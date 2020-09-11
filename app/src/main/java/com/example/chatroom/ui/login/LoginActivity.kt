@@ -1,6 +1,7 @@
 package com.example.chatroom.ui.login
 
 import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -8,6 +9,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -16,10 +18,12 @@ import android.widget.ProgressBar
 import android.widget.Toast
 
 import com.example.chatroom.R
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +34,9 @@ class LoginActivity : AppCompatActivity() {
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
+        val signup = findViewById<Button>(R.id.signup)
+
+        auth = FirebaseAuth.getInstance()
 
         loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
                 .get(LoginViewModel::class.java)
@@ -91,8 +98,29 @@ class LoginActivity : AppCompatActivity() {
             }
 
             login.setOnClickListener {
-                loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
+                //loading.visibility = View.VISIBLE
+                //loginViewModel.login(username.text.toString(), password.text.toString())
+                auth.signInWithEmailAndPassword(username.text.toString(), password.text.toString())
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful){
+                            Log.d("Success", "Authentication Success")
+
+                            Toast.makeText(baseContext, "Successfully Logged In", Toast.LENGTH_LONG).show()
+
+                        }
+                        else {
+                            Log.d("Failure", "Authentication Failure")
+
+                            Toast.makeText(baseContext, "Authentication Failure", Toast.LENGTH_LONG).show()
+
+                        }
+                    }
+
+            }
+
+            signup.setOnClickListener {
+                val intent = Intent(baseContext, SignUpActivity::class.java)
+                startActivity(intent)
             }
         }
     }
