@@ -20,7 +20,7 @@ class SignUpActivity : AppCompatActivity() {
         val city = findViewById<EditText>(R.id.signup_city)
         val password = findViewById<EditText>(R.id.signup_password)
         val reEnterPassword = findViewById<EditText>(R.id.signup_reenterPassword)
-        val avatar = findViewById<ImageView>(R.id.signup_avatar)
+        val avatar = findViewById<ImageView>(R.id.signup_logo)
         val genderRadioGroup = findViewById<RadioGroup>(R.id.signup_genderRadioGroup)
         val maleRadioButton = findViewById<RadioButton>(R.id.signup_maleRadioButton)
         val femaleRadioButton = findViewById<RadioButton>(R.id.signup_femaleRadioButton)

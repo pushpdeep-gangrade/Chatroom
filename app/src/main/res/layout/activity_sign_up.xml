@@ -5,40 +5,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:background="@drawable/sign_up_page"
     tools:context=".ui.login.SignUpActivity">
 
     <ImageView
-        android:id="@+id/signup_avatar"
-        android:layout_width="89dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="16dp"
+        android:id="@+id/signup_logo"
+        android:layout_width="150dip"
+        android:layout_height="150dip"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:contentDescription="@string/logo_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/sym_def_app_icon"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:srcCompat="@drawable/chat_app_logo"
+        tools:srcCompat="@drawable/chat_app_logo" />
 
     <EditText
         android:id="@+id/signup_firstName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_width="0dp"
+        android:layout_height="40dip"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/rounded_edittext"
         android:ems="10"
-        android:hint="First Name"
+        android:hint="@string/prompt_firstname"
         android:inputType="textPersonName"
+        android:padding="10dip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_avatar" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_logo" />
 
     <EditText
         android:id="@+id/signup_lastName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_width="0dp"
+        android:layout_height="40dip"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/rounded_edittext"
         android:ems="10"
-        android:hint="Last Name"
+        android:hint="@string/prompt_lastname"
         android:inputType="textPersonName"
+        android:padding="10dip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,12 +56,16 @@
 
     <EditText
         android:id="@+id/signup_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_width="0dp"
+        android:layout_height="40dip"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/rounded_edittext"
         android:ems="10"
-        android:hint="Email"
-        android:inputType="textPersonName"
+        android:hint="@string/prompt_email"
+        android:inputType="textEmailAddress"
+        android:padding="10dip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,12 +73,16 @@
 
     <EditText
         android:id="@+id/signup_city"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_width="0dp"
+        android:layout_height="40dip"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/rounded_edittext"
         android:ems="10"
-        android:hint="City"
-        android:inputType="textPersonName"
+        android:hint="@string/prompt_city"
+        android:inputType="text"
+        android:padding="10dip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,36 +92,34 @@
         android:id="@+id/signup_genderRadioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:orientation="horizontal"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.013"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/signup_reenterPassword">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
 
         <RadioButton
             android:id="@+id/signup_maleRadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingRight="16dp"
-            android:text="Male" />
+            android:text="@string/prompt_male" />
 
         <RadioButton
             android:id="@+id/signup_femaleRadioButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingRight="8dp"
-            android:text="Female" />
+            android:text="@string/prompt_female" />
     </RadioGroup>
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="76dp"
-        android:layout_marginTop="38dp"
-        android:text="Gender:"
+        android:layout_marginStart="168dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/prompt_gender"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signup_reenterPassword" />
 
@@ -111,33 +127,58 @@
         android:id="@+id/signup_completeSignUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
-        android:text="Sign Up"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_edittext"
+        android:padding="10dip"
+        android:text="@string/action_sign_up"
+        app:layout_constraintEnd_toStartOf="@+id/signup_cancelSignUpButton"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signup_genderRadioGroup" />
+
+    <Button
+        android:id="@+id/signup_cancelSignUpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/rounded_edittext"
+        android:padding="10dip"
+        android:text="@string/action_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/signup_completeSignUpButton"
         app:layout_constraintTop_toBottomOf="@+id/signup_genderRadioGroup" />
 
     <EditText
         android:id="@+id/signup_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_width="0dp"
+        android:layout_height="40dip"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/rounded_edittext"
         android:ems="10"
-        android:hint="Password"
+        android:hint="@string/prompt_password"
         android:inputType="textPassword"
+        android:padding="10dip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signup_city" />
 
     <EditText
         android:id="@+id/signup_reenterPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_width="0dp"
+        android:layout_height="40dip"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/rounded_edittext"
         android:ems="10"
-        android:hint="Re-enter Password"
+        android:hint="@string/prompt_re_enter_password"
         android:inputType="textPassword"
+        android:padding="10dip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"

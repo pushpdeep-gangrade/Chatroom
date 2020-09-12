@@ -12,10 +12,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.Toast
+import android.widget.*
 
 import com.example.chatroom.R
 import com.google.firebase.auth.FirebaseAuth
@@ -34,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
-        val signup = findViewById<Button>(R.id.signup)
+        val signup = findViewById<TextView>(R.id.signup)
 
         auth = FirebaseAuth.getInstance()
 
