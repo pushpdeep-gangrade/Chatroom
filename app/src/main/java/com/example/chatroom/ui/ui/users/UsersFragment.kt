@@ -1,4 +1,4 @@
-package com.example.chatroom.ui.ui.home
+package com.example.chatroom.ui.ui.users
 
 import android.os.Bundle
 import android.view.LayoutInflater

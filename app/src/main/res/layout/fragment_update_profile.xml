@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/profile_page"
-    tools:context=".ui.ui.gallery.ProfileFragment">
+    tools:context=".ui.ui.profile.ProfileFragment">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="0dp"
@@ -21,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textview.MaterialTextView
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/tv_firstname_update"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         app:layout_constraintTop_toBottomOf="@+id/profile_image"
         app:layout_constraintWidth_percent=".4" />
 
-    <com.google.android.material.textview.MaterialTextView
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/tv_lastname_update"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -44,21 +44,8 @@
         app:layout_constraintTop_toBottomOf="@+id/profile_image"
         app:layout_constraintWidth_percent=".4" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/label_gender"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:hint="@string/prompt_gender"
-        app:layout_constraintBottom_toBottomOf="@+id/label_city"
-        app:layout_constraintEnd_toEndOf="@+id/tv_firstname_update"
-        app:layout_constraintStart_toStartOf="@+id/tv_firstname_update"
-        app:layout_constraintTop_toBottomOf="@+id/tv_firstname_update"
-        app:layout_constraintVertical_bias="0.853"
-        app:layout_constraintWidth_percent=".4" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/label_city"
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/et_city"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -72,23 +59,58 @@
         android:id="@+id/tv_cancel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="96dp"
         android:hint="@string/action_cancel"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/label_city"
-        app:layout_constraintStart_toStartOf="@+id/label_city"
-        app:layout_constraintTop_toBottomOf="@+id/label_city"
-        app:layout_constraintWidth_percent=".4" />
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_save"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_percent=".2" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_save"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/save"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/label_gender"
-        app:layout_constraintStart_toStartOf="@+id/label_gender"
-        app:layout_constraintTop_toBottomOf="@+id/label_gender"
-        app:layout_constraintWidth_percent=".4" />
+        app:layout_constraintEnd_toStartOf="@+id/tv_cancel"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        app:layout_constraintWidth_percent=".2" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/tv_firstname_update"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/tv_firstname_update"
+        app:layout_constraintTop_toBottomOf="@+id/tv_firstname_update"
+        app:layout_constraintWidth_percent=".4">
+
+        <RadioButton
+            android:id="@+id/rb_male"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/prompt_male"
+            android:onClick="onRadioButtonClicked"
+            tools:ignore="OnClick" />
+
+        <RadioButton
+            android:id="@+id/rb_female"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/prompt_female"
+            android:onClick="onRadioButtonClicked"
+            tools:ignore="OnClick" />
+
+    </RadioGroup>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

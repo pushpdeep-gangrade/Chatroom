@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/users_page"
-    tools:context=".ui.ui.users.UsersFragment">
+    android:background="@drawable/chatrooms_page"
+    tools:context=".ui.ui.chatroom.ChatroomFragment">
 
     <TextView
-        android:id="@+id/text_home"
+        android:id="@+id/text_slideshow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

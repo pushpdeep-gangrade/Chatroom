@@ -1,4 +1,4 @@
-package com.example.chatroom.ui.ui.slideshow
+package com.example.chatroom.ui.ui.chatroom
 
 import android.os.Bundle
 import android.view.LayoutInflater

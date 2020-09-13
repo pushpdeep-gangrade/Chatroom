@@ -1,17 +1,18 @@
-package com.example.chatroom.ui.ui.gallery
+package com.example.chatroom.ui.ui.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import com.example.chatroom.R
+import com.example.chatroom.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {
-
+    private var _binding : FragmentProfileBinding? = null
+    private val binding get() = _binding!!
     private lateinit var profileViewModel: ProfileViewModel
 
     override fun onCreateView(
@@ -27,7 +28,18 @@ class ProfileFragment : Fragment() {
 //            textView.text = it
 //        })
 
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        return root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.tvUpdateProfile.findNavController().navigate(R.id.action_nav_profile_to_updateProfile)
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

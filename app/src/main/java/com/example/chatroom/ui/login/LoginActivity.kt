@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.*
 
 import com.example.chatroom.R
+import com.example.chatroom.ui.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
@@ -101,9 +102,9 @@ class LoginActivity : AppCompatActivity() {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful){
                             Log.d("Success", "Authentication Success")
-
                             Toast.makeText(baseContext, "Successfully Logged In", Toast.LENGTH_LONG).show()
-
+                            val intent = Intent(baseContext, MainActivity::class.java)
+                            startActivity(intent)
                         }
                         else {
                             Log.d("Failure", "Authentication Failure")

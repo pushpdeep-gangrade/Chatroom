@@ -3,23 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_profile">
+    app:startDestination="@id/updateProfile">
 
     <fragment
         android:id="@+id/nav_profile"
-        android:name="com.example.chatroom.ui.ui.gallery.ProfileFragment"
+        android:name="com.example.chatroom.ui.ui.profile.ProfileFragment"
         android:label="@string/profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_nav_profile_to_updateProfile"
+            app:destination="@id/updateProfile" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_users"
-        android:name="com.example.chatroom.ui.ui.home.UsersFragment"
+        android:name="com.example.chatroom.ui.ui.users.UsersFragment"
         android:label="@string/view_users"
         tools:layout="@layout/fragment_users" />
 
     <fragment
         android:id="@+id/nav_chatrooms"
-        android:name="com.example.chatroom.ui.ui.slideshow.ChatroomFragment"
+        android:name="com.example.chatroom.ui.ui.chatroom.ChatroomFragment"
         android:label="@string/view_chatroom"
         tools:layout="@layout/fragment_chatrooms" />
     <fragment

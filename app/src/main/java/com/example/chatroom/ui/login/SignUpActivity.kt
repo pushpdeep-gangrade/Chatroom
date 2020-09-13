@@ -1,10 +1,12 @@
 package com.example.chatroom.ui.login
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
 import com.example.chatroom.R
+import com.example.chatroom.ui.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class SignUpActivity : AppCompatActivity() {
@@ -36,8 +38,9 @@ class SignUpActivity : AppCompatActivity() {
                 .addOnCompleteListener(this) { task ->
                     if(task.isSuccessful) {
                         Log.d("Success", "Sign Up Successful")
-
                         Toast.makeText(this, "Sign Up Successful", Toast.LENGTH_LONG).show()
+                        val intent = Intent(baseContext, MainActivity::class.java)
+                        startActivity(intent)
 
                     }
                     else {
