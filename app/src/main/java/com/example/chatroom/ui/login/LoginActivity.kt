@@ -13,9 +13,9 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.*
-
 import com.example.chatroom.R
 import com.example.chatroom.ui.MainActivity
+import com.example.chatroom.ui.signup.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
