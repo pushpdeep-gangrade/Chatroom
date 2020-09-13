@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
@@ -24,6 +25,7 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
 import kotlinx.android.synthetic.*
+import kotlinx.android.synthetic.main.fragment_update_profile.view.*
 import java.io.ByteArrayOutputStream
 
 data class User(val firstname: String, val lastname: String, val gender : String, val city : String, val profileImageUrl : String)
@@ -39,8 +41,6 @@ class UpdateProfile : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-
         _binding = FragmentUpdateProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -54,27 +54,15 @@ class UpdateProfile : Fragment() {
 
         binding.tvSave.setOnClickListener{
             uploadUserProfile()
+            findNavController().navigate(R.id.action_updateProfile_to_nav_profile)
         }
+
         binding.tvCancel.setOnClickListener{
-
+            findNavController().navigate(R.id.action_updateProfile_to_nav_profile)
         }
 
-        fun onRadioButtonClicked(view: View) {
-            if (view is RadioButton) {
-                val checked = view.isChecked
-                when (view.getId()) {
-                    R.id.rb_male ->
-                        if (checked) {
-                      userGender = "Male"
-                        }
-                    R.id.rb_female ->
-                        if (checked) {
-                        userGender =  "Female"
-                        }
-                }
-            }
-        }
     }
+
     private fun dispatchTakePictureIntent() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             context?.packageManager?.let {
@@ -118,7 +106,6 @@ class UpdateProfile : Fragment() {
             val downloadUri = task.result
             profileimageUrl = downloadUri.toString()
             Log.d("demo", downloadUri.toString())
-           // Toast.makeText(context, downloadUri, Toast.LENGTH_LONG).show()
         } else {
 
         }
@@ -127,6 +114,12 @@ class UpdateProfile : Fragment() {
 
 
     fun uploadUserProfile(){
+        val id = binding.radioGroup.checkedRadioButtonId
+        when (id) {
+            R.id.rb_female ->  userGender = "Female"
+            R.id.rb_male -> userGender =  "Male"
+
+        }
         val user = User(binding.tvFirstnameUpdate.text.toString(), binding.tvLastnameUpdate.text.toString(),
             userGender.toString(),
             city = binding.etCity.text.toString(), profileImageUrl = profileimageUrl.toString()

@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val toolbar : MaterialToolbar = findViewById(topAppBar)
-        toolbar.setNavigationIcon(R.drawable.chat_app_logo24dp)
           setSupportActionBar(toolbar)
 
       //  val fab: FloatingActionButton = findViewById(R.id.fab)
