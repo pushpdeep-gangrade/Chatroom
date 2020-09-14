@@ -2,10 +2,12 @@ package com.example.chatroom.ui
 
 
 import android.app.Activity.RESULT_OK
+import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,7 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.chatroom.R
 import com.example.chatroom.databinding.FragmentUpdateProfileBinding
@@ -29,8 +32,9 @@ import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_update_profile.view.*
 import java.io.ByteArrayOutputStream
 import com.example.chatroom.data.model.User
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.getValue
+import com.squareup.picasso.Picasso
 
 //data class User(val firstname: String, val lastname: String, val gender : String, val city : String, val profileImageUrl : String)
 
@@ -40,12 +44,14 @@ class UpdateProfile : Fragment() {
     val REQUEST_IMAGE_CAPTURE = 1
     private var _binding : FragmentUpdateProfileBinding? = null
     private val binding get() = _binding!!
-    private var auth = FirebaseAuth.getInstance()
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setProfile()
         _binding = FragmentUpdateProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -53,18 +59,21 @@ class UpdateProfile : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         binding.profileImage.setOnClickListener{
             dispatchTakePictureIntent()
         }
 
         binding.tvSave.setOnClickListener{
             uploadUserProfile()
-            findNavController().navigate(R.id.action_updateProfile_to_nav_profile)
+            view.findNavController().navigate(R.id.action_updateProfile_to_nav_chatrooms)
         }
 
         binding.tvCancel.setOnClickListener{
-            findNavController().navigate(R.id.action_updateProfile_to_nav_profile)
+            view.findNavController().navigate(R.id.action_updateProfile_to_nav_chatrooms)
         }
+
+
 
     }
 
@@ -149,8 +158,8 @@ class UpdateProfile : Fragment() {
         user.email = fbUserEmail
         user.imageUrl = profileimageUrl.toString()
 
-        var db = FirebaseDatabase.getInstance()
-        var dbRef = db.reference
+//        var db = FirebaseDatabase.getInstance()
+//        var dbRef = db.reference
 
         dbRef.child("users").child(user.userId).setValue(user)
 
@@ -164,9 +173,43 @@ class UpdateProfile : Fragment() {
         //    }
     }
 
+    fun setProfile(){
+        dbRef.child("users").child(MainActivity.globalid.toString()).
+        addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val value = dataSnapshot.getValue<com.example.chatroom.data.model.User>()
+                if (value != null) {
+
+                    binding.tvFirstnameUpdate.text =  Editable.Factory.getInstance().newEditable(value.firstName)
+                    binding.tvLastnameUpdate.text =  Editable.Factory.getInstance().newEditable(value.lastName)
+                    binding.etCity.text = Editable.Factory.getInstance().newEditable(value.city)
+
+                    when(value.gender){
+                        "Male" -> binding.radioGroup.check(R.id.rb_male)
+                        "Female" -> binding.radioGroup.check(R.id.rb_female)
+                    }
+
+                    Picasso.get().load(value.imageUrl).into(binding.profileImage);
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+                Log.w("demo", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    companion object{
+
+        var db = FirebaseDatabase.getInstance()
+        var dbRef = db.reference
+         var auth = FirebaseAuth.getInstance()
+        val globalid = auth.currentUser?.uid
     }
 
 }

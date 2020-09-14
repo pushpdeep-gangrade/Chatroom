@@ -12,6 +12,7 @@
         android:layout_height="0dp"
         app:layout_constraintWidth_percent=".4"
         app:layout_constraintHeight_percent=".3"
+        android:background="@drawable/circle"
         android:id="@+id/profile_image"
         android:src="@drawable/chat_app_logo"
         app:civ_border_color="#FF000000"

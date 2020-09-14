@@ -1,6 +1,7 @@
 package com.example.chatroom.ui.login
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -15,6 +16,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.*
 import com.example.chatroom.R
 import com.example.chatroom.ui.MainActivity
+import com.example.chatroom.ui.User
 import com.example.chatroom.ui.signup.ForgotPasswordActivity
 import com.example.chatroom.ui.signup.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -144,7 +146,10 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
+
 }
+
+
 
 /**
  * Extension function to simplify setting an afterTextChanged action to EditText components.

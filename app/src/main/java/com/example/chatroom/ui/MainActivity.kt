@@ -1,6 +1,8 @@
 package com.example.chatroom.ui
 
+import android.content.Context
 import android.os.Bundle
+import android.provider.Settings.Global.putInt
 import android.util.Log
 import android.view.Menu
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -15,8 +17,19 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.example.chatroom.R
 import com.example.chatroom.R.id.topAppBar
+import com.example.chatroom.data.model.User
+import com.example.chatroom.ui.ui.chatroom.ChatroomFragment
+import com.example.chatroom.ui.ui.profile.ProfileFragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.nav_header_main.view.*
+import kotlinx.serialization.json.Json.Default.context
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,23 +41,13 @@ class MainActivity : AppCompatActivity() {
         val toolbar : MaterialToolbar = findViewById(topAppBar)
           setSupportActionBar(toolbar)
 
-      //  val fab: FloatingActionButton = findViewById(R.id.fab)
-//        fab.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null).show()
-//        }
-
-        //Get user info
-//        var auth = FirebaseAuth.getInstance()
-//
-//        var uname = auth.currentUser?.uid
-//        if (uname != null) {
-//            Log.d("demo", uname)
-//        }
-
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
+
+//        drawerLayout.nav_header_user_name.text = globaluser.firstName.plus(" ").plus(globaluser.lastName)
+//        drawerLayout.nav_header_nav_user_email.text = globaluser.email
+//        Picasso.get().load(globaluser.imageUrl).into(drawerLayout.nav_header_user_image);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -56,14 +59,36 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
+//    fun getUser() {
+//        val addValueEventListener =
+//            dbRef.child("users").child("EoJbgm8dPkcIWHp4Tn5Cd0bRS4i2").addValueEventListener(object :
+//                ValueEventListener {
+//                override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                    globaluser = dataSnapshot.getValue<User>()!!
+//                    Log.d("demo", globaluser.toString())
+//                }
+//
+//                override fun onCancelled(error: DatabaseError) {
+//                    Log.w("demo", "Failed to read value.", error.toException())
+//                }
+//            })
+//    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
 
-//    override fun onSupportNavigateUp(): Boolean {
-//        val navController = findNavController(R.id.nav_host_fragment)
-//        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-//    }
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    companion object{
+        var db = FirebaseDatabase.getInstance()
+        var dbRef = db.reference
+        var auth = FirebaseAuth.getInstance()
+        val globalid = "EoJbgm8dPkcIWHp4Tn5Cd0bRS4i2"
+    }
 }

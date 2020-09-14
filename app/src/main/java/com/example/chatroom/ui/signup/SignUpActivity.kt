@@ -184,6 +184,7 @@ class SignUpActivity : AppCompatActivity() {
                     Log.d("Download Uri", downloadUri.toString())
                     user.imageUrl = downloadUri.toString()
                     dbRef.child("users").child(user.userId).setValue(user)
+
                     loading.visibility = View.INVISIBLE
                     Toast.makeText(this, "Sign Up Successful", Toast.LENGTH_LONG).show()
                     finish()
