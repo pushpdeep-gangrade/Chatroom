@@ -11,6 +11,9 @@
     <string name="prompt_male">Male</string>
     <string name="prompt_female">Female</string>
     <string name="prompt_profile_picture">Profile Picture</string>
+    <string name="prompt_create_chatroom">Create Chatroom</string>
+    <string name="prompt_chatroom_name">Chatroom Name</string>
+    <string name="action_create">Create</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_sign_up">Sign Up</string>

@@ -38,4 +38,13 @@
             android:id="@+id/action_updateProfile_to_nav_profile"
             app:destination="@id/nav_profile" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_create_chatroom"
+        android:name="com.example.chatroom.ui.ui.chatroom.CreateChatroomFragment"
+        android:label="@string/prompt_create_chatroom"
+        tools:layout="@layout/fragment_create_chatroom">
+        <action
+            android:id="@+id/action_nav_create_chatroom_to_nav_chatrooms"
+            app:destination="@id/nav_chatrooms" />
+    </fragment>
 </navigation>

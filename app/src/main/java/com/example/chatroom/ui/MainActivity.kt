@@ -1,6 +1,7 @@
 package com.example.chatroom.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.chatroom.R
 import com.example.chatroom.R.id.topAppBar
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,6 +33,15 @@ class MainActivity : AppCompatActivity() {
 //            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                .setAction("Action", null).show()
 //        }
+
+        //Get user info
+//        var auth = FirebaseAuth.getInstance()
+//
+//        var uname = auth.currentUser?.uid
+//        if (uname != null) {
+//            Log.d("demo", uname)
+//        }
+
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
@@ -38,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_profile, R.id.nav_users, R.id.nav_chatrooms
+                R.id.nav_profile, R.id.nav_create_chatroom, R.id.nav_chatrooms, R.id.nav_users
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

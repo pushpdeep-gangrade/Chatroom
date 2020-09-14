@@ -133,12 +133,15 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/rounded_edittext"
         android:padding="10dip"
         android:text="@string/action_sign_up"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/signup_cancelSignUpButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_genderRadioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_genderRadioGroup"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/signup_cancelSignUpButton"
@@ -147,12 +150,15 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/rounded_edittext"
         android:padding="10dip"
         android:text="@string/action_cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/signup_completeSignUpButton"
-        app:layout_constraintTop_toBottomOf="@+id/signup_genderRadioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_genderRadioGroup"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/signup_password"
