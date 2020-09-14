@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.*
 import com.example.chatroom.R
 import com.example.chatroom.ui.MainActivity
+import com.example.chatroom.ui.signup.ForgotPasswordActivity
 import com.example.chatroom.ui.signup.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
 
@@ -33,6 +34,7 @@ class LoginActivity : AppCompatActivity() {
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
         val signup = findViewById<TextView>(R.id.signup)
+        val forgotPassword = findViewById<TextView>(R.id.forgot_password)
 
         auth = FirebaseAuth.getInstance()
 
@@ -118,6 +120,11 @@ class LoginActivity : AppCompatActivity() {
 
             signup.setOnClickListener {
                 val intent = Intent(baseContext, SignUpActivity::class.java)
+                startActivity(intent)
+            }
+
+            forgotPassword.setOnClickListener {
+                val intent = Intent(baseContext, ForgotPasswordActivity::class.java)
                 startActivity(intent)
             }
         }
