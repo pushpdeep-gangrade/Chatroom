@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/updateProfile">
+    app:startDestination="@id/nav_chatrooms">
 
     <fragment
         android:id="@+id/nav_profile"
@@ -25,9 +25,26 @@
         android:id="@+id/nav_chatrooms"
         android:name="com.example.chatroom.ui.ui.chatroom.ChatroomFragment"
         android:label="@string/view_chatroom"
-        tools:layout="@layout/fragment_chatrooms" />
+        tools:layout="@layout/fragment_chatrooms" >
+        <action
+            android:id="@+id/action_nav_chatrooms_to_nav_profile"
+            app:destination="@id/nav_profile" />
+    </fragment>
     <fragment
         android:id="@+id/updateProfile"
         android:name="com.example.chatroom.ui.UpdateProfile"
-        android:label="UpdateProfile" />
+        android:label="UpdateProfile" >
+        <action
+            android:id="@+id/action_updateProfile_to_nav_profile"
+            app:destination="@id/nav_profile" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_create_chatroom"
+        android:name="com.example.chatroom.ui.ui.chatroom.CreateChatroomFragment"
+        android:label="@string/prompt_create_chatroom"
+        tools:layout="@layout/fragment_create_chatroom">
+        <action
+            android:id="@+id/action_nav_create_chatroom_to_nav_chatrooms"
+            app:destination="@id/nav_chatrooms" />
+    </fragment>
 </navigation>

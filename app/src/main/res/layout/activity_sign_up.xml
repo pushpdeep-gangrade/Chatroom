@@ -18,8 +18,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/chat_app_logo"
-        tools:srcCompat="@drawable/chat_app_logo" />
+        app:srcCompat="@drawable/female_user_icon2"
+        tools:srcCompat="@drawable/female_user_icon2" />
 
     <EditText
         android:id="@+id/signup_firstName"
@@ -93,11 +93,12 @@
         android:id="@+id/signup_genderRadioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:orientation="horizontal"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintTop_toBottomOf="@+id/signup_reenterPassword">
 
         <RadioButton
             android:id="@+id/signup_maleRadioButton"
@@ -118,9 +119,10 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="168dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="30dp"
         android:text="@string/prompt_gender"
+        app:layout_constraintEnd_toStartOf="@+id/signup_genderRadioGroup"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signup_reenterPassword" />
 
@@ -131,12 +133,15 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/rounded_edittext"
         android:padding="10dip"
         android:text="@string/action_sign_up"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/signup_cancelSignUpButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_genderRadioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_genderRadioGroup"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/signup_cancelSignUpButton"
@@ -145,12 +150,15 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/rounded_edittext"
         android:padding="10dip"
         android:text="@string/action_cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/signup_completeSignUpButton"
-        app:layout_constraintTop_toBottomOf="@+id/signup_genderRadioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_genderRadioGroup"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/signup_password"
@@ -195,5 +203,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/picture_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/prompt_profile_picture"
+        app:layout_constraintBottom_toBottomOf="@+id/signup_logo"
+        app:layout_constraintEnd_toStartOf="@+id/signup_logo"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/signup_logo"
+        app:layout_constraintVertical_bias="0.526" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

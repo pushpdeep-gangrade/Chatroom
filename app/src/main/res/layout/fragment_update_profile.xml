@@ -92,23 +92,22 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/tv_firstname_update"
         app:layout_constraintTop_toBottomOf="@+id/tv_firstname_update"
-        app:layout_constraintWidth_percent=".4">
+        app:layout_constraintWidth_percent=".4"
+        >
 
         <RadioButton
             android:id="@+id/rb_male"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/prompt_male"
-            android:onClick="onRadioButtonClicked"
-            tools:ignore="OnClick" />
+            />
 
         <RadioButton
             android:id="@+id/rb_female"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/prompt_female"
-            android:onClick="onRadioButtonClicked"
-            tools:ignore="OnClick" />
+          />
 
     </RadioGroup>
 
