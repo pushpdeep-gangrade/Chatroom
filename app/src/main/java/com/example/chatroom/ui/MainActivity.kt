@@ -7,6 +7,9 @@ import android.provider.Settings.Global.putInt
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -37,6 +40,9 @@ import kotlinx.serialization.json.Json.Default.context
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var userImage: ImageView
+    private lateinit var userFullname: TextView
+    private lateinit var userEmail: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,22 +66,33 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        userImage = navView.getHeaderView(0).findViewById<ImageView>(R.id.nav_header_user_image)
+        userFullname = navView.getHeaderView(0).findViewById<TextView>(R.id.nav_header_user_name)
+        userEmail = navView.getHeaderView(0).findViewById<TextView>(R.id.nav_header_nav_user_email)
+
+        setUserInfo()
     }
 
-//    fun getUser() {
-//        val addValueEventListener =
-//            dbRef.child("users").child("EoJbgm8dPkcIWHp4Tn5Cd0bRS4i2").addValueEventListener(object :
-//                ValueEventListener {
-//                override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                    globaluser = dataSnapshot.getValue<User>()!!
-//                    Log.d("demo", globaluser.toString())
-//                }
-//
-//                override fun onCancelled(error: DatabaseError) {
-//                    Log.w("demo", "Failed to read value.", error.toException())
-//                }
-//            })
-//    }
+    private fun setUserInfo(){
+        globalid?.let {
+            dbRef.child("users").child(globalid).addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val globaluser = dataSnapshot.getValue<com.example.chatroom.data.model.User>()!!
+                    if (globaluser != null) {
+                        userFullname.text =  globaluser.firstName + " " + globaluser.lastName
+                        userEmail.text =  globaluser.email
+                        Picasso.get().load(globaluser.imageUrl).into(userImage);
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Failed to read value
+                    Log.w("demo", "Failed to read value.", error.toException())
+                }
+            })
+        }
+
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
