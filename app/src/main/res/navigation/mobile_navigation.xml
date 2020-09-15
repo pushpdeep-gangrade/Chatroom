@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_profile" >
         <action
             android:id="@+id/action_nav_profile_to_updateProfile"
-            app:destination="@id/updateProfile" />
+            app:destination="@id/nav_update_profile" />
     </fragment>
 
     <fragment
@@ -27,9 +27,10 @@
         android:label="@string/view_chatroom"
         tools:layout="@layout/fragment_chatrooms" />
     <fragment
-        android:id="@+id/updateProfile"
-        android:name="com.example.chatroom.ui.UpdateProfile"
-        android:label="UpdateProfile">
+        android:id="@+id/nav_update_profile"
+        android:name="com.example.chatroom.ui.ui.profile.UpdateProfileFragment"
+        android:label="@string/update_profile"
+        tools:layout="@layout/fragment_update_profile">
         <action
             android:id="@+id/action_updateProfile_to_nav_chatrooms"
             app:destination="@id/nav_chatrooms" />

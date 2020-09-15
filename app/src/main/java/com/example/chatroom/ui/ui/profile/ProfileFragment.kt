@@ -1,23 +1,16 @@
 package com.example.chatroom.ui.ui.profile
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.example.chatroom.R
-import com.example.chatroom.data.model.User
 import com.example.chatroom.databinding.FragmentProfileBinding
 import com.example.chatroom.ui.MainActivity
-import com.example.chatroom.ui.UpdateProfile
-import com.example.chatroom.ui.login.LoginActivity
-import com.example.chatroom.ui.ui.chatroom.ChatroomFragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener

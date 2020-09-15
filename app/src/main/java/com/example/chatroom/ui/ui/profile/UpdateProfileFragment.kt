@@ -1,8 +1,7 @@
-package com.example.chatroom.ui
+package com.example.chatroom.ui.ui.profile
 
 
 import android.app.Activity.RESULT_OK
-import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -12,34 +11,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.Toast
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.chatroom.R
 import com.example.chatroom.databinding.FragmentUpdateProfileBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
-import kotlinx.android.synthetic.*
-import kotlinx.android.synthetic.main.fragment_update_profile.view.*
 import java.io.ByteArrayOutputStream
-import com.example.chatroom.data.model.User
-import com.example.chatroom.ui.login.LoginActivity
+import com.example.chatroom.ui.MainActivity
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
 
 //data class User(val firstname: String, val lastname: String, val gender : String, val city : String, val profileImageUrl : String)
 
-class UpdateProfile : Fragment() {
+class UpdateProfileFragment : Fragment() {
     var userGender : String? = null
     var profileimageUrl : String? = null
     val REQUEST_IMAGE_CAPTURE = 1
