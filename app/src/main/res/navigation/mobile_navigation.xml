@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_updateProfile_to_nav_chatrooms"
             app:destination="@id/nav_chatrooms" />
+        <action
+            android:id="@+id/action_updateProfile_to_nav_profile"
+            app:destination="@id/nav_profile" />
     </fragment>
     <fragment
         android:id="@+id/nav_create_chatroom"

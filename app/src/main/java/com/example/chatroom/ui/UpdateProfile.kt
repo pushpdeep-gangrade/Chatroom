@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_update_profile.view.*
 import java.io.ByteArrayOutputStream
 import com.example.chatroom.data.model.User
+import com.example.chatroom.ui.login.LoginActivity
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
@@ -45,14 +46,12 @@ class UpdateProfile : Fragment() {
     private var _binding : FragmentUpdateProfileBinding? = null
     private val binding get() = _binding!!
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setProfile()
         _binding = FragmentUpdateProfileBinding.inflate(inflater, container, false)
+        setProfile()
         return binding.root
     }
 
@@ -66,11 +65,11 @@ class UpdateProfile : Fragment() {
 
         binding.tvSave.setOnClickListener{
             uploadUserProfile()
-            view.findNavController().navigate(R.id.action_updateProfile_to_nav_chatrooms)
+            view.findNavController().navigate(R.id.action_updateProfile_to_nav_profile)
         }
 
         binding.tvCancel.setOnClickListener{
-            view.findNavController().navigate(R.id.action_updateProfile_to_nav_chatrooms)
+            view.findNavController().navigate(R.id.action_updateProfile_to_nav_profile)
         }
 
 
@@ -88,14 +87,13 @@ class UpdateProfile : Fragment() {
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            var fbUserId = auth.currentUser?.uid
+            var fbUserId = MainActivity.globalid
             if (fbUserId == null) {
                 fbUserId = "null"
             }
 
             val imageBitmap = data?.extras?.get("data") as Bitmap
-            var storage: FirebaseStorage
-            storage = Firebase.storage
+            var storage = Firebase.storage
             val storageRef = storage.reference
             val userProfileImage = storageRef.child("images").child(fbUserId).child("profilePic.jpg")
             val baos = ByteArrayOutputStream()
@@ -107,12 +105,13 @@ class UpdateProfile : Fragment() {
             uploadTask.addOnFailureListener {
                 Toast.makeText(context, "Upload failed", Toast.LENGTH_LONG).show()
             }.addOnSuccessListener { taskSnapshot ->
-                Toast.makeText(context, "Upload failed", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Upload Success", Toast.LENGTH_LONG).show()
                 getDownloadURL(userProfileImage, uploadTask)
                 binding.profileImage.setImageBitmap(imageBitmap)
             }
         }
     }
+
     fun getDownloadURL(ref : StorageReference, uploadTask : UploadTask){
     val urlTask = uploadTask.continueWithTask { task ->
         if (!task.isSuccessful) {
@@ -134,11 +133,11 @@ class UpdateProfile : Fragment() {
 
 
     fun uploadUserProfile(){
-        var fbUserId = auth.currentUser?.uid
+        var fbUserId = MainActivity.globalid
         if (fbUserId == null) {
             fbUserId = "null"
         }
-        var fbUserEmail = auth.currentUser?.email
+        var fbUserEmail = MainActivity.auth.currentUser?.email
         if (fbUserEmail == null) {
             fbUserEmail = "null"
         }
@@ -149,7 +148,7 @@ class UpdateProfile : Fragment() {
             R.id.rb_male -> userGender =  "Male"
 
         }
-        val user = User
+        val user = com.example.chatroom.data.model.User
         user.userId = fbUserId
         user.firstName = binding.tvFirstnameUpdate.text.toString()
         user.lastName = binding.tvLastnameUpdate.text.toString()
@@ -158,28 +157,15 @@ class UpdateProfile : Fragment() {
         user.email = fbUserEmail
         user.imageUrl = profileimageUrl.toString()
 
-//        var db = FirebaseDatabase.getInstance()
-//        var dbRef = db.reference
-
-        dbRef.child("users").child(user.userId).setValue(user)
-
-        //db.collection("Users")
-        //    .add(user)
-        //    .addOnSuccessListener { documentReference ->
-        //        Log.d("demo", "DocumentSnapshot added with ID: ${documentReference.id}")
-        //    }
-        //    .addOnFailureListener { e ->
-        //        Log.w("demo", "Error adding document", e)
-        //    }
+        MainActivity.dbRef.child("users").child(user.userId).setValue(user)
     }
 
     fun setProfile(){
-        dbRef.child("users").child(MainActivity.globalid.toString()).
-        addValueEventListener(object : ValueEventListener {
+        MainActivity.dbRef.child("users").child(MainActivity.globalid.toString()).
+        addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val value = dataSnapshot.getValue<com.example.chatroom.data.model.User>()
                 if (value != null) {
-
                     binding.tvFirstnameUpdate.text =  Editable.Factory.getInstance().newEditable(value.firstName)
                     binding.tvLastnameUpdate.text =  Editable.Factory.getInstance().newEditable(value.lastName)
                     binding.etCity.text = Editable.Factory.getInstance().newEditable(value.city)
@@ -189,6 +175,7 @@ class UpdateProfile : Fragment() {
                         "Female" -> binding.radioGroup.check(R.id.rb_female)
                     }
 
+                    profileimageUrl = value.imageUrl
                     Picasso.get().load(value.imageUrl).into(binding.profileImage);
                 }
             }
@@ -204,13 +191,5 @@ class UpdateProfile : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-    companion object{
-
-        var db = FirebaseDatabase.getInstance()
-        var dbRef = db.reference
-         var auth = FirebaseAuth.getInstance()
-        val globalid = auth.currentUser?.uid
-    }
-
 }
 

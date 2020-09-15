@@ -20,6 +20,7 @@ import com.example.chatroom.ui.User
 import com.example.chatroom.ui.signup.ForgotPasswordActivity
 import com.example.chatroom.ui.signup.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class LoginActivity : AppCompatActivity() {
 
@@ -28,6 +29,13 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        var auth = FirebaseAuth.getInstance()
+
+        if (auth.currentUser!=null) {
+            val intent = Intent(baseContext, MainActivity::class.java)
+            startActivity(intent)
+        }
 
         setContentView(R.layout.activity_login)
 
@@ -38,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
         val signup = findViewById<TextView>(R.id.signup)
         val forgotPassword = findViewById<TextView>(R.id.forgot_password)
 
-        auth = FirebaseAuth.getInstance()
+
 
         loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
                 .get(LoginViewModel::class.java)
@@ -146,7 +154,6 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
-
 }
 
 

@@ -89,6 +89,6 @@ class MainActivity : AppCompatActivity() {
         var db = FirebaseDatabase.getInstance()
         var dbRef = db.reference
         var auth = FirebaseAuth.getInstance()
-        val globalid = "EoJbgm8dPkcIWHp4Tn5Cd0bRS4i2"
+        val globalid = auth.currentUser?.uid
     }
 }

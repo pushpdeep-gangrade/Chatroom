@@ -16,6 +16,7 @@ import com.example.chatroom.data.model.User
 import com.example.chatroom.databinding.FragmentProfileBinding
 import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.UpdateProfile
+import com.example.chatroom.ui.login.LoginActivity
 import com.example.chatroom.ui.ui.chatroom.ChatroomFragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -36,33 +37,29 @@ class ProfileFragment : Fragment() {
     ): View? {
         profileViewModel =
             ViewModelProviders.of(this).get(ProfileViewModel::class.java)
-
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        setProfile()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-      binding.progressBar.visibility = View.VISIBLE
-        setProfile()
+        binding.progressBar.visibility = View.VISIBLE
         binding.tvUpdateProfile.setOnClickListener{
             view.findNavController().navigate(R.id.action_nav_profile_to_updateProfile)
         }
-
     }
 
     fun setProfile(){
-
-
         MainActivity.globalid?.let {
-            UpdateProfile.dbRef.child("users").child(MainActivity.globalid).addValueEventListener(object : ValueEventListener {
+            MainActivity.dbRef.child("users").child(MainActivity.globalid).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val globaluser = dataSnapshot.getValue<com.example.chatroom.data.model.User>()!!
                     if (globaluser != null) {
                         binding.tvFirstname.text =  globaluser.firstName
-                        binding.tvLastname.text =  globaluser.firstName
-                        binding.tvGender.text =  globaluser.firstName
-                        binding.tvCity.text =  globaluser.firstName
+                        binding.tvLastname.text =  globaluser.lastName
+                        binding.tvGender.text =  globaluser.gender
+                        binding.tvCity.text =  globaluser.city
                         Picasso.get().load(globaluser.imageUrl).into(binding.profileImage);
                     }
                     binding.progressBar.visibility = View.INVISIBLE

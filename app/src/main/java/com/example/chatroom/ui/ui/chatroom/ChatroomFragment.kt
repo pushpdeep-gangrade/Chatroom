@@ -16,6 +16,7 @@ import com.example.chatroom.databinding.FragmentChatroomsBinding
 import com.example.chatroom.databinding.FragmentProfileBinding
 import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.UpdateProfile
+import com.example.chatroom.ui.login.LoginActivity
 import com.example.chatroom.ui.ui.profile.ProfileFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -41,6 +42,7 @@ class ChatroomFragment : Fragment() {
         chatroomViewModel =
             ViewModelProviders.of(this).get(ChatroomViewModel::class.java)
         _binding = FragmentChatroomsBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -51,7 +53,7 @@ class ChatroomFragment : Fragment() {
     }
 
     fun updateAdapter(){
-            MainActivity.dbRef.child("chatrooms").addValueEventListener(object : ValueEventListener {
+        MainActivity.dbRef.child("chatrooms").addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     for (postSnapshot in dataSnapshot.children) {
                    chatrooms.add(postSnapshot.key.toString())
