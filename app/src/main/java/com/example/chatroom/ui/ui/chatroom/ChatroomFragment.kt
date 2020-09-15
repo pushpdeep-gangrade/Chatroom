@@ -52,19 +52,19 @@ class ChatroomFragment : Fragment() {
 
     }
 
-    fun updateAdapter(){
+    fun updateAdapter() {
         MainActivity.dbRef.child("chatrooms").addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    for (postSnapshot in dataSnapshot.children) {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (postSnapshot in dataSnapshot.children) {
                    chatrooms.add(postSnapshot.key.toString())
-                    }
-                    val arrayAdapter =
-                        context?.let { ArrayAdapter<String>(it,android.R.layout.simple_list_item_1,chatrooms ) }
-                    binding.listView.adapter = arrayAdapter
                 }
-                override fun onCancelled(databaseError: DatabaseError) {
-                }
-            })
-        }
+                val arrayAdapter =
+                    context?.let { ArrayAdapter<String>(it,android.R.layout.simple_list_item_1,chatrooms ) }
+                binding.listView.adapter = arrayAdapter
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
+    }
 
 }
