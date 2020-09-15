@@ -35,6 +35,8 @@ class LoginActivity : AppCompatActivity() {
         if (auth.currentUser!=null) {
             val intent = Intent(baseContext, MainActivity::class.java)
             startActivity(intent)
+            finish()
+            return
         }
 
         setContentView(R.layout.activity_login)

@@ -1,10 +1,12 @@
 package com.example.chatroom.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings.Global.putInt
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -18,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.chatroom.R
 import com.example.chatroom.R.id.topAppBar
 import com.example.chatroom.data.model.User
+import com.example.chatroom.ui.login.LoginActivity
 import com.example.chatroom.ui.ui.chatroom.ChatroomFragment
 import com.example.chatroom.ui.ui.profile.ProfileFragment
 import com.google.android.material.appbar.MaterialToolbar
@@ -78,6 +81,20 @@ class MainActivity : AppCompatActivity() {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.logout -> {
+                auth.signOut()
+                val intent = Intent(baseContext, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
