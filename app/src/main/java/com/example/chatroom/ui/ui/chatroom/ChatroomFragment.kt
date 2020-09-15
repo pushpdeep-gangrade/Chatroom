@@ -42,6 +42,7 @@ class ChatroomFragment : Fragment() {
     fun updateAdapter() {
         MainActivity.dbRef.child("chatrooms").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
+                chatrooms.removeAll(chatrooms)
                 for (postSnapshot in dataSnapshot.children) {
                    chatrooms.add(postSnapshot.key.toString())
                 }

@@ -55,6 +55,7 @@ class UsersFragment : Fragment() {
     fun updateAdapter() {
         MainActivity.dbRef.child("users").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
+                users.removeAll(users)
                 for (postSnapshot in dataSnapshot.children) {
                     val user = postSnapshot.getValue<com.example.chatroom.data.model.User>()!!
                     if (user != null) {
