@@ -53,17 +53,17 @@ class ProfileFragment : Fragment() {
         var id : String?
 
         if(selectedUserId == null){
-            id = MainActivity.globalid
+            id = MainActivity.auth.currentUser?.uid
         }
         else{
             id = selectedUserId
 
-            if(!selectedUserId.equals(MainActivity.globalid)){
+            if(!selectedUserId.equals(MainActivity.auth.currentUser?.uid)){
                 binding.tvUpdateProfile.visibility = View.GONE
             }
         }
 
-        MainActivity.globalid?.let {
+        MainActivity.auth.currentUser?.uid.let {
             if (id != null) {
                 MainActivity.dbRef.child("users").child(id).addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {

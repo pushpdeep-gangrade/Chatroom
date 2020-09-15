@@ -76,7 +76,7 @@ class UpdateProfileFragment : Fragment() {
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            var fbUserId = MainActivity.globalid
+            var fbUserId = MainActivity.auth.currentUser?.uid
             if (fbUserId == null) {
                 fbUserId = "null"
             }
@@ -122,7 +122,7 @@ class UpdateProfileFragment : Fragment() {
 
 
     fun uploadUserProfile(){
-        var fbUserId = MainActivity.globalid
+        var fbUserId = MainActivity.auth.currentUser?.uid
         if (fbUserId == null) {
             fbUserId = "null"
         }
@@ -150,7 +150,7 @@ class UpdateProfileFragment : Fragment() {
     }
 
     fun setProfile(){
-        MainActivity.dbRef.child("users").child(MainActivity.globalid.toString()).
+        MainActivity.dbRef.child("users").child(MainActivity.auth.currentUser?.uid.toString()).
         addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val value = dataSnapshot.getValue<com.example.chatroom.data.model.User>()

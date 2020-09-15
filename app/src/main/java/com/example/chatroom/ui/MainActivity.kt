@@ -74,8 +74,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUserInfo(){
-        globalid?.let {
-            dbRef.child("users").child(globalid).addValueEventListener(object : ValueEventListener {
+        var uid = auth.currentUser?.uid
+        uid?.let {
+            dbRef.child("users").child(uid).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val globaluser = dataSnapshot.getValue<com.example.chatroom.data.model.User>()!!
                     if (globaluser != null) {
