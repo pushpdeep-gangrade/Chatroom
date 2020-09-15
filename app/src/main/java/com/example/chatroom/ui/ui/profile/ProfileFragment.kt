@@ -11,17 +11,21 @@ import androidx.navigation.findNavController
 import com.example.chatroom.R
 import com.example.chatroom.databinding.FragmentProfileBinding
 import com.example.chatroom.ui.MainActivity
+import com.example.chatroom.ui.User
+import com.example.chatroom.ui.ui.users.UsersFragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
+import java.io.Serializable
 
 
 class ProfileFragment : Fragment() {
     private var _binding : FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var profileViewModel: ProfileViewModel
+    var selectedUserId : String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,6 +35,8 @@ class ProfileFragment : Fragment() {
         profileViewModel =
             ViewModelProviders.of(this).get(ProfileViewModel::class.java)
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        selectedUserId = arguments?.getString("userData")
+
         setProfile()
         return binding.root
     }
@@ -44,25 +50,40 @@ class ProfileFragment : Fragment() {
     }
 
     fun setProfile(){
-        MainActivity.globalid?.let {
-            MainActivity.dbRef.child("users").child(MainActivity.globalid).addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val globaluser = dataSnapshot.getValue<com.example.chatroom.data.model.User>()!!
-                    if (globaluser != null) {
-                        binding.tvFirstname.text =  globaluser.firstName
-                        binding.tvLastname.text =  globaluser.lastName
-                        binding.tvGender.text =  globaluser.gender
-                        binding.tvCity.text =  globaluser.city
-                        Picasso.get().load(globaluser.imageUrl).into(binding.profileImage);
-                    }
-                    binding.progressBar.visibility = View.INVISIBLE
-                }
+        var id : String?
 
-                override fun onCancelled(error: DatabaseError) {
-                    // Failed to read value
-                    Log.w("demo", "Failed to read value.", error.toException())
-                }
-            })
+        if(selectedUserId == null){
+            id = MainActivity.globalid
+        }
+        else{
+            id = selectedUserId
+
+            if(!selectedUserId.equals(MainActivity.globalid)){
+                binding.tvUpdateProfile.visibility = View.GONE
+            }
+        }
+
+        MainActivity.globalid?.let {
+            if (id != null) {
+                MainActivity.dbRef.child("users").child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val globaluser = dataSnapshot.getValue<com.example.chatroom.data.model.User>()!!
+                        if (globaluser != null) {
+                            binding.tvFirstname.text =  globaluser.firstName
+                            binding.tvLastname.text =  globaluser.lastName
+                            binding.tvGender.text =  globaluser.gender
+                            binding.tvCity.text =  globaluser.city
+                            Picasso.get().load(globaluser.imageUrl).into(binding.profileImage);
+                        }
+                        binding.progressBar.visibility = View.INVISIBLE
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        // Failed to read value
+                        Log.w("demo", "Failed to read value.", error.toException())
+                    }
+                })
+            }
         }
 
     }
