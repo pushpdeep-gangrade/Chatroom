@@ -12,10 +12,13 @@ import android.widget.Toast
 import androidx.navigation.findNavController
 import com.example.chatroom.R
 import com.example.chatroom.databinding.FragmentCreateChatroomBinding
+import com.example.chatroom.ui.MainActivity
+import com.example.chatroom.ui.login.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.fragment_create_chatroom.view.*
 
 class CreateChatroomFragment : Fragment() {
     // TODO: Rename and change types of parameters
@@ -32,13 +35,18 @@ class CreateChatroomFragment : Fragment() {
         // Inflate the layout for this fragment
         val root = inflater.inflate(R.layout.fragment_create_chatroom, container, false)
         _binding = FragmentCreateChatroomBinding.inflate(inflater, container, false)
-        dbRef = db.reference
 
-        val chatroom_name_edittext = binding.root.findViewById<EditText>(R.id.create_chatroom_text_box)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val chatroom_name_edittext = binding.createChatroomTextBox
         var fbUser = auth.currentUser
         var fbUserId = fbUser?.uid
 
-        binding.root.findViewById<TextView>(R.id.create_chatroom_action).setOnClickListener {
+        binding.createChatroomAction.setOnClickListener {
             var chatroom_name_text = chatroom_name_edittext.text.toString()
             var allValid = true
 
@@ -54,21 +62,20 @@ class CreateChatroomFragment : Fragment() {
 
             if (allValid) {
                 storeChatroomData(chatroom_name_text, fbUser)
+                view.findNavController().navigate(R.id.action_nav_create_chatroom_to_nav_chatrooms)
             }
         }
 
-        binding.root.findViewById<TextView>(R.id.cancel_create_chatroom_action).setOnClickListener {
-            binding.cancelCreateChatroomAction.findNavController().navigate(R.id.action_nav_create_chatroom_to_nav_chatrooms)
+        binding.cancelCreateChatroomAction.setOnClickListener{
+            view.findNavController().navigate(R.id.action_nav_create_chatroom_to_nav_chatrooms)
         }
-
-        return binding.root
     }
 
     private fun storeChatroomData(chatroom_name: String?, fbUser: FirebaseUser?){
         var fbUserId = fbUser?.uid
         Log.d("demo", "Creating a new chatroom\nChatroom Name: ${chatroom_name}, User ID: ${fbUserId}")
         if (chatroom_name != null && chatroom_name != "") {
-            dbRef.child("chatrooms").child(chatroom_name).setValue(fbUserId)
+            MainActivity.dbRef.child("chatrooms").child(chatroom_name).setValue(fbUserId)
             Toast.makeText(this.context, "Chatroom Creation Successful", Toast.LENGTH_LONG).show()
             Log.d("demo", "Load chatroom fragment")
         }
