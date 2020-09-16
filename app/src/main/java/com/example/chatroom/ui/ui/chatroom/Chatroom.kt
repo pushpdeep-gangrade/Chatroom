@@ -29,6 +29,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 var messageUser : User? = null
+var messageUserId: String = ""
 private var listchats = mutableListOf<Chat>()
 private var listActiveUsers = mutableListOf<String>()
 private var listActiveUsersNames = mutableListOf<String>()
@@ -57,13 +58,15 @@ class Chatroom : Fragment() {
         initializeList()
         getActiveUsers()
 
-        FirebaseDatabase.getInstance().reference.child("users").child(FirebaseAuth.getInstance().currentUser?.uid.toString()).addListenerForSingleValueEvent(object :
+        MainActivity.dbRef.child("users").child(MainActivity.auth.currentUser?.uid.toString()).addListenerForSingleValueEvent(object :
                 ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
                    Log.d("demo", "Firebase event cancelled on getting user data")
                 }
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     messageUser = dataSnapshot.getValue<com.example.chatroom.data.model.User>()
+                    Log.d("Message User", messageUser?.userId.toString())
+                    messageUserId = messageUser?.userId.toString()
                     MainActivity.dbRef.child("activeUsers").child(chatRoomId.toString()).child(messageUser?.userId.toString()).setValue(
                         messageUser)
                 }
@@ -132,20 +135,20 @@ class Chatroom : Fragment() {
         super.onDestroyView()
 
         Log.d("Active Status", "Destroy: User is no longer active")
-        Log.d("IDs", "${chatRoomId} ${messageUser?.userId}")
-        MainActivity.dbRef.child("activeUsers").child(chatRoomId.toString()).child(messageUser?.userId.toString()).removeValue()
+        Log.d("IDs", "${chatRoomId} ${messageUser?.userId} $messageUserId")
+        MainActivity.dbRef.child("activeUsers").child(chatRoomId.toString()).child(messageUserId.toString()).removeValue()
     }
 
     override fun onPause() {
         super.onPause()
         Log.d("Active Status", "Pause: User is no longer active")
-        MainActivity.dbRef.child("activeUsers").child(chatRoomId.toString()).child(messageUser?.userId.toString()).removeValue()
+        MainActivity.dbRef.child("activeUsers").child(chatRoomId.toString()).child(messageUserId.toString()).removeValue()
     }
 
     override fun onResume() {
         super.onResume()
         Log.d("Active Status", "Resume: User is now active")
-        MainActivity.dbRef.child("activeUsers").child(chatRoomId.toString()).child(messageUser?.userId.toString()).setValue(
+        MainActivity.dbRef.child("activeUsers").child(chatRoomId.toString()).child(messageUserId.toString()).setValue(
             messageUser)
     }
 
@@ -174,6 +177,11 @@ class Chatroom : Fragment() {
             layoutManager = LinearLayoutManager(activity)
             adapter = ChatAdapter(listchats)
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        MainActivity.dbRef.child("activeUsers").child(chatRoomId.toString()).child(messageUserId.toString()).removeValue()
     }
 
     fun getActiveUsers(){
