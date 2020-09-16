@@ -6,12 +6,16 @@ https://xd.adobe.com/view/cc32e7b4-613f-4c1b-8ea8-cadbe84acec9-9961/
 
 # Design and Implementation
 Login
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Login.png" width=200>
 - Log with email and password using Firebase Authentication
 - Clicking the Create Account link takes the user to the Sign Up page
 - Clicking the Forgot Password link takes the user to the Forgot Password page
 - Once successfully logged in, the user will be taken to the View Chatrooms page
 
 Sign Up
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/SignUp.png" width=200>
 - The user signs up with their first name, last name, email, city, gender, and password
 - The user must also select a profile picture. The profile picture can be selected by clicking the profile 
   image at the top of the page. When the profile image is clicked, the photo gallery on the user's 
@@ -27,17 +31,23 @@ Sign Up
 - Clicking Cancel takes the user back to the Login page with no further actions
 
 Forgot Password
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/ForgotPassword.png" width=200>
 - The user is able to reset their password with Firebase Authentication
 - The Forgot Password page has the user input the email so that they can receive a link to reset their password
 - An email will not be sent if the user is not signed up (Given email is not in Firebase)
 - Clicking Cancel button takes the user back to the Login page with no further actions
 
 View Chatrooms
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/ViewChatrooms.png" width=200>
 - The View Chatrooms page is the default page the user is taken to once they log in
 - It shows a list of all the current chatrooms (pulled from Firebase Realtime Database)
 - Clicking on a chatroom in the list will take you to that particular chatroom
 
 Menu
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Menu.png" width=200>
 - Once logged in there will be a menu that is consistent across every page
 - There are two ways to access the menu, one way is to click the menu boc at the top left corner of the
   screen and the other way is to swipe right on the left side of the screen to pull out the menu
@@ -48,27 +58,39 @@ Menu
   View Users takes the user to the View Users page 
   
 Profile
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/PersonalProfile.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/OthersProfile.png" width=200>
 - The Profile page shows all of the user's information (first name, last name, gender, city, profile picture)
 - Clicking the Update Profile link takes the user to the Update Profile page
 - This page is also used to show the profile of another user when they are selected from the View Users list.
   The current user will not be able to click the Update Profile link when they are viewing someone else's profile
   
 Update Profile
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/EditProfile.png" width=200>
 - Update Profile allows the user to to update their information. They can update their first name, last name,
   gender, city, profile picture
 - Clicking Save will upload the new information to Firebase Realtime Database and Firebase Storage
 - Clicking Cancel takes the user back to the Profile page with no further actions
 
 Create Chatroom
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/CreateChatroom.png" width=200>
 - The Create Chatroom page allows the user to create their own chatroom
 - The user enters the name for their chatroom and clicking Create
 - Clicking Cancel takes the user back to the View Chatrooms page with no further actions
 
 View Users
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/ViewUsers.png" width=200>
 - The View Users page allows the user to view all of the users who are signed up for the app
 - The user can view the profile of another by clicking on their name in the user list
 
 Chatroom
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/InChatroom.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/ActiveUsers.png" width=200>
 - The Chatroom page is dependent on which chatroom the users chooses from the list on the View Chatrooms page
 - The page is populated with messages from the current user and other users that have commented on the thread
 - The user can like other people's messages in the chatroom
