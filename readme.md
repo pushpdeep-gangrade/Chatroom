@@ -94,7 +94,9 @@ Chatroom
 - The Chatroom page is dependent on which chatroom the users chooses from the list on the View Chatrooms page
 - The page is populated with messages from the current user and other users that have commented on the thread
 - The user can like other people's messages in the chatroom
-- The user will be able to see active users
+- There is text near the top of the Chatroom page that shows the number of active users (The current user is 
+  included in the count). Clicking on the text will open a dialog box that displays the list of active users. 
+  Clicking on a user in the list of active users will bring up that particular user's profile page.
 - The user is able to delete their own messages
 - A message has a text body, the full name of the user that posted it, the profile picture of the user that
   posted it, and the date and time the message was posted. It also has a like icon that can be clicked to like
