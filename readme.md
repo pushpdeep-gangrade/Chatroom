@@ -6,7 +6,7 @@ https://xd.adobe.com/view/cc32e7b4-613f-4c1b-8ea8-cadbe84acec9-9961/
 
 # Design and Implementation
 Login
-![Image of Login Screen](https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Login.png)
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Login.png" width=300>
 - Log with email and password using Firebase Authentication
 - Clicking the Create Account link takes the user to the Sign Up page
 - Clicking the Forgot Password link takes the user to the Forgot Password page
