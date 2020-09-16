@@ -7,4 +7,6 @@ data class Chat(var userId: String = "",
                 var message : String = "",
                 var likes : Int = 0,
                 var timedate : String = "",
-                var messageId : String = "")
+                var messageId : String = "",
+                var listOfLikes: MutableList<String> = mutableListOf()
+                )

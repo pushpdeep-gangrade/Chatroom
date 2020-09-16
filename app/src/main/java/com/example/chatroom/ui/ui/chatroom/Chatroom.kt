@@ -69,17 +69,17 @@ class Chatroom : Fragment() {
                 }
             })
 
-        FirebaseDatabase.getInstance().reference.child("users").child(FirebaseAuth.getInstance().currentUser?.uid.toString()).addListenerForSingleValueEvent(object :
-            ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-                Log.d("demo", "Firebase event cancelled on getting user data")
-            }
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                messageUser = dataSnapshot.getValue<com.example.chatroom.data.model.User>()
-                MainActivity.dbRef.child("activeUsers").child(chatRoomId.toString()).child(messageUser?.userId.toString()).setValue(
-                    messageUser)
-            }
-        })
+//        FirebaseDatabase.getInstance().reference.child("users").child(FirebaseAuth.getInstance().currentUser?.uid.toString()).addListenerForSingleValueEvent(object :
+//            ValueEventListener {
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.d("demo", "Firebase event cancelled on getting user data")
+//            }
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                messageUser = dataSnapshot.getValue<com.example.chatroom.data.model.User>()
+//                MainActivity.dbRef.child("activeUsers").child(chatRoomId.toString()).child(messageUser?.userId.toString()).setValue(
+//                    messageUser)
+//            }
+//        })
 
         binding.chatroomActiveUsers.setOnClickListener {
             /*val activeUserIds = Array(listActiveUsers.size)
@@ -113,13 +113,14 @@ class Chatroom : Fragment() {
         binding.sendMessage.setOnClickListener{
             val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
             val message = binding.inputMessage.text.toString()
+            val templist = mutableListOf<String>()
 
-            if(message!=null){
+            if(!message.isEmpty()){
            val msgKey = MainActivity.dbRef.child("chatrooms").push().key
                 val msg = Chat(messageUser?.userId.toString(),
                     messageUser?.firstName.toString(),
                     messageUser?.lastName.toString(),
-                    messageUser?.imageUrl.toString(), message, 0, timestamp,msgKey.toString())
+                    messageUser?.imageUrl.toString(), message, 0, timestamp,msgKey.toString(),templist)
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child(msgKey.toString()).setValue(msg)
             binding.inputMessage.setText("").toString()
                 updateAdapter()

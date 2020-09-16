@@ -1,5 +1,6 @@
 package com.example.chatroom.ui.ui.chatroom
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,8 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatroom.R
 import com.example.chatroom.ui.MainActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.MainScope
@@ -36,23 +39,56 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     }
     fun bind(chat: Chat) {
         mTvUser?.text = chat.userfname.plus(" ").plus(chat.userlname)
-        mTvLikes?.text = chat.likes.toString()
+        mTvLikes?.text = chat.listOfLikes.size.toString()
         mTvMsg?.text = chat.message
         mTvtime?.text = chat.timedate
-        Picasso.get().load(chat.userphotourl).resize(250, 250).into(mUserImage);
-        if(!MainActivity.globalid.equals(chat.userId))
+        Picasso.get().load(chat.userphotourl).resize(250, 250).into(mUserImage)
+
+        if(!FirebaseAuth.getInstance().currentUser?.uid.equals(chat.userId))
             mDelImage!!.visibility = View.INVISIBLE
 
-        mDelImage?.setOnClickListener(){
-         //     MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child(chat.messageId).setValue("")
-        }
+        if(chat.listOfLikes.contains(FirebaseAuth.getInstance().currentUser?.uid))
+            mLikeImage?.setImageResource(R.drawable.heart_icon)
 
+        mDelImage?.setOnClickListener(){
+         var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child(chat.messageId)
+        ref.removeValue()
+        }
 
         mLikeImage?.setOnClickListener() {
-            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child(chat.messageId)
-                .child("likes").setValue(chat.likes + 1)
-            mLikeImage!!.setImageResource(R.drawable.heart_icon)
+             var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child(chat.messageId)
+            onLiked(ref)
+
         }
+    }
+
+    private fun onLiked(postRef: DatabaseReference) {
+        postRef.runTransaction(object : Transaction.Handler {
+            override fun doTransaction(currentData: MutableData): Transaction.Result {
+                val p = currentData.getValue(Chat::class.java)
+                    ?: return Transaction.success(currentData)
+                var id = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                if (p.listOfLikes.contains(FirebaseAuth.getInstance().currentUser?.uid)) {
+                   p.listOfLikes.remove(id)
+                    mLikeImage!!.setImageResource(R.drawable.heart_icon_empty)
+                } else {
+                p.listOfLikes.add(id)
+                    mLikeImage!!.setImageResource(R.drawable.heart_icon)
+                }
+                currentData.value = p
+                return Transaction.success(currentData)
+            }
+
+
+            override fun onComplete(
+                error: DatabaseError?,
+                committed: Boolean,
+                currentData: DataSnapshot?
+            ) {
+            }
+
+
+        })
     }
 
 
