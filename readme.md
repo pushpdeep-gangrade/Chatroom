@@ -57,12 +57,12 @@ Update Profile
 - Update Profile allows the user to to update their information. They can update their first name, last name,
   gender, city, profile picture
 - Clicking Save will upload the new information to Firebase Realtime Database and Firebase Storage
-- Clicking Cancel takes the user back to the Login page with no further actions
+- Clicking Cancel takes the user back to the Profile page with no further actions
 
 Create Chatroom
 - The Create Chatroom page allows the user to create their own chatroom
 - The user enters the name for their chatroom and clicking Create
-- Clicking Cancel takes the user back to the Login page with no further actions
+- Clicking Cancel takes the user back to the View Chatrooms page with no further actions
 
 View Users
 - The View Users page allows the user to view all of the users who are signed up for the app
