@@ -25,6 +25,8 @@ import com.example.chatroom.R.id.topAppBar
 import com.example.chatroom.data.model.User
 import com.example.chatroom.ui.login.LoginActivity
 import com.example.chatroom.ui.ui.chatroom.ChatroomFragment
+import com.example.chatroom.ui.ui.chatroom.chatRoomId
+import com.example.chatroom.ui.ui.chatroom.messageUser
 import com.example.chatroom.ui.ui.profile.ProfileFragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.auth.FirebaseAuth
@@ -105,6 +107,8 @@ class MainActivity : AppCompatActivity() {
         // Handle item selection
         return when (item.itemId) {
             R.id.logout -> {
+                dbRef.child("activeUsers").child(chatRoomId.toString()).child(
+                    messageUser?.userId.toString()).removeValue()
                 auth.signOut()
                 val intent = Intent(baseContext, LoginActivity::class.java)
                 startActivity(intent)

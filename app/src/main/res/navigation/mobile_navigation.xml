@@ -64,5 +64,11 @@
         android:id="@+id/chatroom"
         android:name="com.example.chatroom.ui.ui.chatroom.Chatroom"
         android:label="fragment_chatroom"
-        tools:layout="@layout/fragment_chatroom" />
+        tools:layout="@layout/fragment_chatroom" >
+        <action
+            android:id="@+id/action_chatroom_to_profile"
+            app:destination="@id/nav_profile"
+            />
+    </fragment>
+
 </navigation>
