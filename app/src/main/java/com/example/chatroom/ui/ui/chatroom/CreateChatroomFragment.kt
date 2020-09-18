@@ -1,5 +1,6 @@
 package com.example.chatroom.ui.ui.chatroom
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -7,18 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.navigation.findNavController
 import com.example.chatroom.R
 import com.example.chatroom.databinding.FragmentCreateChatroomBinding
 import com.example.chatroom.ui.MainActivity
-import com.example.chatroom.ui.login.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import kotlinx.android.synthetic.main.fragment_create_chatroom.view.*
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.getValue
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 class CreateChatroomFragment : Fragment() {
     // TODO: Rename and change types of parameters
@@ -39,19 +41,35 @@ class CreateChatroomFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val chatroom_name_edittext = binding.createChatroomTextBox
+        var chatroomNameEdittext = binding.createChatroomTextBox
         var fbUser = auth.currentUser
         var fbUserId = fbUser?.uid
 
+        MainActivity.dbRef.child("users").child(MainActivity.auth.currentUser?.uid.toString()).addListenerForSingleValueEvent(object :
+            ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("demo", "Firebase event cancelled on getting user data")
+            }
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                messageUser = dataSnapshot.getValue<com.example.chatroom.data.model.User>()
+                Log.d("Message User", messageUser?.userId.toString() + " whaaaaaaaaaaaaaaaaaaaaaaaaaaat")
+            }
+        })
+
         binding.createChatroomAction.setOnClickListener {
-            var chatroom_name_text = chatroom_name_edittext.text.toString()
+            var chatroom_name_text = chatroomNameEdittext.text.toString()
             var allValid = true
 
             if(chatroom_name_text.equals("")){
-                chatroom_name_edittext.error = "Please enter a chatroom name"
+                chatroomNameEdittext.error = "Please enter a chatroom name"
+                allValid = false
+            }
+            else if (chatroom_name_text.contains("/")) {
+                chatroomNameEdittext.error = "Chatroom name can't contain \'/\' character"
                 allValid = false
             }
 
@@ -71,11 +89,22 @@ class CreateChatroomFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun storeChatroomData(chatroom_name: String?, fbUser: FirebaseUser?){
         var fbUserId = fbUser?.uid
         Log.d("demo", "Creating a new chatroom\nChatroom Name: ${chatroom_name}, User ID: ${fbUserId}")
-        if (chatroom_name != null && chatroom_name != "") {
-            MainActivity.dbRef.child("chatrooms").child(chatroom_name).setValue(fbUserId)
+        if (chatroom_name != null) {
+            val timestamp = LocalDateTime.now().format(
+                DateTimeFormatter.ofLocalizedDateTime(
+                    FormatStyle.SHORT))
+            val message = "Welcome to ${chatroom_name}!"
+            val templist = mutableMapOf<String, Boolean>()
+            val msgKey = MainActivity.dbRef.child("chatrooms").push().key
+            val msg = Chat(messageUser?.userId.toString(),
+                messageUser?.firstName.toString(),
+                messageUser?.lastName.toString(),
+                messageUser?.imageUrl.toString(), message, 0, timestamp,msgKey.toString(), templist)
+            MainActivity.dbRef.child("chatrooms").child(chatroom_name).child("chatList").child(msgKey.toString()).setValue(msg)
             Toast.makeText(this.context, "Chatroom Creation Successful", Toast.LENGTH_LONG).show()
             Log.d("demo", "Load chatroom fragment")
         }

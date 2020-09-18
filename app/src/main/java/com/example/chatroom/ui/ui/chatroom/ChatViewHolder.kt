@@ -39,7 +39,8 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     }
     fun bind(chat: Chat) {
         mTvUser?.text = chat.userfname.plus(" ").plus(chat.userlname)
-        mTvLikes?.text = chat.listOfLikes.size.toString()
+        //mTvLikes?.text = chat.listOfLikes.size.toString()
+        mTvLikes?.text = chat.likesMap.size.toString()
         mTvMsg?.text = chat.message
         mTvtime?.text = chat.timedate
         Picasso.get().load(chat.userphotourl).resize(250, 250).into(mUserImage)
@@ -47,16 +48,16 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         if(!FirebaseAuth.getInstance().currentUser?.uid.equals(chat.userId))
             mDelImage!!.visibility = View.INVISIBLE
 
-        if(chat.listOfLikes.contains(FirebaseAuth.getInstance().currentUser?.uid))
+        if(chat.likesMap.containsKey(FirebaseAuth.getInstance().currentUser?.uid))
             mLikeImage?.setImageResource(R.drawable.heart_icon)
 
         mDelImage?.setOnClickListener(){
-         var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child(chat.messageId)
+         var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child("chatList").child(chat.messageId)
         ref.removeValue()
         }
 
         mLikeImage?.setOnClickListener() {
-             var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child(chat.messageId)
+             var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child("chatList").child(chat.messageId)
             onLiked(ref)
 
         }
@@ -68,11 +69,11 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                 val p = currentData.getValue(Chat::class.java)
                     ?: return Transaction.success(currentData)
                 var id = FirebaseAuth.getInstance().currentUser?.uid.toString()
-                if (p.listOfLikes.contains(FirebaseAuth.getInstance().currentUser?.uid)) {
-                   p.listOfLikes.remove(id)
+                if (p.likesMap.containsKey(FirebaseAuth.getInstance().currentUser?.uid)) {
+                   p.likesMap.remove(id)
                     mLikeImage!!.setImageResource(R.drawable.heart_icon_empty)
                 } else {
-                p.listOfLikes.add(id)
+                p.likesMap[id] = true
                     mLikeImage!!.setImageResource(R.drawable.heart_icon)
                 }
                 currentData.value = p
