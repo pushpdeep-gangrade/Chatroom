@@ -71,9 +71,11 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                 var id = FirebaseAuth.getInstance().currentUser?.uid.toString()
                 if (p.likesMap.containsKey(FirebaseAuth.getInstance().currentUser?.uid)) {
                    p.likesMap.remove(id)
+                    p.likes = p.likesMap.size
                     mLikeImage!!.setImageResource(R.drawable.heart_icon_empty)
                 } else {
                 p.likesMap[id] = true
+                    p.likes = p.likesMap.size
                     mLikeImage!!.setImageResource(R.drawable.heart_icon)
                 }
                 currentData.value = p
