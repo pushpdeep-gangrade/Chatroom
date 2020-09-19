@@ -69,6 +69,14 @@
             android:id="@+id/action_chatroom_to_profile"
             app:destination="@id/nav_profile"
             />
+        <action
+            android:id="@+id/action_chatroom_to_nav_request_ride"
+            app:destination="@id/nav_request_ride" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_request_ride"
+        android:name="com.example.chatroom.ui.ui.rider.RequestRideFragment"
+        android:label="@string/prompt_request_ride"
+        tools:layout="@layout/fragment_request_ride" />
 
 </navigation>

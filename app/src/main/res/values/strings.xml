@@ -13,6 +13,9 @@
     <string name="prompt_profile_picture">Profile Picture</string>
     <string name="prompt_create_chatroom">Create Chatroom</string>
     <string name="prompt_chatroom_name">Chatroom Name</string>
+    <string name="prompt_request_ride">Request Ride</string>
+    <string name="prompt_pickup_location">Pickup Location</string>
+    <string name="prompt_dropoff_location">Dropoff Location</string>
     <string name="action_create">Create</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
@@ -46,7 +49,6 @@
     <string name="send">Send message</string>
 
     <string name="type_message">Type message here...</string>
-
 
 
 </resources>

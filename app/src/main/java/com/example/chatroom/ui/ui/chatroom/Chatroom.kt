@@ -123,6 +123,12 @@ class Chatroom : Fragment() {
                 updateAdapter()
             }
         }
+
+        binding.requestRideButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("chatroomId", chatRoomId.toString())
+            view.findNavController().navigate(R.id.action_chatroom_to_nav_request_ride, bundle)
+        }
     }
 
     override fun onDestroyView() {

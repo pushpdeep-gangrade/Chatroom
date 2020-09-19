@@ -9,13 +9,15 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/active_user_rcyler_view"
-        android:scrollbars="horizontal"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:background="#FFFFFF"
+        android:scrollbars="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chatroom_activeUsers" />
 
@@ -36,29 +38,29 @@
         android:id="@+id/input_message"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/rounded_edittext"
         android:hint="@string/type_message"
-        app:layout_constraintBottom_toBottomOf="@+id/sendMessage"
+        app:layout_constraintBottom_toBottomOf="@id/sendMessage"
         app:layout_constraintEnd_toStartOf="@+id/sendMessage"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/sendMessage" />
+        app:layout_constraintTop_toTopOf="@id/sendMessage" />
 
     <ImageView
         android:id="@+id/sendMessage"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/send_icon"
         android:contentDescription="@string/send"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/request_ride_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/input_message"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/chatroom_activeUsers"
@@ -66,9 +68,21 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Active Users"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintBottom_toTopOf="@+id/active_user_rcyler_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/request_ride_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/prompt_request_ride"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sendMessage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
