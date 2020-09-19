@@ -77,6 +77,33 @@
         android:id="@+id/nav_request_ride"
         android:name="com.example.chatroom.ui.ui.rider.RequestRideFragment"
         android:label="@string/prompt_request_ride"
-        tools:layout="@layout/fragment_request_ride" />
+        tools:layout="@layout/fragment_request_ride" >
 
+        <action
+            android:id="@+id/action_nav_request_ride_to_nav_request_driver"
+            app:destination="@id/nav_request_driver" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_request_driver"
+        android:name="com.example.chatroom.ui.ui.rider.RequestDriverFragment"
+        android:label="@string/prompt_request_driver"
+        tools:layout="@layout/fragment_request_driver" >
+        <action
+            android:id="@+id/action_nav_request_driver_to_nav_waiting_on_ride"
+            app:destination="@id/nav_waiting_on_ride" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_wait_for_accept"
+        android:name="com.example.chatroom.ui.ui.driver.WaitForAcceptFragment"
+        android:label="@string/prompt_wait_for_accept"
+        tools:layout="@layout/fragment_wait_for_accept" >
+        <action
+            android:id="@+id/action_nav_wait_for_accept_to_chatroom"
+            app:destination="@id/chatroom" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_waiting_on_ride"
+        android:name="com.example.chatroom.ui.ui.rider.WaitingOnRideFragment"
+        android:label="@string/prompt_waiting_on_ride"
+        tools:layout="@layout/fragment_waiting_on_ride" />
 </navigation>
