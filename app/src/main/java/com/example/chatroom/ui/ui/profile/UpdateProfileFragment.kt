@@ -4,6 +4,7 @@ package com.example.chatroom.ui.ui.profile
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
@@ -16,15 +17,18 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.chatroom.R
 import com.example.chatroom.databinding.FragmentUpdateProfileBinding
+import com.example.chatroom.ui.MainActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
-import java.io.ByteArrayOutputStream
-import com.example.chatroom.ui.MainActivity
-import com.google.firebase.database.*
-import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
+import java.io.ByteArrayOutputStream
+
 
 //data class User(val firstname: String, val lastname: String, val gender : String, val city : String, val profileImageUrl : String)
 
@@ -165,6 +169,20 @@ class UpdateProfileFragment : Fragment() {
                     }
 
                     profileimageUrl = value.imageUrl
+//                    Firebase.storage.reference.child("profile-imgs").child("EoJbgm8dPkcIWHp4Tn5Cd0bRS4i2" + ".png")
+//                        .getBytes(Long.MAX_VALUE).addOnSuccessListener {
+//                            // Use the bytes to display the image
+//                            val bmp =
+//                                BitmapFactory.decodeByteArray(it, 0, it.size)
+//                            binding.profileImage.setImageBitmap(Bitmap.createScaledBitmap(
+//                                    bmp, binding.profileImage.getWidth(),
+//                                    binding.profileImage.getHeight(), false
+//                                )
+//                            )
+//                        }.addOnFailureListener {
+//                            // Handle any errors
+//                        }
+
                     Picasso.get().load(value.imageUrl).into(binding.profileImage);
                 }
             }

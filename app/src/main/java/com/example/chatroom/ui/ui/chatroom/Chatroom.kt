@@ -21,6 +21,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
+import org.intellij.lang.annotations.JdkConstants
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -30,6 +31,7 @@ var messageUserId: String = ""
 private var listchats = mutableListOf<Chat>()
 private var listActiveUsers = mutableListOf<String>()
 private var listActiveUsersNames = mutableListOf<String>()
+private var activeUsers  = mutableListOf<User>()
 var chatRoomId : String? = null
 
 class Chatroom : Fragment() {
@@ -83,14 +85,6 @@ class Chatroom : Fragment() {
 //        })
 
         binding.chatroomActiveUsers.setOnClickListener {
-            /*val activeUserIds = Array(listActiveUsers.size)
-            { i ->
-                Log.d("Add id $i", listActiveUsers[i].userId.toString())
-                listActiveUsers[i].userId.toString() }
-            val bundle = bundleOf("activeUserChatroom" to chatRoomId)
-            view.findNavController().navigate(R.id.action_chatroom_to_users, bundle)*/
-
-            // setup the alert builder
             var builder  =  AlertDialog.Builder(context);
             builder.setTitle("Active Users");
 
@@ -189,31 +183,41 @@ class Chatroom : Fragment() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 listActiveUsers.clear()
                 listActiveUsersNames.clear()
-
+                activeUsers.clear()
                 for (postSnapshot in dataSnapshot.children) {
-                    var value : User? = postSnapshot.getValue<User>()
-                    if (value != null) {
-                        Log.d("Data change id", value.userId.toString())
-                        //Log.d("Data change id", value.toString())
-                        var fullName = "${value.firstName} ${value.lastName}"
-                        listActiveUsersNames.add(fullName)
-                        listActiveUsers.add(value.userId)
+                    var u : User? = postSnapshot.getValue<User>()
+                    if (u != null) {
+                        activeUsers.add(u)
+//                        Log.d("Data change id", value.userId.toString())
+//                        //Log.d("Data change id", value.toString())
+//                        var fullName = "${value.firstName} ${value.lastName}"
+//                        listActiveUsersNames.add(fullName)
+//                        listActiveUsers.add(value.userId)
                     }
                 }
+                updateActiveUsers()
+                for(ac in activeUsers){
+                    Log.d("check active user " , "${ac.firstName}")
+                }
 
-                var activeUsersText = "${listActiveUsers.size} Active User(s)"
-                for(user in listActiveUsers){
-                    Log.d("Active Users", user)
-                }
-                for(user in listActiveUsersNames){
-                    Log.d("Active Users", user)
-                }
-                binding.chatroomActiveUsers.setText(activeUsersText)
+//                var activeUsersText = "${listActiveUsers.size} Active User(s)"
+//                for(user in listActiveUsers){
+//                    Log.d("Active Users", user)
+//                }
+//                for(user in listActiveUsersNames){
+//                    Log.d("Active Users", user)
+//                }
+//                binding.chatroomActiveUsers.setText(activeUsersText)
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.d("demoo", "cancel")
             }
         })
+    }
+    fun updateActiveUsers(){
+
+        binding.activeUserRcylerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL ,false)
+        binding.activeUserRcylerView.adapter = ActiveUserAdapter(activeUsers)
     }
 
 

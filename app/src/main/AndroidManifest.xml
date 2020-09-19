@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.chatroom">
 
+    <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="AIzaSyBuIvBN797lPyHRIASQJzk77k0ry-UZTCI"/>
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
