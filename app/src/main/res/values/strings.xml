@@ -23,12 +23,15 @@
     <string name="prompt_distance">Distance</string>
     <string name="prompt_eta">ETA</string>
     <string name="prompt_waiting_for_rider_acceptance">Waiting for rider to accept...</string>
+    <string name="prompt_potential_rider">Potential Rider</string>
     <string name="action_create">Create</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_sign_up">Sign Up</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_send_email">Send Email</string>
+    <string name="action_yes">Yes</string>
+    <string name="action_no">No</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>

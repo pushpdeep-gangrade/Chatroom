@@ -125,10 +125,23 @@ class Chatroom : Fragment() {
         }
 
         binding.requestRideButton.setOnClickListener {
-            //val bundle = Bundle()
-            //bundle.putString("chatroomId", chatRoomId.toString())
-            view.findNavController().navigate(R.id.action_chatroom_to_nav_request_ride)//, bundle)
+            val bundle2 = Bundle()
+            bundle2.putString("chatroomId", chatRoomId.toString())
+            //This is for rider view (testing)
+            view.findNavController().navigate(R.id.action_chatroom_to_nav_request_ride, bundle2)
+
+
         }
+
+        // this would be deleted. Just for testing layouts at the moment -------------------------------------------------------------------
+        binding.requestRideButton.setOnLongClickListener {
+            val bundle3 = Bundle()
+            bundle3.putString("chatroomId", chatRoomId.toString())
+            //This is for driver view (testing)
+            view.findNavController().navigate(R.id.action_chatroom_to_nav_potential_rider, bundle3)
+            true
+        }
+        //----------------------------------------------------------------------------------------------------------------------------------
     }
 
     override fun onDestroyView() {
