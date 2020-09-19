@@ -19,6 +19,10 @@
     <string name="prompt_waiting_on_ride">Waiting On Ride</string>
     <string name="prompt_pickup_location">Pickup Location</string>
     <string name="prompt_dropoff_location">Dropoff Location</string>
+    <string name="prmpt_full_name">Full Name</string>
+    <string name="prompt_distance">Distance</string>
+    <string name="prompt_eta">ETA</string>
+    <string name="prompt_waiting_for_rider_acceptance">Waiting for rider to accept...</string>
     <string name="action_create">Create</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>

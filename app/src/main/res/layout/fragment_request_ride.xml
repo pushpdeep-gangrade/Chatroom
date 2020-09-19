@@ -7,8 +7,8 @@
     android:background="@drawable/ride_background"
     tools:context=".ui.ui.rider.RequestRideFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/request_ride_map_recyvlerview"
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/request_ride_mapView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
@@ -17,9 +17,9 @@
         android:layout_marginBottom="360dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/pickup_location_edittext"
@@ -37,7 +37,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/request_ride_map_recyvlerview"
+        app:layout_constraintTop_toBottomOf="@+id/request_ride_mapView"
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
