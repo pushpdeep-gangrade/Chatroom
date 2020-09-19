@@ -8,19 +8,21 @@
     tools:context=".ui.ui.profile.ProfileFragment">
 
     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintWidth_percent=".4"
-        app:layout_constraintHeight_percent=".3"
+        android:layout_marginVertical="50dp"
         android:background="@drawable/circle"
-        android:id="@+id/profile_image"
         android:src="@drawable/chat_app_logo"
         app:civ_border_color="#FF000000"
         app:civ_border_width="2dp"
-        android:layout_marginVertical="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent=".3"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_percent=".4" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/tv_firstname_update"
@@ -29,9 +31,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="180dp"
         android:hint="@string/prompt_firstname"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_lastname_update"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_lastname_update"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_image"
+        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintWidth_percent=".4" />
 
     <com.google.android.material.textfield.TextInputEditText
@@ -41,8 +45,11 @@
         android:layout_marginTop="180dp"
         android:layout_marginEnd="16dp"
         android:hint="@string/prompt_lastname"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_firstname_update"
         app:layout_constraintTop_toBottomOf="@+id/profile_image"
+        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintWidth_percent=".4" />
 
     <com.google.android.material.textfield.TextInputEditText
@@ -51,21 +58,25 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:hint="@string/prompt_city"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tv_lastname_update"
         app:layout_constraintStart_toStartOf="@+id/tv_lastname_update"
         app:layout_constraintTop_toBottomOf="@+id/tv_lastname_update"
+        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintWidth_percent=".4" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_cancel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="96dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="40dp"
         android:hint="@string/action_cancel"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_save"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_save"
+        app:layout_constraintStart_toEndOf="@+id/tv_save"
+        app:layout_constraintTop_toBottomOf="@+id/et_city"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintWidth_percent=".2" />
 
@@ -73,13 +84,16 @@
         android:id="@+id/tv_save"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="50dp"
         android:hint="@string/save"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tv_cancel"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/et_city"
+        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintWidth_percent=".2" />
 
     <RadioGroup
@@ -89,26 +103,25 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tv_firstname_update"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/tv_firstname_update"
         app:layout_constraintTop_toBottomOf="@+id/tv_firstname_update"
-        app:layout_constraintWidth_percent=".4"
-        >
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_percent=".4">
 
         <RadioButton
             android:id="@+id/rb_male"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/prompt_male"
-            />
+            android:text="@string/prompt_male" />
 
         <RadioButton
             android:id="@+id/rb_female"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/prompt_female"
-          />
+            android:text="@string/prompt_female" />
 
     </RadioGroup>
 

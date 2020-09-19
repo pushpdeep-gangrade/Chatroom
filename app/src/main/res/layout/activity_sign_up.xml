@@ -33,10 +33,12 @@
         android:hint="@string/prompt_firstname"
         android:inputType="textPersonName"
         android:padding="10dip"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_logo" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_logo"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/signup_lastName"
@@ -50,10 +52,12 @@
         android:hint="@string/prompt_lastname"
         android:inputType="textPersonName"
         android:padding="10dip"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_firstName" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_firstName"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/signup_email"
@@ -67,10 +71,12 @@
         android:hint="@string/prompt_email"
         android:inputType="textEmailAddress"
         android:padding="10dip"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_lastName" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_lastName"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/signup_city"
@@ -84,10 +90,12 @@
         android:hint="@string/prompt_city"
         android:inputType="text"
         android:padding="10dip"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_email" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_email"
+        app:layout_constraintVertical_bias="0.0" />
 
     <RadioGroup
         android:id="@+id/signup_genderRadioGroup"
@@ -96,9 +104,11 @@
         android:layout_marginTop="16dp"
         android:orientation="horizontal"
         android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_reenterPassword">
+        app:layout_constraintTop_toBottomOf="@+id/signup_reenterPassword"
+        app:layout_constraintVertical_bias="0.0">
 
         <RadioButton
             android:id="@+id/signup_maleRadioButton"
@@ -121,10 +131,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="@string/prompt_gender"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/signup_genderRadioGroup"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_reenterPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_reenterPassword"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/signup_completeSignUpButton"
@@ -172,9 +184,11 @@
         android:hint="@string/prompt_password"
         android:inputType="textPassword"
         android:padding="10dip"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_city" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_city"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/signup_reenterPassword"
@@ -188,10 +202,12 @@
         android:hint="@string/prompt_re_enter_password"
         android:inputType="textPassword"
         android:padding="10dip"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signup_password" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_password"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ProgressBar
         android:id="@+id/signup_loading"
