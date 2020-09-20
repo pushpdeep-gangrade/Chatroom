@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatroom.R
+import com.example.chatroom.data.model.RideRequest
 import com.example.chatroom.data.model.User
 import com.example.chatroom.databinding.FragmentChatroomBinding
 import com.example.chatroom.ui.MainActivity
@@ -21,16 +22,23 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
+import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 var messageUser : User? = null
 var messageUserId: String = ""
+
 private var listchats = mutableListOf<Chat>()
 private var listActiveUsers = mutableListOf<String>()
 private var listActiveUsersNames = mutableListOf<String>()
 private var listActiveUserImageURLs = mutableListOf<String>()
+
+private var listRideRequests = mutableListOf<String>()
+private var listRideRequestsObjects = mutableListOf<RideRequest>()
+private var listRideRequestNames= mutableListOf<String>()
+
 private var activeUsers  = mutableListOf<User>()
 var chatRoomId : String? = null
 
@@ -55,6 +63,7 @@ class Chatroom : Fragment() {
         Log.d("Active Status", "User is now active")
 
         initializeList()
+        setRideRequestListener(view)
 
         MainActivity.dbRef.child("users").child(MainActivity.auth.currentUser?.uid.toString()).addListenerForSingleValueEvent(object :
                 ValueEventListener {
@@ -235,10 +244,73 @@ class Chatroom : Fragment() {
             }
         })
     }
-    fun updateActiveUsers(){
 
+    fun updateActiveUsers(){
         binding.activeUserRcylerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL ,false)
         binding.activeUserRcylerView.adapter = ActiveUserAdapter(listActiveUsersNames, listActiveUserImageURLs)
+    }
+
+    fun setRideRequestListener(view: View){
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.d("Ride Request", "Ride Request Updated")
+
+                listRideRequests.clear()
+                listRideRequestNames.clear()
+                listRideRequestsObjects.clear()
+
+                for (postSnapshot in dataSnapshot.children) {
+                    var rr : RideRequest? = postSnapshot.getValue<RideRequest>()
+                    if (rr != null) {
+                        listRideRequests.add(rr.requestId)
+                        var name = rr.riderInfo.firstName.plus(" ").plus(rr.riderInfo.lastName)
+                            .plus(": ").plus(rr.pickupLocation.name).plus(" to ")
+                            .plus(rr.dropoffLocation.name)
+                        listRideRequestNames.add(name)
+                        listRideRequestsObjects.add(rr)
+
+                    }
+                }
+
+                var active = false
+
+                for(id in listActiveUsers){
+                    if(id == messageUserId){
+                        active = true
+                    }
+                }
+
+                if(active){
+                    showNotificationDialog(view)
+                }
+
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.d("demoo", "cancel")
+            }
+        })
+    }
+
+    fun showNotificationDialog(view: View){
+        var builder  =  AlertDialog.Builder(context);
+        builder.setTitle("Ride Requests");
+
+        builder.setNegativeButton("Close", DialogInterface.OnClickListener {
+                dialog, id -> dialog.cancel()
+        })
+
+        builder.setCancelable(false)
+
+        var requestNames = listRideRequestNames.toTypedArray()
+
+        builder.setItems(requestNames, DialogInterface.OnClickListener(){ dialogInterface: DialogInterface, i: Int ->
+            //val bundle = bundleOf("userData" to listRideRequests[i])
+            val bundle = bundleOf("chatroomId" to chatRoomId, "requestId" to listRideRequests[i])
+            view.findNavController().navigate(R.id.action_chatroom_to_nav_potential_rider, bundle)
+        })
+
+        var dialog : AlertDialog = builder.create()
+        dialog.show()
     }
 
 

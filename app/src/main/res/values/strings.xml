@@ -14,6 +14,7 @@
     <string name="prompt_create_chatroom">Create Chatroom</string>
     <string name="prompt_chatroom_name">Chatroom Name</string>
     <string name="prompt_request_ride">Request Ride</string>
+    <string name="prompt_on_drive">On Drive</string>
     <string name="prompt_request_driver">Request Driver</string>
     <string name="prompt_wait_for_accept">Wait For Accept</string>
     <string name="prompt_waiting_on_ride">Waiting On Ride</string>

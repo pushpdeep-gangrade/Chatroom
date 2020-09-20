@@ -8,7 +8,7 @@ import com.example.chatroom.data.model.User
 import com.example.chatroom.ui.ui.chatroom.Chat
 import com.example.chatroom.ui.ui.chatroom.ChatViewHolder
 
-class DriverAdapter(private val list: List<User>, private val view: View?)
+class DriverAdapter(private val list: List<User>, private val view: View?, private val requestId: String)
     : RecyclerView.Adapter<DriverViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DriverViewHolder {
@@ -20,6 +20,6 @@ class DriverAdapter(private val list: List<User>, private val view: View?)
 
     override fun onBindViewHolder(holder: DriverViewHolder, position: Int) {
         val driver: User = list[position]
-        holder.bind(driver, view)
+        holder.bind(driver, view, requestId)
     }
 }

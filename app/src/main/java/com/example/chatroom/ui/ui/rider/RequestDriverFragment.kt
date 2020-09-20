@@ -25,25 +25,31 @@ class RequestDriverFragment : Fragment() {
     private var _binding : FragmentRequestDriverBinding? = null
     private val binding get() = _binding!!
     private var activeUsers  = mutableListOf<User>()
+    private var requestId : String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        requestId = arguments?.getString("requestId").toString()
+        Log.d("Pass RId Driver", requestId.toString())
+
+        getDrivers()
+
         _binding = FragmentRequestDriverBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getActiveUsers()
+        getDrivers()
 
     }
 
-    fun getActiveUsers(){
+    fun getDrivers(){
         Log.d("Current Chatroom", chatRoomId.toString())
-        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("listActiveUsers").addValueEventListener(object :
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests").child(requestId.toString()).child("drivers").addValueEventListener(object :
             ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
@@ -72,7 +78,7 @@ class RequestDriverFragment : Fragment() {
 
     fun updateActiveUsers(){
         binding.driverRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL ,false)
-        binding.driverRecyclerView.adapter = DriverAdapter(activeUsers, view)
+        binding.driverRecyclerView.adapter = DriverAdapter(activeUsers, view, requestId.toString())
     }
 
 }

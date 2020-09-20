@@ -123,7 +123,7 @@ class SignUpActivity : AppCompatActivity() {
                 auth.createUserWithEmailAndPassword(emailText, passwordText)
                     .addOnCompleteListener(this) { task ->
                         if(task.isSuccessful) {
-                            val user =  User;
+                            val user =  User();
 
                             user.email = emailText
                             user.firstName = firstNameText

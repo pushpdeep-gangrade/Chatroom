@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatroom.R
 import com.example.chatroom.data.model.User
 import com.example.chatroom.databinding.FragmentRequestDriverBinding
+import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.ui.chatroom.Chat
+import com.example.chatroom.ui.ui.chatroom.chatRoomId
 import com.squareup.picasso.Picasso
 
 class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
@@ -34,12 +36,14 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         noButton = itemView.findViewById(R.id.driverItem_noButton)
     }
 
-    fun bind(driver: User, view: View?) {
+    fun bind(driver: User, view: View?, requestId: String) {
         driverFullName?.text = driver.firstName.plus(" ").plus(driver.lastName)
         Picasso.get().load(driver.imageUrl).resize(250, 250).into(driverProfilePic)
 
         yesButton?.setOnClickListener {
             Log.d("Yes Button", "Clicked")
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
+                .child(requestId).child("status").setValue("Accepted")
             view?.findNavController()?.navigate(R.id.action_nav_request_driver_to_nav_waiting_on_ride)
         }
 

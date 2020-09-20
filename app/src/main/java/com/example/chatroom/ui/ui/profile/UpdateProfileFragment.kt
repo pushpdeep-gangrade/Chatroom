@@ -141,7 +141,7 @@ class UpdateProfileFragment : Fragment() {
             R.id.rb_male -> userGender =  "Male"
 
         }
-        val user = com.example.chatroom.data.model.User
+        val user = com.example.chatroom.data.model.User()
         user.userId = fbUserId
         user.firstName = binding.tvFirstnameUpdate.text.toString()
         user.lastName = binding.tvLastnameUpdate.text.toString()

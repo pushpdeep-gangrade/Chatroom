@@ -103,6 +103,9 @@
         <action
             android:id="@+id/action_nav_wait_for_accept_to_chatroom"
             app:destination="@id/chatroom" />
+        <action
+            android:id="@+id/action_nav_wait_for_accept_to_nav_on_drive"
+            app:destination="@id/nav_on_drive" />
     </fragment>
     <fragment
         android:id="@+id/nav_waiting_on_ride"
@@ -121,4 +124,9 @@
             android:id="@+id/action_nav_potential_rider_to_nav_wait_for_accept"
             app:destination="@id/nav_wait_for_accept" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_on_drive"
+        android:name="com.example.chatroom.ui.ui.driver.OnDriveFragment"
+        android:label="@string/prompt_on_drive"
+        tools:layout="@layout/fragment_on_drive" />
 </navigation>
