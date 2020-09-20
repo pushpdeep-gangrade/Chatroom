@@ -32,6 +32,7 @@ class RequestDriverFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        //chatRoomId = arguments?.getString("chatroomId").toString()
         requestId = arguments?.getString("requestId").toString()
         Log.d("Pass RId Driver", requestId.toString())
 
@@ -81,4 +82,11 @@ class RequestDriverFragment : Fragment() {
         binding.driverRecyclerView.adapter = DriverAdapter(activeUsers, view, requestId.toString())
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        Log.d("demo", "Destroy: User is no longer active")
+        Log.d("demo", "${chatRoomId}: ${requestId}")
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests").child(requestId.toString()).removeValue()
+    }
 }

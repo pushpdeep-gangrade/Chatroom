@@ -25,12 +25,27 @@
         tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 
 
+    <TextView
+        android:id="@+id/request_ride_pickup_location_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/prompt_pickup_location"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/request_ride_mapView"
+        app:layout_constraintVertical_bias="0.0" />
+
     <fragment
         android:id="@+id/pickup_location_edittext"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/rounded_edittext"
         android:ems="10"
@@ -41,10 +56,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/request_ride_mapView"
-        app:layout_constraintVertical_bias="0.0"
-        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/request_ride_pickup_location_prompt"
+        app:layout_constraintVertical_bias="0.0" />
 
 <!--    <EditText-->
 <!--        android:id="@+id/pickup_location_edittext"-->
@@ -66,12 +79,27 @@
 <!--        app:layout_constraintVertical_bias="0.0" />-->
 
 
+    <TextView
+        android:id="@+id/request_ride_dropoff_location_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/prompt_dropoff_location"
+        app:layout_constraintBottom_toBottomOf="@+id/submit_request_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pickup_location_edittext"
+        app:layout_constraintVertical_bias="0.0" />
+
     <fragment
         android:id="@+id/dropoff_location_edittext"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/rounded_edittext"
         android:ems="10"
@@ -83,10 +111,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pickup_location_edittext"
-        app:layout_constraintVertical_bias="0.0"
-        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/request_ride_dropoff_location_prompt"
+        app:layout_constraintVertical_bias="0.0" />
 
 <!--    <EditText-->
 <!--        android:id="@+id/dropoff_location_edittext"-->
@@ -118,4 +144,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dropoff_location_edittext"
         app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/request_ride_clear_markers_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/places_autocomplete_clear_button"
+        app:layout_constraintBottom_toTopOf="@+id/submit_request_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dropoff_location_edittext"
+        app:layout_constraintVertical_bias="1.0" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

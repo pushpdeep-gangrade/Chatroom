@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolygonOptions
 import com.google.android.libraries.places.api.Places
@@ -31,14 +33,15 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import kotlinx.android.synthetic.main.chat_item.view.*
+import kotlinx.android.synthetic.main.fragment_request_ride.*
 import java.util.*
 
 
 class RequestRideFragment : Fragment(), OnMapReadyCallback {
     private var _binding : FragmentRequestRideBinding? = null
     private val binding get() = _binding!!
-    lateinit var pickupLocationLatLng: LatLng
-    lateinit var dropoffLocationLatLng: LatLng
+    var pickupLocationLatLng: LatLng? = null
+    var dropoffLocationLatLng: LatLng? = null
     var pickupLocationPlace: PickedPlace = PickedPlace()
     var dropoffLocationPlace: PickedPlace = PickedPlace()
     var rider : User? = null
@@ -55,23 +58,28 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
         initialize()
 
-
-
         binding.submitRequestButton.setOnClickListener {
-            var requestId: UUID = UUID.randomUUID()
-            var rideRequest: RideRequest = RideRequest()
+            if (pickupLocationPlace.name != "" && dropoffLocationPlace.name != "") {
+                var requestId: UUID = UUID.randomUUID()
+                var rideRequest: RideRequest = RideRequest()
 
-            rideRequest.pickupLocation = pickupLocationPlace
-            rideRequest.dropoffLocation = dropoffLocationPlace
-            rideRequest.requestId = requestId.toString()
-            rideRequest.status = "Available"
-            rideRequest.riderInfo = messageUser!!
+                rideRequest.pickupLocation = pickupLocationPlace
+                rideRequest.dropoffLocation = dropoffLocationPlace
+                rideRequest.requestId = requestId.toString()
+                rideRequest.status = "Available"
+                rideRequest.riderInfo = messageUser!!
 
-            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                .child("rideRequests").child(requestId.toString()).setValue(rideRequest)
+                MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                    .child("rideRequests").child(requestId.toString()).setValue(rideRequest)
 
-            val bundle = bundleOf("requestId" to chatRoomId, "requestId" to requestId.toString())
-            view.findNavController().navigate(R.id.action_nav_request_ride_to_nav_request_driver, bundle)//, bundle)
+                val bundle =
+                    bundleOf("chartroomId" to chatRoomId, "requestId" to requestId.toString())
+                view.findNavController()
+                    .navigate(R.id.action_nav_request_ride_to_nav_request_driver, bundle)//, bundle)
+            }
+            else {
+                Toast.makeText(context, "Enter a pickup and dropoff location", Toast.LENGTH_LONG).show()
+            }
         }
 
     }
@@ -102,9 +110,42 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
                 pickupLocationPlace.longitude = long
                 pickupLocationPlace.name = place.name.toString()
 
-                googleMap?.addMarker(MarkerOptions().position(pickupLocationLatLng)
+                googleMap?.addMarker(MarkerOptions().position(pickupLocationLatLng!!)
                     .title(place.name))
-                googleMap?.moveCamera(CameraUpdateFactory.newLatLng(pickupLocationLatLng))
+
+                if (pickupLocationLatLng != null && dropoffLocationLatLng != null) {
+                    var northViewLat: Double
+                    var northViewLng: Double
+                    var southViewLat: Double
+                    var southViewLng: Double
+
+                    if (pickupLocationLatLng!!.latitude > dropoffLocationLatLng!!.latitude) {
+                        northViewLat = pickupLocationLatLng!!.latitude
+                        southViewLat = dropoffLocationLatLng!!.latitude
+                    }
+                    else {
+                        northViewLat = dropoffLocationLatLng!!.latitude
+                        southViewLat = pickupLocationLatLng!!.latitude
+                    }
+
+                    if (pickupLocationLatLng!!.longitude > dropoffLocationLatLng!!.longitude) {
+                        northViewLng = pickupLocationLatLng!!.longitude
+                        southViewLng = dropoffLocationLatLng!!.longitude
+                    }
+                    else {
+                        northViewLng = dropoffLocationLatLng!!.longitude
+                        southViewLng = pickupLocationLatLng!!.longitude
+                    }
+
+
+                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(LatLngBounds(LatLng(southViewLat, southViewLng), LatLng(northViewLat, northViewLng)), 100))
+                    googleMap?.addPolygon(PolygonOptions().clickable(true).add(pickupLocationLatLng, dropoffLocationLatLng))
+                }
+                else {
+                    googleMap?.moveCamera(CameraUpdateFactory.newLatLng(pickupLocationLatLng))
+                    googleMap?.moveCamera(CameraUpdateFactory.zoomTo(5.0f))
+                }
+
                 Log.d("demo", "Place: ${place.latLng}, ${place.name}")
             }
 
@@ -135,11 +176,42 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
                 dropoffLocationPlace.longitude = long
                 dropoffLocationPlace.name = place.name.toString()
 
-                googleMap?.addMarker(MarkerOptions().position(dropoffLocationLatLng)
+                googleMap?.addMarker(MarkerOptions().position(dropoffLocationLatLng!!)
                     .title(place.name))
-                googleMap?.moveCamera(CameraUpdateFactory.newLatLng(dropoffLocationLatLng))
 
-                googleMap?.addPolygon(PolygonOptions().clickable(true).add(pickupLocationLatLng, dropoffLocationLatLng))
+                if (pickupLocationLatLng != null && dropoffLocationLatLng != null) {
+                    var northViewLat: Double
+                    var northViewLng: Double
+                    var southViewLat: Double
+                    var southViewLng: Double
+
+                    if (pickupLocationLatLng!!.latitude > dropoffLocationLatLng!!.latitude) {
+                        northViewLat = pickupLocationLatLng!!.latitude
+                        southViewLat = dropoffLocationLatLng!!.latitude
+                    }
+                    else {
+                        northViewLat = dropoffLocationLatLng!!.latitude
+                        southViewLat = pickupLocationLatLng!!.latitude
+                    }
+
+                    if (pickupLocationLatLng!!.longitude > dropoffLocationLatLng!!.longitude) {
+                        northViewLng = pickupLocationLatLng!!.longitude
+                        southViewLng = dropoffLocationLatLng!!.longitude
+                    }
+                    else {
+                        northViewLng = dropoffLocationLatLng!!.longitude
+                        southViewLng = pickupLocationLatLng!!.longitude
+                    }
+
+
+                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(LatLngBounds(LatLng(southViewLat, southViewLng), LatLng(northViewLat, northViewLng)), 100))
+                    googleMap?.addPolygon(PolygonOptions().clickable(true).add(pickupLocationLatLng, dropoffLocationLatLng))
+                }
+                else {
+                    googleMap?.moveCamera(CameraUpdateFactory.newLatLng(dropoffLocationLatLng))
+                    googleMap?.moveCamera(CameraUpdateFactory.zoomTo(5.0f))
+                }
+
                 Log.d("demo", "Place: ${place.latLng}, ${place.name}")
             }
 
@@ -149,6 +221,15 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
 
         })
 
+        binding.requestRideClearMarkersButton.setOnClickListener {
+            googleMap?.clear()
+            pickUpAutoComplete.setText("")
+            dropOffAutoComplete.setText("")
+            pickupLocationPlace = PickedPlace()
+            pickupLocationLatLng = null
+            dropoffLocationPlace = PickedPlace()
+            dropoffLocationLatLng = null
+        }
     }
 
     fun initialize(){
