@@ -1,5 +1,6 @@
 package com.example.chatroom.ui.ui.rider
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,10 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.chatroom.R
 import com.example.chatroom.data.model.PickedPlace
 import com.example.chatroom.data.model.RideRequest
@@ -23,17 +28,16 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolygonOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.Places.createClient
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.maps.android.PolyUtil
 import kotlinx.android.synthetic.main.chat_item.view.*
 import kotlinx.android.synthetic.main.fragment_request_ride.*
+import org.json.JSONObject
 import java.util.*
 
 
@@ -45,6 +49,9 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
     var pickupLocationPlace: PickedPlace = PickedPlace()
     var dropoffLocationPlace: PickedPlace = PickedPlace()
     var rider : User? = null
+    var path: MutableList<List<LatLng>> = ArrayList()
+    var urlDirections: String = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyBuIvBN797lPyHRIASQJzk77k0ry-UZTCI"
+    var directionsRequest: StringRequest? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,11 +88,9 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
                 Toast.makeText(context, "Enter a pickup and dropoff location", Toast.LENGTH_LONG).show()
             }
         }
-
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
-
         if (!Places.isInitialized()) {
             context?.let { Places.initialize(it, "AIzaSyBuIvBN797lPyHRIASQJzk77k0ry-UZTCI") };
         }
@@ -114,32 +119,36 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
                     .title(place.name))
 
                 if (pickupLocationLatLng != null && dropoffLocationLatLng != null) {
-                    var northViewLat: Double
-                    var northViewLng: Double
-                    var southViewLat: Double
-                    var southViewLng: Double
-
-                    if (pickupLocationLatLng!!.latitude > dropoffLocationLatLng!!.latitude) {
-                        northViewLat = pickupLocationLatLng!!.latitude
-                        southViewLat = dropoffLocationLatLng!!.latitude
-                    }
-                    else {
-                        northViewLat = dropoffLocationLatLng!!.latitude
-                        southViewLat = pickupLocationLatLng!!.latitude
-                    }
-
-                    if (pickupLocationLatLng!!.longitude > dropoffLocationLatLng!!.longitude) {
-                        northViewLng = pickupLocationLatLng!!.longitude
-                        southViewLng = dropoffLocationLatLng!!.longitude
-                    }
-                    else {
-                        northViewLng = dropoffLocationLatLng!!.longitude
-                        southViewLng = pickupLocationLatLng!!.longitude
-                    }
-
-
-                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(LatLngBounds(LatLng(southViewLat, southViewLng), LatLng(northViewLat, northViewLng)), 100))
-                    googleMap?.addPolygon(PolygonOptions().clickable(true).add(pickupLocationLatLng, dropoffLocationLatLng))
+                    directionsRequest = object : StringRequest(Request.Method.GET,
+                        urlDirections
+                            .plus("&origin=${pickupLocationLatLng?.latitude},${pickupLocationLatLng?.longitude}")
+                            .plus("&destination=${dropoffLocationLatLng?.latitude},${dropoffLocationLatLng?.longitude}"), Response.Listener<String> {
+                                response ->
+                            val jsonResponse = JSONObject(response)
+                            // Get routes
+                            val routes = jsonResponse.getJSONArray("routes")
+                            val legs = routes.getJSONObject(0).getJSONArray("legs")
+                            val steps = legs.getJSONObject(0).getJSONArray("steps")
+                            for (i in 0 until steps.length()) {
+                                val points = steps.getJSONObject(i).getJSONObject("polyline").getString("points")
+                                path.add(PolyUtil.decode(points))
+                            }
+                            for (i in 0 until path.size) {
+                                googleMap!!.addPolyline(PolylineOptions().addAll(path[i]).color(Color.RED))
+                            }
+                            // Get bounds
+                            val bounds = routes.getJSONObject(0).getJSONObject("bounds")
+                            val northeastLat = bounds.getJSONObject("northeast").getDouble("lat")
+                            val northeastLng = bounds.getJSONObject("northeast").getDouble("lng")
+                            val southwestLat = bounds.getJSONObject("southwest").getDouble("lat")
+                            val southwestLng = bounds.getJSONObject("southwest").getDouble("lng")
+                            Log.d("maps-test", "LatLngs: ${northeastLat}, ${northeastLng} | ${southwestLat}, ${southwestLng}")
+                            googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(LatLngBounds(LatLng(southwestLat, southwestLng), LatLng(northeastLat, northeastLng)), 100))
+                        }, Response.ErrorListener {
+                                _ ->
+                        }){}
+                    val requestQueue = Volley.newRequestQueue(context)
+                    requestQueue.add(directionsRequest)
                 }
                 else {
                     googleMap?.moveCamera(CameraUpdateFactory.newLatLng(pickupLocationLatLng))
@@ -180,32 +189,36 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
                     .title(place.name))
 
                 if (pickupLocationLatLng != null && dropoffLocationLatLng != null) {
-                    var northViewLat: Double
-                    var northViewLng: Double
-                    var southViewLat: Double
-                    var southViewLng: Double
-
-                    if (pickupLocationLatLng!!.latitude > dropoffLocationLatLng!!.latitude) {
-                        northViewLat = pickupLocationLatLng!!.latitude
-                        southViewLat = dropoffLocationLatLng!!.latitude
-                    }
-                    else {
-                        northViewLat = dropoffLocationLatLng!!.latitude
-                        southViewLat = pickupLocationLatLng!!.latitude
-                    }
-
-                    if (pickupLocationLatLng!!.longitude > dropoffLocationLatLng!!.longitude) {
-                        northViewLng = pickupLocationLatLng!!.longitude
-                        southViewLng = dropoffLocationLatLng!!.longitude
-                    }
-                    else {
-                        northViewLng = dropoffLocationLatLng!!.longitude
-                        southViewLng = pickupLocationLatLng!!.longitude
-                    }
-
-
-                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(LatLngBounds(LatLng(southViewLat, southViewLng), LatLng(northViewLat, northViewLng)), 100))
-                    googleMap?.addPolygon(PolygonOptions().clickable(true).add(pickupLocationLatLng, dropoffLocationLatLng))
+                    directionsRequest = object : StringRequest(Request.Method.GET,
+                        urlDirections
+                            .plus("&origin=${pickupLocationLatLng?.latitude},${pickupLocationLatLng?.longitude}")
+                            .plus("&destination=${dropoffLocationLatLng?.latitude},${dropoffLocationLatLng?.longitude}"), Response.Listener<String> {
+                                response ->
+                            val jsonResponse = JSONObject(response)
+                            // Get routes
+                            val routes = jsonResponse.getJSONArray("routes")
+                            val legs = routes.getJSONObject(0).getJSONArray("legs")
+                            val steps = legs.getJSONObject(0).getJSONArray("steps")
+                            for (i in 0 until steps.length()) {
+                                val points = steps.getJSONObject(i).getJSONObject("polyline").getString("points")
+                                path.add(PolyUtil.decode(points))
+                            }
+                            for (i in 0 until path.size) {
+                                googleMap!!.addPolyline(PolylineOptions().addAll(path[i]).color(Color.RED))
+                            }
+                            // Get bounds
+                            val bounds = routes.getJSONObject(0).getJSONObject("bounds")
+                            val northeastLat = bounds.getJSONObject("northeast").getDouble("lat")
+                            val northeastLng = bounds.getJSONObject("northeast").getDouble("lng")
+                            val southwestLat = bounds.getJSONObject("southwest").getDouble("lat")
+                            val southwestLng = bounds.getJSONObject("southwest").getDouble("lng")
+                            Log.d("maps-test", "LatLngs: ${northeastLat}, ${northeastLng} | ${southwestLat}, ${southwestLng}")
+                            googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(LatLngBounds(LatLng(southwestLat, southwestLng), LatLng(northeastLat, northeastLng)), 100))
+                        }, Response.ErrorListener {
+                                _ ->
+                        }){}
+                    val requestQueue = Volley.newRequestQueue(context)
+                    requestQueue.add(directionsRequest)
                 }
                 else {
                     googleMap?.moveCamera(CameraUpdateFactory.newLatLng(dropoffLocationLatLng))
@@ -229,6 +242,7 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
             pickupLocationLatLng = null
             dropoffLocationPlace = PickedPlace()
             dropoffLocationLatLng = null
+            path = ArrayList()
         }
     }
 
