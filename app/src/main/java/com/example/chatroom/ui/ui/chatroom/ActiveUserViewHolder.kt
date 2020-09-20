@@ -21,9 +21,9 @@ class ActiveUserViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         mActiveUserName = itemView.findViewById(R.id.active_user_name_tv)
     }
 
-    fun bind(activeUser: User) {
-        Picasso.get().load(activeUser.imageUrl).into(mProfileImageActiveUser)
-        mActiveUserName?.text = activeUser.firstName
+    fun bind(firstname: String, imageURL: String) {
+        Picasso.get().load(imageURL).into(mProfileImageActiveUser)
+        mActiveUserName?.text = firstname
 
     }
 

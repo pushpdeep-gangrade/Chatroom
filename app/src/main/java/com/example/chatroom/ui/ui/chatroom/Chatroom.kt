@@ -21,7 +21,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
-import org.intellij.lang.annotations.JdkConstants
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -31,6 +30,7 @@ var messageUserId: String = ""
 private var listchats = mutableListOf<Chat>()
 private var listActiveUsers = mutableListOf<String>()
 private var listActiveUsersNames = mutableListOf<String>()
+private var listActiveUserImageURLs = mutableListOf<String>()
 private var activeUsers  = mutableListOf<User>()
 var chatRoomId : String? = null
 
@@ -202,22 +202,24 @@ class Chatroom : Fragment() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 listActiveUsers.clear()
                 listActiveUsersNames.clear()
-                activeUsers.clear()
+                listActiveUserImageURLs.clear()
+
                 for (postSnapshot in dataSnapshot.children) {
                     var u : User? = postSnapshot.getValue<User>()
                     if (u != null) {
-                        activeUsers.add(u)
 //                        Log.d("Data change id", value.userId.toString())
 //                        //Log.d("Data change id", value.toString())
 //                        var fullName = "${value.firstName} ${value.lastName}"
 //                        listActiveUsersNames.add(fullName)
-//                        listActiveUsers.add(value.userId)
+                        listActiveUsers.add(u.userId)
+                        listActiveUsersNames.add(u.firstName)
+                        listActiveUserImageURLs.add(u.imageUrl)
                     }
                 }
                 updateActiveUsers()
-                for(ac in activeUsers){
-                    Log.d("check active user " , "${ac.firstName}")
-                }
+                //for(ac in activeUsers){
+                //    Log.d("check active user " , "${ac.firstName}")
+                //}
 
 //                var activeUsersText = "${listActiveUsers.size} Active User(s)"
 //                for(user in listActiveUsers){
@@ -236,7 +238,7 @@ class Chatroom : Fragment() {
     fun updateActiveUsers(){
 
         binding.activeUserRcylerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL ,false)
-        binding.activeUserRcylerView.adapter = ActiveUserAdapter(activeUsers)
+        binding.activeUserRcylerView.adapter = ActiveUserAdapter(listActiveUsersNames, listActiveUserImageURLs)
     }
 
 
