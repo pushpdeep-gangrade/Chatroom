@@ -39,6 +39,18 @@
         app:layout_constraintTop_toBottomOf="@+id/request_ride_mapView"
         app:layout_constraintVertical_bias="0.0" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/pickup_location_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#B3FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@+id/pickup_location_edittext"
+        app:layout_constraintEnd_toEndOf="@+id/pickup_location_edittext"
+        app:layout_constraintStart_toStartOf="@+id/pickup_location_edittext"
+        app:layout_constraintTop_toTopOf="@+id/pickup_location_edittext">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <fragment
         android:id="@+id/pickup_location_edittext"
         android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
@@ -47,7 +59,6 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="20dp"
-        android:background="@drawable/rounded_edittext"
         android:ems="10"
         android:hint="@string/prompt_pickup_location"
         android:inputType="textPersonName"
@@ -92,6 +103,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pickup_location_edittext"
         app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dropoff_location_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#B3FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@+id/dropoff_location_edittext"
+        app:layout_constraintEnd_toEndOf="@+id/dropoff_location_edittext"
+        app:layout_constraintStart_toStartOf="@+id/dropoff_location_edittext"
+        app:layout_constraintTop_toTopOf="@+id/dropoff_location_edittext">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <fragment
         android:id="@+id/dropoff_location_edittext"
