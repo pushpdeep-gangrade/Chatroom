@@ -7,7 +7,8 @@
     android:background="@drawable/ride_background"
     tools:context=".ui.ui.rider.RequestRideFragment">
 
-    <com.google.android.gms.maps.MapView
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/request_ride_mapView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -19,9 +20,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 
-    <EditText
+
+    <fragment
         android:id="@+id/pickup_location_edittext"
         android:layout_width="0dp"
         android:layout_height="60dp"
@@ -38,9 +42,31 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/request_ride_mapView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+        />
 
-    <EditText
+<!--    <EditText-->
+<!--        android:id="@+id/pickup_location_edittext"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:layout_marginTop="60dp"-->
+<!--        android:layout_marginEnd="20dp"-->
+<!--        android:background="@drawable/rounded_edittext"-->
+<!--        android:ems="10"-->
+<!--        android:hint="@string/prompt_pickup_location"-->
+<!--        android:inputType="textPersonName"-->
+<!--        android:paddingLeft="10dp"-->
+<!--        android:paddingRight="10dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/request_ride_mapView"-->
+<!--        app:layout_constraintVertical_bias="0.0" />-->
+
+
+    <fragment
         android:id="@+id/dropoff_location_edittext"
         android:layout_width="0dp"
         android:layout_height="60dp"
@@ -58,7 +84,29 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pickup_location_edittext"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+        />
+
+<!--    <EditText-->
+<!--        android:id="@+id/dropoff_location_edittext"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:layout_marginTop="30dp"-->
+<!--        android:layout_marginEnd="20dp"-->
+<!--        android:background="@drawable/rounded_edittext"-->
+<!--        android:ems="10"-->
+<!--        android:hint="@string/prompt_dropoff_location"-->
+<!--        android:inputType="textPersonName"-->
+<!--        android:paddingLeft="10dp"-->
+<!--        android:paddingRight="10dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="1.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/pickup_location_edittext"-->
+<!--        app:layout_constraintVertical_bias="0.0" />-->
 
     <Button
         android:id="@+id/submit_request_button"
