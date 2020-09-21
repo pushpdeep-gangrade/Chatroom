@@ -76,22 +76,9 @@ class Chatroom : Fragment() {
                     messageUserId = messageUser?.userId.toString()
                     MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("listActiveUsers").child(messageUser?.userId.toString()).setValue(
                         messageUser)
+                    getActiveUsers()
                 }
             })
-
-        getActiveUsers()
-
-//        FirebaseDatabase.getInstance().reference.child("users").child(FirebaseAuth.getInstance().currentUser?.uid.toString()).addListenerForSingleValueEvent(object :
-//            ValueEventListener {
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.d("demo", "Firebase event cancelled on getting user data")
-//            }
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                messageUser = dataSnapshot.getValue<com.example.chatroom.data.model.User>()
-//                MainActivity.dbRef.child("activeUsers").child(chatRoomId.toString()).child(messageUser?.userId.toString()).setValue(
-//                    messageUser)
-//            }
-//        })
 
         binding.chatroomActiveUsers.setOnClickListener {
             var builder  =  AlertDialog.Builder(context);
@@ -158,20 +145,7 @@ class Chatroom : Fragment() {
 
         Log.d("Active Status", "Destroy: User is no longer active")
         Log.d("IDs", "${chatRoomId} ${messageUser?.userId} $messageUserId")
-        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("listActiveUsers").child(messageUserId.toString()).removeValue()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d("Active Status", "Pause: User is no longer active")
-        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("listActiveUsers").child(messageUserId.toString()).removeValue()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d("Active Status", "Resume: User is now active")
-        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("listActiveUsers").child(messageUserId.toString()).setValue(
-            messageUser)
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("listActiveUsers").child(MainActivity.auth.currentUser?.uid.toString()).removeValue()
     }
 
     fun initializeList(){
@@ -199,11 +173,6 @@ class Chatroom : Fragment() {
             layoutManager = LinearLayoutManager(activity)
             adapter = ChatAdapter(listchats)
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("listActiveUsers").child(messageUserId.toString()).removeValue()
     }
 
     fun getActiveUsers(){
