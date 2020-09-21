@@ -39,7 +39,6 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     }
     fun bind(chat: Chat) {
         mTvUser?.text = chat.userfname.plus(" ").plus(chat.userlname)
-        //mTvLikes?.text = chat.listOfLikes.size.toString()
         mTvLikes?.text = chat.likesMap.size.toString()
         mTvMsg?.text = chat.message
         mTvtime?.text = chat.timedate

@@ -1,12 +1,18 @@
 package com.example.chatroom.ui.ui.driver
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
@@ -15,6 +21,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.chatroom.R
+import com.example.chatroom.data.model.MapUser
 import com.example.chatroom.data.model.PickedPlace
 import com.example.chatroom.data.model.RideRequest
 import com.example.chatroom.databinding.FragmentChatroomBinding
@@ -22,6 +29,8 @@ import com.example.chatroom.databinding.FragmentPotentialRiderBinding
 import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.ui.chatroom.chatRoomId
 import com.example.chatroom.ui.ui.chatroom.messageUser
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -50,6 +59,11 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
     var path: MutableList<List<LatLng>> = ArrayList()
     var urlDirections: String = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyBuIvBN797lPyHRIASQJzk77k0ry-UZTCI"
     var directionsRequest: StringRequest? = null
+    private var map: GoogleMap? = null
+    private var lastKnownLocation: Location? = null
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private val defaultLocation = LatLng(-33.8523341, 151.2106085)
+    private var locationPermissionGranted = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -97,20 +111,26 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
 
         Log.d("Button", "Butto Clicked")
 
-      /*  Picasso.get().load(requestInfo?.riderInfo?.imageUrl.toString()).resize(250, 250).into(binding.potentialRiderImageview)
-        binding.potentialRiderFirstnameTextview.text = requestInfo?.riderInfo?.firstName.toString()
-        binding.potentialRiderLastnameTextview.text = requestInfo?.riderInfo?.lastName.toString()
-        binding.potentialRiderPickupLocationTextview.text = requestInfo?.pickupLocation?.name.toString()
-        binding.potentialRiderDropoffLocationTextview.text = requestInfo?.dropoffLocation?.name.toString()
-*/
         binding.acceptRequestButton.setOnClickListener {
+
+            val driver =
+                messageUser?.let { it1 -> lastKnownLocation?.latitude?.let { it2 ->
+                    lastKnownLocation?.longitude?.let { it3 ->
+                        MapUser(it1,
+                            it2, it3
+                        )
+                    }
+                } }
+
+         //
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
                 .child("driverRequests").child(requestId).child("drivers").child(MainActivity.auth.currentUser?.uid.toString())
-                .setValue(messageUser)
+                .setValue(driver)
 
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
                 .child("driverRequests").child(requestId)
                 .child("status").setValue("Available")
+
 
             val bundle = bundleOf("requestId" to requestId)
             view.findNavController().navigate(R.id.action_nav_potential_rider_to_nav_wait_for_accept, bundle)
@@ -124,6 +144,9 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
+        map = googleMap
+        getLocationPermission()
+        getDeviceLocation()
         directionsRequest = object : StringRequest(Request.Method.GET,
             urlDirections
                 .plus("&origin=${pickupLocationPlace.latitude},${pickupLocationPlace.longitude}")
@@ -165,5 +188,94 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
     fun initialize(){
         val mapFragment : SupportMapFragment? = FragmentManager.findFragment(view?.findViewById(R.id.potential_rider_mapView)!!)as? SupportMapFragment
         mapFragment?.getMapAsync(this)
+        fusedLocationProviderClient =
+            context?.let { LocationServices.getFusedLocationProviderClient(it) }!!
     }
+
+    private fun getLocationPermission() {
+        if (context?.let {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+            == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true
+        } else {
+            ActivityCompat.requestPermissions(
+                context as Activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>,
+                                            grantResults: IntArray) {
+        locationPermissionGranted = false
+        when (requestCode) {
+            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locationPermissionGranted = true
+                }
+            }
+        }
+        updateLocationUI()
+    }
+
+    private fun updateLocationUI() {
+        if (map == null) {
+            return
+        }
+        try {
+            if (locationPermissionGranted) {
+                map?.isMyLocationEnabled = true
+                map?.uiSettings?.isMyLocationButtonEnabled = true
+            } else {
+                map?.isMyLocationEnabled = false
+                map?.uiSettings?.isMyLocationButtonEnabled = false
+                lastKnownLocation = null
+                getLocationPermission()
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }
+
+    private fun getDeviceLocation() {
+        try {
+            if (locationPermissionGranted) {
+                val locationResult = fusedLocationProviderClient.lastLocation
+                locationResult.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Set the map's camera position to the current location of the device.
+                        lastKnownLocation = task.result
+                        Log.d("driver location", lastKnownLocation?.latitude.toString() + " " + lastKnownLocation?.longitude.toString())
+                        if (lastKnownLocation != null) {
+                            val driver = LatLng(lastKnownLocation!!.latitude,lastKnownLocation!!.longitude)
+                            map?.addMarker(MarkerOptions().position(driver).title("driver"))
+                            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                LatLng(lastKnownLocation!!.latitude,
+                                    lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
+                        }
+
+                    } else {
+                        Log.d("demo", "Current location is null. Using defaults.")
+                        Log.e("demo", "Exception: %s", task.exception)
+                        map?.moveCamera(CameraUpdateFactory
+                            .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
+                        map?.uiSettings?.isMyLocationButtonEnabled = false
+                    }
+                }
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }
+
+    companion object {
+        private const val DEFAULT_ZOOM = 15
+        private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+    }
+
+
 }

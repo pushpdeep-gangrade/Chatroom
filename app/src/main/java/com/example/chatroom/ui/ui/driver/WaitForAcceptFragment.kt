@@ -33,7 +33,6 @@ class WaitForAcceptFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         requestId = arguments?.getString("requestId").toString()
-
         _binding = FragmentWaitForAcceptBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -69,7 +68,9 @@ class WaitForAcceptFragment : Fragment() {
                 Log.d("Status change", status.toString())
                 if(status == "Accepted"){
                     timer.cancel()
-                    view.findNavController().navigate(R.id.action_nav_wait_for_accept_to_nav_on_drive)
+                    val bundle = Bundle()
+                    bundle.putString("rideId", requestId)
+                    view.findNavController().navigate(R.id.action_nav_wait_for_accept_to_nav_on_drive,bundle)
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {

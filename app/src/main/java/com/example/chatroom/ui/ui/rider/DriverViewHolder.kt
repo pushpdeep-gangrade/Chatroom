@@ -1,5 +1,6 @@
 package com.example.chatroom.ui.ui.rider
 
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +11,13 @@ import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatroom.R
+import com.example.chatroom.data.model.MapUser
 import com.example.chatroom.data.model.User
 import com.example.chatroom.databinding.FragmentRequestDriverBinding
 import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.ui.chatroom.Chat
 import com.example.chatroom.ui.ui.chatroom.chatRoomId
+import com.example.chatroom.ui.ui.chatroom.messageUser
 import com.squareup.picasso.Picasso
 
 class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
@@ -42,9 +45,25 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
         yesButton?.setOnClickListener {
             Log.d("Yes Button", "Clicked")
+
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
                 .child(requestId).child("status").setValue("Accepted")
-            view?.findNavController()?.navigate(R.id.action_nav_request_driver_to_nav_waiting_on_ride)
+
+            var rider = messageUser?.let { it1 -> RequestRideFragment.lastKnownLocation?.latitude?.let { it2 ->
+                RequestRideFragment.lastKnownLocation?.longitude?.let { it3 ->
+                    MapUser(it1,
+                        it2, it3
+                    )
+                }
+            } }
+
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
+                .child(requestId).child("rider").setValue(rider)
+
+
+            val bundle = Bundle()
+            bundle.putString("rideId", requestId)
+            view?.findNavController()?.navigate(R.id.action_nav_request_driver_to_nav_waiting_on_ride, bundle)
         }
 
         noButton?.setOnClickListener {

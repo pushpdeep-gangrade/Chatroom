@@ -28,6 +28,7 @@ import com.example.chatroom.ui.ui.chatroom.ChatroomFragment
 import com.example.chatroom.ui.ui.chatroom.chatRoomId
 import com.example.chatroom.ui.ui.chatroom.messageUser
 import com.example.chatroom.ui.ui.profile.ProfileFragment
+import com.google.android.libraries.places.api.Places
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -49,6 +50,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+
+     //    mGeoDataClient = Places.getGeoDataClient(this, null);
+
+
+       //   mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
+
+         // mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         val toolbar : MaterialToolbar = findViewById(topAppBar)
           setSupportActionBar(toolbar)
 

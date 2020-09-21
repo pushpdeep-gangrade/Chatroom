@@ -292,6 +292,7 @@ class Chatroom : Fragment() {
     }
 
     fun showNotificationDialog(view: View){
+        if(context!=null){
         var builder  =  AlertDialog.Builder(context);
         builder.setTitle("Ride Requests");
 
@@ -311,6 +312,7 @@ class Chatroom : Fragment() {
 
         var dialog : AlertDialog = builder.create()
         dialog.show()
+        }
     }
 
 

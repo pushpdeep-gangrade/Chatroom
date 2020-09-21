@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatroom.R
+import com.example.chatroom.data.model.MapUser
 import com.example.chatroom.data.model.User
 import com.example.chatroom.databinding.FragmentRequestDriverBinding
 import com.example.chatroom.ui.MainActivity
@@ -22,10 +23,10 @@ import com.google.firebase.database.ktx.getValue
 
 
 class RequestDriverFragment : Fragment() {
-    private var _binding : FragmentRequestDriverBinding? = null
+    private var _binding: FragmentRequestDriverBinding? = null
     private val binding get() = _binding!!
-    private var activeUsers  = mutableListOf<User>()
-    private var requestId : String? = null
+    private var activeUsers = mutableListOf<User>()
+    private var requestId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,8 +36,9 @@ class RequestDriverFragment : Fragment() {
         //chatRoomId = arguments?.getString("chatroomId").toString()
         requestId = arguments?.getString("requestId").toString()
         Log.d("Pass RId Driver", requestId.toString())
-
         getDrivers()
+
+
 
         _binding = FragmentRequestDriverBinding.inflate(inflater, container, false)
         return binding.root
@@ -48,37 +50,42 @@ class RequestDriverFragment : Fragment() {
 
     }
 
-    fun getDrivers(){
+    fun getDrivers() {
         Log.d("Current Chatroom", chatRoomId.toString())
-        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests").child(requestId.toString()).child("drivers").addValueEventListener(object :
-            ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
+            .child(requestId.toString()).child("drivers").addValueEventListener(object :
+            //MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests").child("drivers").addValueEventListener(object :
 
-                activeUsers.clear()
-                for (postSnapshot in dataSnapshot.children) {
-                    var u : User? = postSnapshot.getValue<User>()
-                    if (u != null) {
-                        activeUsers.add(u)
+                ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
 
+                    activeUsers.clear()
+                    for (postSnapshot in dataSnapshot.children) {
+                        var u: MapUser? = postSnapshot.getValue<MapUser>()
+                        if (u != null) {
+                            activeUsers.add(u.rider)
+
+                        }
                     }
+
+                    updateActiveUsers()
+
+                    for (ac in activeUsers) {
+                        Log.d("check active user ", "${ac.firstName}")
+                    }
+
+
                 }
 
-                updateActiveUsers()
-
-                for(ac in activeUsers){
-                    Log.d("check active user " , "${ac.firstName}")
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.d("demoo", "cancel")
                 }
-
-
-            }
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.d("demoo", "cancel")
-            }
-        })
+            })
     }
 
-    fun updateActiveUsers(){
-        binding.driverRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL ,false)
+    fun updateActiveUsers() {
+        binding.driverRecyclerView.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.driverRecyclerView.adapter = DriverAdapter(activeUsers, view, requestId.toString())
     }
 
@@ -87,6 +94,7 @@ class RequestDriverFragment : Fragment() {
 
         Log.d("demo", "Destroy: User is no longer active")
         Log.d("demo", "${chatRoomId}: ${requestId}")
-        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests").child(requestId.toString()).removeValue()
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests")
+            .child(requestId.toString()).removeValue()
     }
 }
