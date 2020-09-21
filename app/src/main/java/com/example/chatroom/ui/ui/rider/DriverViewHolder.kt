@@ -1,5 +1,10 @@
 package com.example.chatroom.ui.ui.rider
 
+import android.content.Context
+import android.graphics.Color
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,15 +15,22 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.chatroom.R
 import com.example.chatroom.data.model.MapUser
-import com.example.chatroom.data.model.User
-import com.example.chatroom.databinding.FragmentRequestDriverBinding
 import com.example.chatroom.ui.MainActivity
-import com.example.chatroom.ui.ui.chatroom.Chat
 import com.example.chatroom.ui.ui.chatroom.chatRoomId
 import com.example.chatroom.ui.ui.chatroom.messageUser
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.PolylineOptions
 import com.squareup.picasso.Picasso
+import org.json.JSONObject
+import java.util.*
 
 class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.driver_item, parent, false)){
@@ -29,6 +41,11 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     private var driverEta: TextView? = null
     private var yesButton: Button? = null
     private var noButton: Button? = null
+    var path: MutableList<List<LatLng>> = ArrayList()
+    var urlDirections: String =
+        "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyBuIvBN797lPyHRIASQJzk77k0ry-UZTCI"
+    var directionsRequest: StringRequest? = null
+   
 
     init {
         driverProfilePic = itemView.findViewById(R.id.driverItem_profilePic)
@@ -39,9 +56,22 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         noButton = itemView.findViewById(R.id.driverItem_noButton)
     }
 
-    fun bind(driver: User, view: View?, requestId: String) {
-        driverFullName?.text = driver.firstName.plus(" ").plus(driver.lastName)
-        Picasso.get().load(driver.imageUrl).resize(250, 250).into(driverProfilePic)
+    fun bind(driver: MapUser, view: View?, requestId: String, context: Context, pickupLocationLatLng: LatLng) {
+       /* var geocoder : Geocoder = Geocoder(context, Locale.getDefault());
+        var addresses : MutableList<Address>
+        addresses = geocoder.getFromLocation(driver.lat, driver.long, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        val address = addresses[0]
+            .getAddressLine(0)
+        val city = addresses[0].locality
+        val state = addresses[0].adminArea*/
+
+
+        getDistanceAndTime(pickupLocationLatLng, driver, context)
+
+        driverFullName?.text = driver.rider.firstName.plus(" ").plus(driver.rider.lastName)
+        Picasso.get().load(driver.rider.imageUrl).resize(250, 250).into(driverProfilePic)
+        //driverLocation!!.text = driver.lat.toString().plus(" ").plus(driver.long.toString())
+        //driverLocation!!.text = address
 
         yesButton?.setOnClickListener {
             Log.d("Yes Button", "Clicked")
@@ -69,6 +99,37 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         noButton?.setOnClickListener {
             Log.d("No Button", "Clicked")
         }
+
+    }
+
+    fun getDistanceAndTime(pickupLocationLatLng: LatLng, driver: MapUser, context: Context){
+        directionsRequest = object : StringRequest(
+            Request.Method.GET,
+            urlDirections
+                .plus("&origin=${pickupLocationLatLng.latitude},${pickupLocationLatLng.longitude}")
+                .plus("&destination=${driver.lat},${driver.long}"),
+            Response.Listener<String> { response ->
+                val jsonResponse = JSONObject(response)
+                // Get routes
+                val routes = jsonResponse.getJSONArray("routes")
+                val legs = routes.getJSONObject(0).getJSONArray("legs")
+                val distance = legs.getJSONObject(0).getJSONObject("distance").getString("text")
+                val duration = legs.getJSONObject(0).getJSONObject("duration").getString("text")
+
+                val distanceText = "Distance Away: ".plus(distance)
+                val durationText = "Estimated Time: ".plus(duration)
+
+                driverLocation?.text = distanceText
+                driverEta?.text = durationText
+
+                Log.d("Distance", distance)
+                Log.d("Time", duration)
+
+            },
+            Response.ErrorListener { _ ->
+            }) {}
+        val requestQueue = Volley.newRequestQueue(context)
+        requestQueue.add(directionsRequest)
 
     }
 }

@@ -95,7 +95,8 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
                     .child("rideRequests").child(requestId.toString()).setValue(rideRequest)
 
                 val bundle =
-                    bundleOf("chartroomId" to chatRoomId, "requestId" to requestId.toString())
+                    bundleOf("chatroomId" to chatRoomId, "requestId" to requestId.toString(),
+                        "pickupLatitude" to pickupLocationLatLng!!.latitude.toString(), "pickupLongitude" to pickupLocationLatLng!!.longitude.toString())
                 view.findNavController()
                     .navigate(R.id.action_nav_request_ride_to_nav_request_driver, bundle)//, bundle)
             } else {

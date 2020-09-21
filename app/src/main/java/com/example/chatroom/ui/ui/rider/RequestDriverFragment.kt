@@ -1,5 +1,6 @@
 package com.example.chatroom.ui.ui.rider
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,6 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.chatroom.R
 import com.example.chatroom.data.model.MapUser
 import com.example.chatroom.data.model.User
@@ -16,17 +21,27 @@ import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.ui.chatroom.ActiveUserAdapter
 import com.example.chatroom.ui.ui.chatroom.chatRoomId
 
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.PolylineOptions
+
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
+import org.json.JSONObject
 
 
 class RequestDriverFragment : Fragment() {
     private var _binding: FragmentRequestDriverBinding? = null
     private val binding get() = _binding!!
-    private var activeUsers = mutableListOf<User>()
+    private var activeUsers = mutableListOf<MapUser>()
     private var requestId: String? = null
+    private var pickupLatitude: Double = 0.0
+    private var pickupLongitude: Double = 0.0
+    private lateinit var pickupLocationLatLng: LatLng
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +50,10 @@ class RequestDriverFragment : Fragment() {
         // Inflate the layout for this fragment
         //chatRoomId = arguments?.getString("chatroomId").toString()
         requestId = arguments?.getString("requestId").toString()
+        pickupLatitude = arguments?.getString("pickupLatitude")!!.toDouble()
+        pickupLongitude = arguments?.getString("pickupLongitude")!!.toDouble()
+
+        pickupLocationLatLng = LatLng(pickupLatitude, pickupLongitude)
         Log.d("Pass RId Driver", requestId.toString())
         getDrivers()
 
@@ -50,6 +69,7 @@ class RequestDriverFragment : Fragment() {
 
     }
 
+
     fun getDrivers() {
         Log.d("Current Chatroom", chatRoomId.toString())
         MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
@@ -63,7 +83,7 @@ class RequestDriverFragment : Fragment() {
                     for (postSnapshot in dataSnapshot.children) {
                         var u: MapUser? = postSnapshot.getValue<MapUser>()
                         if (u != null) {
-                            activeUsers.add(u.rider)
+                            activeUsers.add(u)
 
                         }
                     }
@@ -71,7 +91,7 @@ class RequestDriverFragment : Fragment() {
                     updateActiveUsers()
 
                     for (ac in activeUsers) {
-                        Log.d("check active user ", "${ac.firstName}")
+                        Log.d("check active user ", "${ac.rider.firstName}")
                     }
 
 
@@ -86,7 +106,9 @@ class RequestDriverFragment : Fragment() {
     fun updateActiveUsers() {
         binding.driverRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.driverRecyclerView.adapter = DriverAdapter(activeUsers, view, requestId.toString())
+        binding.driverRecyclerView.adapter = DriverAdapter(activeUsers, view, requestId.toString(),
+            pickupLocationLatLng
+        )
     }
 
     override fun onDestroyView() {

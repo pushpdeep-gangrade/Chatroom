@@ -106,6 +106,7 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
         }
         val riderLocation = rider?.lat?.let { rider?.long?.let { it1 -> LatLng(it, it1) } }
         val driverLocation = driver?.lat?.let { driver?.long?.let { it1 -> LatLng(it, it1) } }
+
         map?.addMarker(riderLocation?.let {
             MarkerOptions().position(it).title(rider?.rider?.firstName)
         })
@@ -126,7 +127,6 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
                 riderLocation, 15F
             )
         )
-
 
     }
 
