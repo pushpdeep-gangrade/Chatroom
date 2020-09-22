@@ -138,10 +138,14 @@ class SignUpActivity : AppCompatActivity() {
 
                         }
                         else {
+                            // other errors?
+                            // catch error for log?
+                            // timeout for internet connection?
+                            // app launch goes to chat screen?
                             loading.visibility = View.INVISIBLE
-                            Log.d("Failure", "Sign Up Failure")
+                            Log.d("Failure", "Sign Up Failure.")
 
-                            Toast.makeText(this, "Sign Up Failed", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this, "Sign Up Failed. Check Internet connection.", Toast.LENGTH_LONG).show()
 
                         }
                     }

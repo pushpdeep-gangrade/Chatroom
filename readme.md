@@ -8,7 +8,7 @@ Rockford Stoller
 https://xd.adobe.com/view/cc32e7b4-613f-4c1b-8ea8-cadbe84acec9-9961/
 
 # Chatroom Demo
-https://youtu.be/PmfODNEfFbY
+link to part 2 demo
 
 # Design and Implementation
 Login
@@ -110,3 +110,5 @@ Chatroom
   belongs to the current user)
 - The user can type a message in the edit text at the bottom of the screen and click the Send button to post
   the message in the chatroom
+  
+# need to add sections for new rider/driver features
