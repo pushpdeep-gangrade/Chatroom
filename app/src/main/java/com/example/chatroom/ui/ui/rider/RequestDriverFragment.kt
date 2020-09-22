@@ -41,6 +41,9 @@ class RequestDriverFragment : Fragment() {
     private var pickupLatitude: Double = 0.0
     private var pickupLongitude: Double = 0.0
     private lateinit var pickupLocationLatLng: LatLng
+    private var dropoffLatitude: Double = 0.0
+    private var dropoffLongitude: Double = 0.0
+    private lateinit var dropoffLocationLatLng: LatLng
 
 
     override fun onCreateView(
@@ -52,8 +55,11 @@ class RequestDriverFragment : Fragment() {
         requestId = arguments?.getString("requestId").toString()
         pickupLatitude = arguments?.getString("pickupLatitude")!!.toDouble()
         pickupLongitude = arguments?.getString("pickupLongitude")!!.toDouble()
+        dropoffLatitude = arguments?.getString("dropoffLatitude")!!.toDouble()
+        dropoffLongitude = arguments?.getString("dropoffLongitude")!!.toDouble()
 
         pickupLocationLatLng = LatLng(pickupLatitude, pickupLongitude)
+        dropoffLocationLatLng = LatLng(dropoffLatitude, dropoffLongitude)
         Log.d("Pass RId Driver", requestId.toString())
         getDrivers()
 
@@ -91,7 +97,7 @@ class RequestDriverFragment : Fragment() {
                     updateActiveUsers()
 
                     for (ac in activeUsers) {
-                        Log.d("check active user ", "${ac.rider.firstName}")
+                        Log.d("check active user ", "${ac.driver.firstName}")
                     }
 
 
@@ -107,7 +113,7 @@ class RequestDriverFragment : Fragment() {
         binding.driverRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.driverRecyclerView.adapter = DriverAdapter(activeUsers, view, requestId.toString(),
-            pickupLocationLatLng
+            pickupLocationLatLng, dropoffLocationLatLng
         )
     }
 

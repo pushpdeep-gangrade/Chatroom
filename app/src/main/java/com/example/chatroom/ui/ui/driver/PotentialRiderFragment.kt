@@ -57,7 +57,7 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
     var pickupLocationPlace: PickedPlace = PickedPlace()
     var dropoffLocationPlace: PickedPlace = PickedPlace()
     var path: MutableList<List<LatLng>> = ArrayList()
-    var urlDirections: String = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyBuIvBN797lPyHRIASQJzk77k0ry-UZTCI"
+    var urlDirections: String = "https://maps.googleapis.com/maps/api/directions/json?"
     var directionsRequest: StringRequest? = null
     private var map: GoogleMap? = null
     private var lastKnownLocation: Location? = null
@@ -128,7 +128,7 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
                 .setValue(driver)
 
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                .child("driverRequests").child(requestId)
+                .child("driverRequests").child(requestId).child("drivers").child(MainActivity.auth.currentUser?.uid.toString())
                 .child("status").setValue("Available")
 
 
@@ -147,42 +147,6 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
         map = googleMap
         getLocationPermission()
         getDeviceLocation()
-        directionsRequest = object : StringRequest(Request.Method.GET,
-            urlDirections
-                .plus("&origin=${pickupLocationPlace.latitude},${pickupLocationPlace.longitude}")
-                .plus("&destination=${dropoffLocationPlace.latitude},${dropoffLocationPlace.longitude}"), Response.Listener<String> {
-                    response ->
-                val jsonResponse = JSONObject(response)
-                // Get routes
-                val routes = jsonResponse.getJSONArray("routes")
-                val legs = routes.getJSONObject(0).getJSONArray("legs")
-                val steps = legs.getJSONObject(0).getJSONArray("steps")
-                for (i in 0 until steps.length()) {
-                    val points = steps.getJSONObject(i).getJSONObject("polyline").getString("points")
-                    path.add(PolyUtil.decode(points))
-                }
-                for (i in 0 until path.size) {
-                    googleMap!!.addPolyline(PolylineOptions().addAll(path[i]).color(Color.RED))
-                }
-                // Get bounds
-                val bounds = routes.getJSONObject(0).getJSONObject("bounds")
-                val northeastLat = bounds.getJSONObject("northeast").getDouble("lat")
-                val northeastLng = bounds.getJSONObject("northeast").getDouble("lng")
-                val southwestLat = bounds.getJSONObject("southwest").getDouble("lat")
-                val southwestLng = bounds.getJSONObject("southwest").getDouble("lng")
-                Log.d("maps-test", "LatLngs: ${northeastLat}, ${northeastLng} | ${southwestLat}, ${southwestLng}")
-                googleMap?.addMarker(
-                    MarkerOptions().position(LatLng(pickupLocationPlace.latitude, pickupLocationPlace.longitude)!!)
-                    .title(pickupLocationPlace.name))
-                googleMap?.addMarker(
-                    MarkerOptions().position(LatLng(dropoffLocationPlace.latitude, dropoffLocationPlace.longitude)!!)
-                        .title(dropoffLocationPlace.name))
-                googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(LatLngBounds(LatLng(southwestLat, southwestLng), LatLng(northeastLat, northeastLng)), 100))
-            }, Response.ErrorListener {
-                    _ ->
-            }){}
-        val requestQueue = Volley.newRequestQueue(context)
-        requestQueue.add(directionsRequest)
     }
 
     fun initialize(){
@@ -256,6 +220,44 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
                             map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                 LatLng(lastKnownLocation!!.latitude,
                                     lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
+                            directionsRequest = object : StringRequest(Request.Method.GET,
+                                urlDirections
+                                    .plus("key=${context?.resources?.getString(R.string.api_key)}")
+                                    .plus("&origin=${lastKnownLocation!!.latitude},${lastKnownLocation!!.longitude}")
+                                    .plus("&waypoints=via:${pickupLocationPlace.latitude},${pickupLocationPlace.longitude}")
+                                    .plus("&destination=${dropoffLocationPlace.latitude},${dropoffLocationPlace.longitude}"), Response.Listener<String> {
+                                        response ->
+                                    val jsonResponse = JSONObject(response)
+                                    // Get routes
+                                    val routes = jsonResponse.getJSONArray("routes")
+                                    val legs = routes.getJSONObject(0).getJSONArray("legs")
+                                    val steps = legs.getJSONObject(0).getJSONArray("steps")
+                                    for (i in 0 until steps.length()) {
+                                        val points = steps.getJSONObject(i).getJSONObject("polyline").getString("points")
+                                        path.add(PolyUtil.decode(points))
+                                    }
+                                    for (i in 0 until path.size) {
+                                        map!!.addPolyline(PolylineOptions().addAll(path[i]).color(Color.RED))
+                                    }
+                                    // Get bounds
+                                    val bounds = routes.getJSONObject(0).getJSONObject("bounds")
+                                    val northeastLat = bounds.getJSONObject("northeast").getDouble("lat")
+                                    val northeastLng = bounds.getJSONObject("northeast").getDouble("lng")
+                                    val southwestLat = bounds.getJSONObject("southwest").getDouble("lat")
+                                    val southwestLng = bounds.getJSONObject("southwest").getDouble("lng")
+                                    Log.d("maps-test", "LatLngs: ${northeastLat}, ${northeastLng} | ${southwestLat}, ${southwestLng}")
+                                    map?.addMarker(
+                                        MarkerOptions().position(LatLng(pickupLocationPlace.latitude, pickupLocationPlace.longitude)!!)
+                                            .title(pickupLocationPlace.name))
+                                    map?.addMarker(
+                                        MarkerOptions().position(LatLng(dropoffLocationPlace.latitude, dropoffLocationPlace.longitude)!!)
+                                            .title(dropoffLocationPlace.name))
+                                    map?.moveCamera(CameraUpdateFactory.newLatLngBounds(LatLngBounds(LatLng(southwestLat, southwestLng), LatLng(northeastLat, northeastLng)), 100))
+                                }, Response.ErrorListener {
+                                        _ ->
+                                }){}
+                            val requestQueue = Volley.newRequestQueue(context)
+                            requestQueue.add(directionsRequest)
                         }
 
                     } else {

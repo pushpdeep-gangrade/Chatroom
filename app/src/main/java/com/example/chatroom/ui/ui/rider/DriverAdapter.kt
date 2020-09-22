@@ -13,7 +13,8 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.serialization.json.Json.Default.context
 
 class DriverAdapter(private val list: List<MapUser>, private val view: View?,
-                    private val requestId: String, private val pickupLocationLatLng: LatLng)
+                    private val requestId: String, private val pickupLocationLatLng: LatLng,
+                    private val dropoffLocationLatLng: LatLng)
     : RecyclerView.Adapter<DriverViewHolder>() {
     lateinit var context: Context
 
@@ -27,6 +28,6 @@ class DriverAdapter(private val list: List<MapUser>, private val view: View?,
 
     override fun onBindViewHolder(holder: DriverViewHolder, position: Int) {
         val driver: MapUser = list[position]
-        holder.bind(driver, view, requestId, context, pickupLocationLatLng)
+        holder.bind(driver, view, requestId, context, pickupLocationLatLng, dropoffLocationLatLng)
     }
 }

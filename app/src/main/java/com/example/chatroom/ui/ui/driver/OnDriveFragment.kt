@@ -74,7 +74,7 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         for (postSnapshot in dataSnapshot.children) {
                             driver = postSnapshot.getValue<MapUser>()
-                            Log.d("driver", "rider name" + driver?.rider?.firstName.toString())
+                            Log.d("driver", "driver name" + driver?.driver?.firstName.toString())
                             Log.d("drive", driver.toString())
                         }
 
@@ -86,11 +86,11 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
 
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
                 .child("driverRequests")
-                .child(rideId!!).child("rider").addValueEventListener(object : ValueEventListener {
+                .child(rideId!!).child("drivers").addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        rider = dataSnapshot.getValue<MapUser>()
-                        Log.d("demo", "rider name" + rider?.rider?.firstName.toString())
-                        updateLocationUI()
+                        //driver = dataSnapshot.getValue<MapUser>()
+                        //Log.d("demo", "rider name" + rider?.rider?.firstName.toString())
+                        //updateLocationUI()
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
@@ -108,10 +108,10 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
         val driverLocation = driver?.lat?.let { driver?.long?.let { it1 -> LatLng(it, it1) } }
 
         map?.addMarker(riderLocation?.let {
-            MarkerOptions().position(it).title(rider?.rider?.firstName)
+            MarkerOptions().position(it).title(rider?.driver?.firstName)
         })
         map?.addMarker(driverLocation?.let {
-            MarkerOptions().position(it).title(driver?.rider?.firstName)
+            MarkerOptions().position(it).title(driver?.driver?.firstName)
         })
 
         val polyline1 = map!!.addPolyline(

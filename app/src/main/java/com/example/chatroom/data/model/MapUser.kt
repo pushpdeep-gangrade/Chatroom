@@ -3,7 +3,7 @@ package com.example.chatroom.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MapUser(var rider : User = User(),
+data class MapUser(var driver : User = User(),
                 var lat : Double = 0.0,
                 var long : Double = 0.0) {
 

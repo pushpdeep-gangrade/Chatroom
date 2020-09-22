@@ -47,6 +47,8 @@ class WaitForAcceptFragment : Fragment() {
             }
 
             override fun onFinish() {
+                MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests").child(requestId)
+                    .child("drivers").child(MainActivity.auth.currentUser?.uid.toString()).removeValue()
                 val bundle = Bundle()
                 bundle.putString("chatroomId", chatRoomId.toString())
                 view.findNavController().navigate(R.id.action_nav_wait_for_accept_to_chatroom, bundle)
@@ -61,7 +63,8 @@ class WaitForAcceptFragment : Fragment() {
 
     fun setDriverRequestListener(view: View, timer: CountDownTimer){
 
-        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests").child(requestId).child("status").addValueEventListener(object : ValueEventListener
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests").child(requestId)
+            .child("drivers").child(MainActivity.auth.currentUser?.uid.toString()).child("status").addValueEventListener(object : ValueEventListener
             {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 var status = dataSnapshot.getValue<String>()
@@ -79,6 +82,5 @@ class WaitForAcceptFragment : Fragment() {
         })
 
     }
-
 
 }

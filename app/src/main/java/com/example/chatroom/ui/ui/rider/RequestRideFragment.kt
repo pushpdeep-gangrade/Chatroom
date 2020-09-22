@@ -58,8 +58,7 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
     var pickupLocationPlace: PickedPlace = PickedPlace()
     var dropoffLocationPlace: PickedPlace = PickedPlace()
     var path: MutableList<List<LatLng>> = ArrayList()
-    var urlDirections: String =
-        "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyBuIvBN797lPyHRIASQJzk77k0ry-UZTCI"
+    var urlDirections: String = "https://maps.googleapis.com/maps/api/directions/json?"
     var directionsRequest: StringRequest? = null
 
     private var map: GoogleMap? = null
@@ -96,7 +95,8 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
 
                 val bundle =
                     bundleOf("chatroomId" to chatRoomId, "requestId" to requestId.toString(),
-                        "pickupLatitude" to pickupLocationLatLng!!.latitude.toString(), "pickupLongitude" to pickupLocationLatLng!!.longitude.toString())
+                        "pickupLatitude" to pickupLocationLatLng!!.latitude.toString(), "pickupLongitude" to pickupLocationLatLng!!.longitude.toString(),
+                        "dropoffLatitude" to dropoffLocationLatLng!!.latitude.toString(), "dropoffLongitude" to dropoffLocationLatLng!!.longitude.toString())
                 view.findNavController()
                     .navigate(R.id.action_nav_request_ride_to_nav_request_driver, bundle)//, bundle)
             } else {
@@ -109,7 +109,7 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap?) {
         map = googleMap
         if (!Places.isInitialized()) {
-            context?.let { Places.initialize(it, "AIzaSyBuIvBN797lPyHRIASQJzk77k0ry-UZTCI") };
+            context?.let { Places.initialize(it, requireContext().resources.getString(R.string.api_key)) };
         }
 
         getLocationPermission()
@@ -151,6 +151,7 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
                 if (pickupLocationLatLng != null && dropoffLocationLatLng != null) {
                     directionsRequest = object : StringRequest(Request.Method.GET,
                         urlDirections
+                            .plus("key=${context?.resources?.getString(R.string.api_key)}")
                             .plus("&origin=${pickupLocationLatLng?.latitude},${pickupLocationLatLng?.longitude}")
                             .plus("&destination=${dropoffLocationLatLng?.latitude},${dropoffLocationLatLng?.longitude}"),
                         Response.Listener<String> { response ->
@@ -241,6 +242,7 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
                 if (pickupLocationLatLng != null && dropoffLocationLatLng != null) {
                     directionsRequest = object : StringRequest(Request.Method.GET,
                         urlDirections
+                            .plus("key=${context?.resources?.getString(R.string.api_key)}")
                             .plus("&origin=${pickupLocationLatLng?.latitude},${pickupLocationLatLng?.longitude}")
                             .plus("&destination=${dropoffLocationLatLng?.latitude},${dropoffLocationLatLng?.longitude}"),
                         Response.Listener<String> { response ->

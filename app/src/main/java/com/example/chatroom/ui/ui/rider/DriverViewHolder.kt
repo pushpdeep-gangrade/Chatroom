@@ -21,6 +21,9 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.chatroom.R
 import com.example.chatroom.data.model.MapUser
+import com.example.chatroom.data.model.PickedPlace
+import com.example.chatroom.data.model.RideRequest
+import com.example.chatroom.data.model.User
 import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.ui.chatroom.chatRoomId
 import com.example.chatroom.ui.ui.chatroom.messageUser
@@ -28,6 +31,10 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
 import java.util.*
@@ -43,7 +50,7 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     private var noButton: Button? = null
     var path: MutableList<List<LatLng>> = ArrayList()
     var urlDirections: String =
-        "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyBuIvBN797lPyHRIASQJzk77k0ry-UZTCI"
+        "https://maps.googleapis.com/maps/api/directions/json?"
     var directionsRequest: StringRequest? = null
    
 
@@ -56,7 +63,7 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         noButton = itemView.findViewById(R.id.driverItem_noButton)
     }
 
-    fun bind(driver: MapUser, view: View?, requestId: String, context: Context, pickupLocationLatLng: LatLng) {
+    fun bind(driver: MapUser, view: View?, requestId: String, context: Context, pickupLocationLatLng: LatLng, dropoffLocationLatLng: LatLng) {
        /* var geocoder : Geocoder = Geocoder(context, Locale.getDefault());
         var addresses : MutableList<Address>
         addresses = geocoder.getFromLocation(driver.lat, driver.long, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
@@ -68,8 +75,8 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
         getDistanceAndTime(pickupLocationLatLng, driver, context)
 
-        driverFullName?.text = driver.rider.firstName.plus(" ").plus(driver.rider.lastName)
-        Picasso.get().load(driver.rider.imageUrl).resize(250, 250).into(driverProfilePic)
+        driverFullName?.text = driver.driver.firstName.plus(" ").plus(driver.driver.lastName)
+        Picasso.get().load(driver.driver.imageUrl).resize(250, 250).into(driverProfilePic)
         //driverLocation!!.text = driver.lat.toString().plus(" ").plus(driver.long.toString())
         //driverLocation!!.text = address
 
@@ -77,19 +84,35 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             Log.d("Yes Button", "Clicked")
 
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
-                .child(requestId).child("status").setValue("Accepted")
+                .child(requestId).child("drivers").child(driver.driver.userId).child("status").setValue("Accepted")
 
-            var rider = messageUser?.let { it1 -> RequestRideFragment.lastKnownLocation?.latitude?.let { it2 ->
-                RequestRideFragment.lastKnownLocation?.longitude?.let { it3 ->
-                    MapUser(it1,
-                        it2, it3
-                    )
+            //var rider = messageUser?.let { it1 -> RequestRideFragment.lastKnownLocation?.latitude?.let { it2 ->
+            //    RequestRideFragment.lastKnownLocation?.longitude?.let { it3 ->
+            //        MapUser(MainActivity.auth.currentUser?.uid.toString(), it1,
+            //            it2, it3
+            //        )
+            //    }
+            //} }
+
+
+
+
+
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests")
+                .child(requestId.toString()).addListenerForSingleValueEvent(object :
+                ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("demo", "Firebase event cancelled on getting user data")
                 }
-            } }
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    var ride: RideRequest? = dataSnapshot.getValue<RideRequest>()
+                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
+                        .child(requestId).child("ride").setValue(ride)
+                }
+            })
 
-            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
-                .child(requestId).child("rider").setValue(rider)
-
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests")
+                .child(requestId.toString()).removeValue()
 
             val bundle = Bundle()
             bundle.putString("rideId", requestId)
@@ -106,8 +129,9 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         directionsRequest = object : StringRequest(
             Request.Method.GET,
             urlDirections
-                .plus("&origin=${pickupLocationLatLng.latitude},${pickupLocationLatLng.longitude}")
-                .plus("&destination=${driver.lat},${driver.long}"),
+                .plus("key=${context?.resources?.getString(R.string.api_key)}")
+                .plus("&origin=${driver.lat},${driver.long}")
+                .plus("&destination=${pickupLocationLatLng.latitude},${pickupLocationLatLng.longitude}"),
             Response.Listener<String> { response ->
                 val jsonResponse = JSONObject(response)
                 // Get routes
