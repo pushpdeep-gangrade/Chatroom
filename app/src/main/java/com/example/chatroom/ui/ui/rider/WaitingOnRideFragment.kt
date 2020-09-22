@@ -55,6 +55,17 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
 
         binding.waitingOnRideCancelButton.setOnClickListener {
             //   onDestroy()
+            val bundle = Bundle()
+            bundle.putString("chatroomId", chatRoomId.toString())
+
+            findNavController().navigate(R.id.action_nav_waiting_on_ride_to_chatroom, bundle)
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                .child("driverRequests")
+                .child(rideId!!).removeValue()
+
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                .child("activeRides")
+                .child(rideId!!).removeValue()
         }
     }
 
@@ -140,6 +151,10 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
         findNavController().navigate(R.id.action_nav_waiting_on_ride_to_nav_chatrooms)
         MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
             .child("driverRequests")
+            .child(rideId!!).removeValue()
+
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+            .child("activeRides")
             .child(rideId!!).removeValue()
     }
 }

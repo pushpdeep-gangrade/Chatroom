@@ -14,19 +14,18 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.chatroom.R
-import com.example.chatroom.data.model.MapUser
-import com.example.chatroom.data.model.PickedPlace
-import com.example.chatroom.data.model.RideRequest
-import com.example.chatroom.data.model.User
+import com.example.chatroom.data.model.*
 import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.ui.chatroom.chatRoomId
 import com.example.chatroom.ui.ui.chatroom.messageUser
+import com.example.chatroom.ui.ui.chatroom.messageUserId
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
@@ -84,7 +83,9 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             Log.d("Yes Button", "Clicked")
 
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
-                .child(requestId).child("drivers").child(driver.driver.userId).child("status").setValue("Accepted")
+                .child(requestId).child("drivers").child(driver.driver.userId)
+                .child("status").setValue("Accepted")
+
 
             //var rider = messageUser?.let { it1 -> RequestRideFragment.lastKnownLocation?.latitude?.let { it2 ->
             //    RequestRideFragment.lastKnownLocation?.longitude?.let { it3 ->
@@ -93,9 +94,6 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             //        )
             //    }
             //} }
-
-
-
 
 
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests")
@@ -108,19 +106,36 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                     var ride: RideRequest? = dataSnapshot.getValue<RideRequest>()
                     MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
                         .child(requestId).child("ride").setValue(ride)
+
+                    var completeRide: CompleteRide = CompleteRide(ride!!, driver)
+
+                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                        .child("activeRides").child(requestId).setValue(completeRide)
+
+
                 }
             })
 
-            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests")
-                .child(requestId.toString()).removeValue()
+            /*MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests")
+                .child(requestId.toString()).removeValue()*/
 
             val bundle = Bundle()
             bundle.putString("rideId", requestId)
             view?.findNavController()?.navigate(R.id.action_nav_request_driver_to_nav_waiting_on_ride, bundle)
+
+
         }
 
         noButton?.setOnClickListener {
             Log.d("No Button", "Clicked")
+
+            val bundle = Bundle()
+            bundle.putString("chatroomId", chatRoomId.toString())
+
+            view?.findNavController()!!.navigate(R.id.action_nav_request_driver_to_chatroom, bundle)
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                .child("driverRequests")
+                .child(requestId).removeValue()
         }
 
     }

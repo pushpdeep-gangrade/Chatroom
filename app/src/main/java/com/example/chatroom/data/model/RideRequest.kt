@@ -8,6 +8,6 @@ data class RideRequest(var requestId : String = "",
                        var pickupLocation: PickedPlace = PickedPlace(),
                        var dropoffLocation: PickedPlace = PickedPlace(),
                        var riderInfo: User = User(),
-                       var status : String = "") {
+                       var status : String = "") : java.io.Serializable {
 
 }

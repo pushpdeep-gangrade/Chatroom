@@ -94,6 +94,9 @@
         <action
             android:id="@+id/action_nav_request_driver_to_nav_waiting_on_ride"
             app:destination="@id/nav_waiting_on_ride" />
+        <action
+            android:id="@+id/action_nav_request_driver_to_chatroom"
+            app:destination="@id/chatroom" />
     </fragment>
     <fragment
         android:id="@+id/nav_wait_for_accept"
@@ -115,6 +118,9 @@
         <action
             android:id="@+id/action_nav_waiting_on_ride_to_nav_chatrooms"
             app:destination="@id/nav_chatrooms" />
+        <action
+            android:id="@+id/action_nav_waiting_on_ride_to_chatroom"
+            app:destination="@id/chatroom" />
     </fragment>
     <fragment
         android:id="@+id/nav_potential_rider"
@@ -136,5 +142,8 @@
         <action
             android:id="@+id/action_nav_on_drive_to_nav_chatrooms"
             app:destination="@id/nav_chatrooms" />
+        <action
+            android:id="@+id/action_nav_on_drive_to_chatroom"
+            app:destination="@id/chatroom" />
     </fragment>
 </navigation>

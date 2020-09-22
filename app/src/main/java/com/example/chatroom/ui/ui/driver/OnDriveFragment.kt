@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.findNavController
 import com.example.chatroom.R
+import com.example.chatroom.data.model.CompleteRide
 import com.example.chatroom.data.model.MapUser
+import com.example.chatroom.data.model.RideRequest
 import com.example.chatroom.databinding.FragmentOnDriveBinding
 import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.ui.chatroom.chatRoomId
@@ -29,6 +31,8 @@ private var map: GoogleMap? = null
 private var rideId: String? = null
 private var rider: MapUser? = null
 private var driver: MapUser? = null
+private var ride: RideRequest? = null
+
 
 class OnDriveFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentOnDriveBinding? = null
@@ -39,6 +43,8 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
         rideId = arguments?.getString("rideId")
+        ride = arguments?.getSerializable("ride") as RideRequest?
+        Log.d("Ride", ride.toString())
         _binding = FragmentOnDriveBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -49,6 +55,47 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
 
         binding.onDriveCancelButton.setOnClickListener {
             //    onDestroy()
+            val bundle = Bundle()
+            bundle.putString("chatroomId", chatRoomId.toString())
+
+            findNavController().navigate(R.id.action_nav_on_drive_to_chatroom, bundle)
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                .child("driverRequests")
+                .child(rideId!!).removeValue()
+
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                .child("activeRides")
+                .child(rideId!!).removeValue()
+        }
+
+        binding.onDriveDoneButton.setOnClickListener {
+            //    ride completed
+            findNavController().navigate(R.id.action_nav_on_drive_to_nav_chatrooms)
+
+
+
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                .child("activeRides").child(rideId!!.toString()).addListenerForSingleValueEvent(object :
+                    ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.d("demo", "Firebase event cancelled on getting user data")
+                    }
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val completeRide: CompleteRide? = dataSnapshot.getValue<CompleteRide>()
+
+                        Log.d("On Drive Ride", completeRide.toString())
+                        Log.d("On Drive Driver", driver.toString())
+
+                        //val completeRide: CompleteRide = CompleteRide(ride!!, driver!!)
+
+                        MainActivity.dbRef.child("rideHistory").child(rideId.toString()).setValue(completeRide)
+
+                        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                            .child("activeRides")
+                            .child(rideId!!).removeValue()
+                    }
+                })
+
         }
 
     }
@@ -135,6 +182,10 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
         findNavController().navigate(R.id.action_nav_on_drive_to_nav_chatrooms)
         MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
             .child("driverRequests")
+            .child(rideId!!).removeValue()
+
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+            .child("activeRides")
             .child(rideId!!).removeValue()
     }
 

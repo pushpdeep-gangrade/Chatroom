@@ -203,6 +203,7 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
 
             override fun onError(p0: Status) {
                 Log.d("demo", "error pickup")
+                Log.d("demo", p0.status.statusMessage.toString())
             }
 
         })
