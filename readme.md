@@ -8,13 +8,14 @@ Rockford Stoller
 https://xd.adobe.com/view/cc32e7b4-613f-4c1b-8ea8-cadbe84acec9-9961/
 
 # Chatroom Demo
-link to part 2 demo
+Part 1: https://www.youtube.com/watch?v=PmfODNEfFbY
+Part 2: 
 
 # Design and Implementation
 Login
 <br />
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Login.png" width=200>
-- Log with email and password using Firebase Authentication
+- Login with email and password using Firebase Authentication
 - Clicking the Create Account link takes the user to the Sign Up page
 - Clicking the Forgot Password link takes the user to the Forgot Password page
 - Once successfully logged in, the user will be taken to the View Chatrooms page
@@ -25,16 +26,16 @@ Sign Up
 - The user signs up with their first name, last name, email, city, gender, and password
 - The user must also select a profile picture. The profile picture can be selected by clicking the profile 
   image at the top of the page. When the profile image is clicked, the photo gallery on the user's 
-  phone will be opened so the user can select a picture.
-- The data input by the user is checked when the user clicks the Sign Up button, No fields can be left blank.
+  phone will be opened so the user can select a picture
+- The data input by the user is checked when the user clicks the Sign Up button. No fields can be left blank
 - Once all data is verified, the app will attempt to sign up the user and add their information to Firebase.
   On successful sign up, the user's email and password is added to Firebase Authentication, all of the
   user's data is stored in the Firebase Realtime Database, and the image for the profile picture is stored
-  in Firebase Storage.
+  in Firebase Storage
 - Sign Up shows a loading symbol when verifying data and uploading data to Firebase. The loading symbol will
   disappear once the operations are complete
 - Once the user is successfully signed up, they are taken back to the login page 
-- Clicking Cancel takes the user back to the Login page with no further actions
+- Clicking Cancel takes the user back to the Login page with no further action
 
 Forgot Password
 <br />
@@ -42,7 +43,7 @@ Forgot Password
 - The user is able to reset their password with Firebase Authentication
 - The Forgot Password page has the user input the email so that they can receive a link to reset their password
 - An email will not be sent if the user is not signed up (Given email is not in Firebase)
-- Clicking Cancel button takes the user back to the Login page with no further actions
+- Clicking the Cancel button takes the user back to the Login page with no further action
 
 View Chatrooms
 <br />
@@ -55,7 +56,7 @@ Menu
 <br />
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Menu.png" width=200>
 - Once logged in there will be a menu that is consistent across every page
-- There are two ways to access the menu, one way is to click the menu boc at the top left corner of the
+- There are two ways to access the menu, one way is to click the menu button at the top left corner of the
   screen and the other way is to swipe right on the left side of the screen to pull out the menu
 - The top part of the menu displays the current user's profile picture, full name, and email
 - There are links displayed under the top part of the menu that will take the user to different pages
@@ -76,16 +77,16 @@ Update Profile
 <br />
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/EditProfile.png" width=200>
 - Update Profile allows the user to to update their information. They can update their first name, last name,
-  gender, city, profile picture
+  gender, city and profile picture
 - Clicking Save will upload the new information to Firebase Realtime Database and Firebase Storage
-- Clicking Cancel takes the user back to the Profile page with no further actions
+- Clicking Cancel takes the user back to the Profile page with no further action
 
 Create Chatroom
 <br />
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/CreateChatroom.png" width=200>
 - The Create Chatroom page allows the user to create their own chatroom
-- The user enters the name for their chatroom and clicking Create
-- Clicking Cancel takes the user back to the View Chatrooms page with no further actions
+- The user enters the name for their chatroom and clicks Create
+- Clicking Cancel takes the user back to the View Chatrooms page with no further action
 
 View Users
 <br />
@@ -110,5 +111,19 @@ Chatroom
   belongs to the current user)
 - The user can type a message in the edit text at the bottom of the screen and click the Send button to post
   the message in the chatroom
-  
-# need to add sections for new rider/driver features
+    
+  Ride Requests
+  <br />
+  ## Insert mockup images
+- The user can share their location with others in the chat. The location is presented as coordinates 
+  and clicking them will display a map.
+- The user can request rides from all users in the chat room. If several pickup offers are received, 
+  the user can choose which request to accept. 
+- Once a ride is accepted, the user can view the progress of the driver via a real-time location on a 
+  map. When the user is picked up, monitoring stops and the ride is marked as complete. If a user leaves 
+  the chat room, the trip is finished for both driver and rider.
+- Users receiving ride requests are alerted and shown a map indicating that a ride was requested. The request 
+  includes user name, pickup and drop off locations.
+- Users can view previous ride details.
+## elaborate on ride details shown
+

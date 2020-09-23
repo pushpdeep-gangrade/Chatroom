@@ -55,10 +55,10 @@ class SignUpActivity : AppCompatActivity() {
         avatar.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
-            startActivityForResult(intent, Companion.REQUEST_CODE)
+            startActivityForResult(intent, REQUEST_CODE)
         }
 
-        genderRadioGroup.setOnCheckedChangeListener( RadioGroup.OnCheckedChangeListener{ group, checkedId ->
+        genderRadioGroup.setOnCheckedChangeListener({ group, checkedId ->
             val radio: RadioButton = findViewById(checkedId)
             genderText = radio.text.toString()
         })
@@ -77,53 +77,52 @@ class SignUpActivity : AppCompatActivity() {
 
             var allValid = true
 
-            if(firstNameText.equals("")){
+            if (firstNameText.equals("")) {
                 firstName.error = "Please enter your first name"
                 allValid = false
             }
 
-            if(lastNameText.equals("")){
+            if (lastNameText.equals("")) {
                 lastName.error = "Please enter your last name"
                 allValid = false
             }
 
-            if(emailText.equals("")){
+            if (emailText.equals("")) {
                 email.error = "Please enter your email"
                 allValid = false
             }
 
-            if(cityText.equals("")){
+            if (cityText.equals("")) {
                 city.error = "Please enter your city"
                 allValid = false
             }
 
-            if(!passwordText.equals(reEnterPasswordText) || passwordText.equals("")){
-                if(!passwordText.equals(reEnterPasswordText)){
+            if (!passwordText.equals(reEnterPasswordText) || passwordText.equals("")) {
+                if (!passwordText.equals(reEnterPasswordText)) {
                     password.error = "Passwords do not match"
-                }
-                else{
+                } else {
                     password.error = "Please enter a password"
                 }
                 allValid = false
             }
 
-            if(imageUrl.equals("")){
+            if (imageUrl.equals("")) {
                 Toast.makeText(this, "Please select a profile picture", Toast.LENGTH_LONG).show()
                 allValid = false
             }
 
-            if(genderText.equals("")){
+            if (genderText.equals("")) {
                 Toast.makeText(this, "Please select a gender", Toast.LENGTH_LONG).show()
                 allValid = false
             }
 
-            if(allValid){
+            if (allValid) {
                 loading.visibility = View.VISIBLE
 
                 auth.createUserWithEmailAndPassword(emailText, passwordText)
                     .addOnCompleteListener(this) { task ->
-                        if(task.isSuccessful) {
-                            val user =  User();
+                        if (task.isSuccessful) {
+                            val user = User()
 
                             user.email = emailText
                             user.firstName = firstNameText
@@ -136,16 +135,14 @@ class SignUpActivity : AppCompatActivity() {
 
                             Log.d("Success", "Sign Up Successful")
 
-                        }
-                        else {
-                            // other errors?
-                            // catch error for log?
-                            // timeout for internet connection?
-                            // app launch goes to chat screen?
+                        } else {
                             loading.visibility = View.INVISIBLE
                             Log.d("Failure", "Sign Up Failure.")
-
-                            Toast.makeText(this, "Sign Up Failed. Check Internet connection.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                this,
+                                "Sign Up Failed. Check Internet connection.",
+                                Toast.LENGTH_LONG
+                            ).show()
 
                         }
                     }
@@ -155,7 +152,7 @@ class SignUpActivity : AppCompatActivity() {
 
     }
 
-    private fun storeUserData(user: User?){
+    private fun storeUserData(user: User?) {
         if (user != null) {
             avatar.isDrawingCacheEnabled = true
             avatar.buildDrawingCache()
@@ -202,7 +199,7 @@ class SignUpActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == Companion.REQUEST_CODE){
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             avatar.setImageURI(data?.data) // handle chosen image
             Log.d("Image url", data?.data.toString())
 
