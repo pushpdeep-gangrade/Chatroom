@@ -390,6 +390,7 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
                         if (lastKnownLocation != null) {
                             val rider =
                                 LatLng(lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
+
                             map?.addMarker(MarkerOptions().position(rider).title("Rider"))
                             map?.moveCamera(
                                 CameraUpdateFactory.newLatLngZoom(

@@ -1,5 +1,6 @@
 package com.example.chatroom.ui.ui.rider
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,31 +12,42 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.chatroom.R
 import com.example.chatroom.data.model.MapUser
+import com.example.chatroom.data.model.RideRequest
 import com.example.chatroom.databinding.FragmentChatroomsBinding
 import com.example.chatroom.databinding.FragmentWaitingOnRideBinding
 import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.ui.chatroom.chatRoomId
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
+import com.google.maps.android.PolyUtil
+import org.json.JSONObject
+import java.util.ArrayList
 
 private var rideId: String? = null
 private var rider: MapUser? = null
 private var driver: MapUser? = null
 private var map: GoogleMap? = null
+private var dropoff : LatLng ? =null
+private var directionsRequest: StringRequest? = null
+private var urlDirections: String = "https://maps.googleapis.com/maps/api/directions/json?"
+private var path: MutableList<List<LatLng>> = ArrayList()
+
 
 class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
+    private var car_location : Marker ?= null
     private var _binding: FragmentWaitingOnRideBinding? = null
     private val binding get() = _binding!!
 
@@ -83,6 +95,25 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
 
     fun getLocation() {
         if (rideId != null) {
+
+
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                .child("driverRequests")
+                .child(rideId!!).child("ride").addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val curent_ride = dataSnapshot.getValue<RideRequest>()
+
+
+                        if (curent_ride != null) {
+                            rider = MapUser(curent_ride.riderInfo, curent_ride.pickupLocation.latitude, curent_ride.pickupLocation.longitude, curent_ride.status)
+                            dropoff = LatLng(curent_ride?.dropoffLocation.latitude, curent_ride?.dropoffLocation.longitude)
+                        }
+
+                    }
+                    override fun onCancelled(databaseError: DatabaseError) {
+                    }
+                })
+
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
                 .child("driverRequests")
                 .child(rideId!!).child("drivers")
@@ -90,23 +121,10 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         for (postSnapshot in dataSnapshot.children) {
                             driver = postSnapshot.getValue<MapUser>()
-                            Log.d("driver", "rider name" + driver?.driver?.firstName.toString())
-                            Log.d("drive", driver.toString())
+                            if(driver?.status.equals("Accepted"))
+                                driver = postSnapshot.getValue<MapUser>()
                         }
-
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                    }
-                })
-
-            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                .child("driverRequests")
-                .child(rideId!!).child("drivers").addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        //rider = dataSnapshot.getValue<MapUser>()
-                        //Log.d("demo", "rider name" + rider?.driver?.firstName.toString())
-                        //updateLocationUI()
+                        updateLocationUI()
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
@@ -122,28 +140,72 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
         }
         val riderLocation = rider?.lat?.let { rider?.long?.let { it1 -> LatLng(it, it1) } }
         val driverLocation = driver?.lat?.let { driver?.long?.let { it1 -> LatLng(it, it1) } }
+
         map?.addMarker(riderLocation?.let {
             MarkerOptions().position(it).title(rider?.driver?.firstName)
         })
+
+        if(car_location == null)
+        car_location = map?.addMarker(MarkerOptions().position(driverLocation!!).title(driver?.driver?.firstName).icon(BitmapDescriptorFactory.fromResource(R.drawable.driver_icon)))
+        else
+            updateDriver()
+
         map?.addMarker(driverLocation?.let {
-            MarkerOptions().position(it).title(driver?.driver?.firstName)
+            dropoff?.let { it1 -> MarkerOptions().position(it1).title("Dropoff") }
         })
 
-        val polyline1 = map!!.addPolyline(
-            PolylineOptions()
-                .clickable(true)
-                .add(
-                    riderLocation, driverLocation
+        path.clear()
+        directionsRequest = object : StringRequest(
+            Request.Method.GET,
+            urlDirections
+                .plus("key=${context?.resources?.getString(R.string.api_key)}")
+                .plus("&origin=${driverLocation?.latitude},${driverLocation?.longitude}")
+                .plus("&destination=${riderLocation?.latitude},${riderLocation?.longitude}"),
+            Response.Listener<String> { response ->
+                val jsonResponse = JSONObject(response)
+                // Get routes
+                val routes = jsonResponse.getJSONArray("routes")
+                val legs = routes.getJSONObject(0).getJSONArray("legs")
+                val steps = legs.getJSONObject(0).getJSONArray("steps")
+                for (i in 0 until steps.length()) {
+                    val points = steps.getJSONObject(i).getJSONObject("polyline")
+                        .getString("points")
+                    path.add(PolyUtil.decode(points))
+                }
+                for (i in 0 until path.size) {
+            map!!.addPolyline(
+                        PolylineOptions().addAll(path[i]).color(Color.RED)
+                    )
+                }
+                // Get bounds
+                val bounds = routes.getJSONObject(0).getJSONObject("bounds")
+                val northeastLat = bounds.getJSONObject("northeast").getDouble("lat")
+                val northeastLng = bounds.getJSONObject("northeast").getDouble("lng")
+                val southwestLat = bounds.getJSONObject("southwest").getDouble("lat")
+                val southwestLng = bounds.getJSONObject("southwest").getDouble("lng")
+                Log.d(
+                    "maps-test",
+                    "LatLngs: ${northeastLat}, ${northeastLng} | ${southwestLat}, ${southwestLng}"
                 )
-        )
+                map?.moveCamera(
+                    CameraUpdateFactory.newLatLngBounds(
+                        LatLngBounds(
+                            LatLng(southwestLat, southwestLng),
+                            LatLng(northeastLat, northeastLng)
+                        ), 100
+                    )
+                )
+            },
+            Response.ErrorListener { _ ->
+            }) {}
+        val requestQueue = Volley.newRequestQueue(context)
+        requestQueue.add(directionsRequest)
 
-        map?.moveCamera(
-            CameraUpdateFactory.newLatLngZoom(
-                riderLocation, 15F
-            )
-        )
 
+    }
 
+    private fun updateDriver(){
+        car_location?.position = driver?.lat?.let { LatLng(it, driver!!.long) }
     }
 
     override fun onDestroy() {

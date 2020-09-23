@@ -35,10 +35,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -217,7 +214,9 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
                         Log.d("driver location", lastKnownLocation?.latitude.toString() + " " + lastKnownLocation?.longitude.toString())
                         if (lastKnownLocation != null) {
                             val driver = LatLng(lastKnownLocation!!.latitude,lastKnownLocation!!.longitude)
-                            map?.addMarker(MarkerOptions().position(driver).title("driver"))
+                            map?.addMarker(MarkerOptions().position(driver).title("driver").icon(
+                                BitmapDescriptorFactory.fromResource(R.drawable.driver_icon)
+                            ))
                             map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                 LatLng(lastKnownLocation!!.latitude,
                                     lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
