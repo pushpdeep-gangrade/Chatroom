@@ -12,12 +12,11 @@
         android:id="@+id/rideDetails_riderDetailsContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:background="#B2FFFFFF"
-        android:layout_marginTop="12dp"
         android:orientation="horizontal"
         android:padding="4dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textView8"
         app:layout_constraintTop_toBottomOf="@+id/textView8">
 
         <ImageView
@@ -54,13 +53,14 @@
         android:id="@+id/rideDetails_driverDetailsContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:background="#B2FFFFFF"
         android:orientation="horizontal"
         android:padding="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/rideDetails_riderDetailsContainer"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/rideDetails_riderDetailsContainer"
-        app:layout_constraintTop_toBottomOf="@+id/textView5">
+        app:layout_constraintTop_toTopOf="@+id/rideDetails_riderDetailsContainer">
 
         <ImageView
             android:id="@+id/rideDetails_driverProfilePic"
@@ -98,9 +98,11 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="76dp"
         android:layout_marginTop="16dp"
         android:text="Rider:"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -109,15 +111,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="80dp"
         android:text="Driver:"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/rideDetails_rideInfoContainer"
-        android:layout_width="350dp"
-        android:layout_height="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
         android:background="#B3FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
@@ -131,12 +135,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
-            android:layout_marginEnd="190dp"
             android:text="@string/prompt_pickup_location"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
@@ -145,15 +146,12 @@
             android:id="@+id/rideDetails_dropoffLocationLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="190dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
             android:text="@string/prompt_dropoff_location"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
@@ -161,14 +159,12 @@
             android:id="@+id/rideDetails_dropoffLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="190dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp"
             android:text="@string/prompt_dropoff_location"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/rideDetails_dropoffLocationLabel"
+            app:layout_constraintStart_toStartOf="@+id/rideDetails_dropoffLocationLabel"
             app:layout_constraintTop_toBottomOf="@+id/rideDetails_dropoffLocationLabel"
             app:layout_constraintVertical_bias="0.0" />
 
@@ -176,22 +172,34 @@
             android:id="@+id/rideDetails_pickupLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:inputType="textMultiLine"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            android:inputType="textMultiLine"
             android:text="@string/prompt_pickup_location"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/rideDetails_pickupLocationLabel"
+            app:layout_constraintStart_toStartOf="@+id/rideDetails_pickupLocationLabel"
             app:layout_constraintTop_toBottomOf="@+id/rideDetails_pickupLocationLabel" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/rideDetails_dropoffLocationLabel"
+            app:layout_constraintStart_toEndOf="@+id/rideDetails_pickupLocationLabel"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <fragment
         android:id="@+id/rideDetails_mapView"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="350dp"
+        android:layout_width="0dp"
         android:layout_height="250dp"
         android:layout_marginTop="36dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/rideDetails_rideInfoContainer"
+        app:layout_constraintStart_toStartOf="@+id/rideDetails_rideInfoContainer"
         app:layout_constraintTop_toBottomOf="@+id/rideDetails_rideInfoContainer"
         tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 

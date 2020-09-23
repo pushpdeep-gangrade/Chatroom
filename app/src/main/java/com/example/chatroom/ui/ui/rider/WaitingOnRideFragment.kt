@@ -168,8 +168,10 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
         b.latitude =driverLocation?.latitude!!
         b.longitude= driverLocation?.longitude!!
 
-        if(a.distanceTo(b) <= 200)
-            Toast.makeText(context, "Rider picked up", Toast.LENGTH_LONG).show()
+        if(a.distanceTo(b) <= 200){
+            Toast.makeText(context, "Driver is here", Toast.LENGTH_LONG).show()
+          //  Log.d("distance",a.distanceTo(b).toString())
+        }
 
 
         car_location = map?.addMarker(MarkerOptions().position(driverLocation!!).title(driver?.driver?.firstName).icon(BitmapDescriptorFactory.fromResource(R.drawable.driver_icon)))
