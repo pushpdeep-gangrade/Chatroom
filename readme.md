@@ -9,7 +9,7 @@ https://xd.adobe.com/view/cc32e7b4-613f-4c1b-8ea8-cadbe84acec9-9961/
 
 # Chatroom Demo
 Part 1: https://www.youtube.com/watch?v=PmfODNEfFbY
-Part 2: 
+Part 2: https://youtu.be/Ylk_P11ix0k
 
 # Design and Implementation
 Login
