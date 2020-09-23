@@ -33,6 +33,7 @@
     <string name="action_send_email">Send Email</string>
     <string name="action_yes">Yes</string>
     <string name="action_no">No</string>
+    <string name="action_share_remove_location">Share/Remove Location</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
@@ -63,6 +64,6 @@
 
 
     <string name="old_api_key">AIzaSyBuIvBN797lPyHRIASQJzk77k0ry-UZTCI</string>
-<!--    <string name="api_key">AIzaSyB7hpRkVng8CeIQTZ73OZyEGZbUQfDVn7s</string>-->
+    <!--    <string name="api_key">AIzaSyB7hpRkVng8CeIQTZ73OZyEGZbUQfDVn7s</string>-->
     <string name="api_key">AIzaSyDutinEyrC4GMb5QyTSr0ROrcAlHDBL5sA</string>
 </resources>

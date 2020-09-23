@@ -75,6 +75,9 @@
         <action
             android:id="@+id/action_chatroom_to_nav_potential_rider"
             app:destination="@id/nav_potential_rider" />
+        <action
+            android:id="@+id/action_chatroom_to_nav_shared_location"
+            app:destination="@id/nav_shared_location" />
     </fragment>
     <fragment
         android:id="@+id/nav_request_ride"
@@ -144,6 +147,15 @@
             app:destination="@id/nav_chatrooms" />
         <action
             android:id="@+id/action_nav_on_drive_to_chatroom"
+            app:destination="@id/chatroom" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_shared_location"
+        android:name="com.example.chatroom.ui.ui.chatroom.SharedLocationFragment"
+        android:label="{chatroomId}"
+        tools:layout="@layout/fragment_shared_location" >
+        <action
+            android:id="@+id/action_nav_shared_location_to_chatroom"
             app:destination="@id/chatroom" />
     </fragment>
 </navigation>

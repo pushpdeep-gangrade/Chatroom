@@ -1,7 +1,12 @@
 package com.example.chatroom.ui.ui.chatroom
 
+import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -9,19 +14,36 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.chatroom.R
+import com.example.chatroom.data.model.PickedPlace
 import com.example.chatroom.data.model.RideRequest
 import com.example.chatroom.data.model.User
 import com.example.chatroom.databinding.FragmentChatroomBinding
 import com.example.chatroom.ui.MainActivity
+import com.example.chatroom.ui.ui.driver.PotentialRiderFragment
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
+import com.google.maps.android.PolyUtil
+import org.json.JSONObject
 import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -38,6 +60,13 @@ private var listActiveUserImageURLs = mutableListOf<String>()
 private var listRideRequests = mutableListOf<String>()
 private var listRideRequestsObjects = mutableListOf<RideRequest>()
 private var listRideRequestNames= mutableListOf<String>()
+
+private var listSharedLocationUserNames = mutableListOf<String>()
+private var listSharedLocations = mutableListOf<LatLng>()
+private var locationIsShared = false
+private var locationPermissionGranted = false
+private var lastKnownLocation: Location? = null
+private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
 private var activeUsers  = mutableListOf<User>()
 var chatRoomId : String? = null
@@ -62,8 +91,15 @@ class Chatroom : Fragment() {
 
         Log.d("Active Status", "User is now active")
 
+        fusedLocationProviderClient = context?.let { LocationServices.getFusedLocationProviderClient(it) }!!
+        //Weird if I try to check permission on button click for share location button
+        getLocationPermission()
+        getDeviceLocation()
+        //----------------------------------------------------------------------------
+
         initializeList()
         setRideRequestListener(view)
+        setShareLocationListener(view)
 
         MainActivity.dbRef.child("users").child(MainActivity.auth.currentUser?.uid.toString()).addListenerForSingleValueEvent(object :
                 ValueEventListener {
@@ -120,13 +156,37 @@ class Chatroom : Fragment() {
             }
         }
 
+        binding.chatroomShareLocationButton.setOnClickListener {
+
+            if (locationPermissionGranted && lastKnownLocation != null) {
+                if (!locationIsShared) {
+                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                        .child("shareLocations")
+                        .child(MainActivity.auth.currentUser?.uid.toString())
+                        .setValue(
+                            PickedPlace(
+                                "",
+                                lastKnownLocation!!.latitude,
+                                lastKnownLocation!!.longitude,
+                                "${messageUser?.firstName.toString()} ${messageUser?.lastName.toString()}"
+                            )
+                        )
+                    locationIsShared = true
+                }
+                else {
+                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                        .child("shareLocations")
+                        .child(MainActivity.auth.currentUser?.uid.toString()).removeValue()
+                    locationIsShared = false
+                }
+            }
+        }
+
         binding.requestRideButton.setOnClickListener {
             val bundle2 = Bundle()
             bundle2.putString("chatroomId", chatRoomId.toString())
             //This is for rider view (testing)
             view.findNavController().navigate(R.id.action_chatroom_to_nav_request_ride, bundle2)
-
-
         }
 
         // this would be deleted. Just for testing layouts at the moment -------------------------------------------------------------------
@@ -262,28 +322,142 @@ class Chatroom : Fragment() {
 
     fun showNotificationDialog(view: View){
         if(context!=null){
-        var builder  =  AlertDialog.Builder(context);
-        builder.setTitle("Ride Requests");
+            var builder  =  AlertDialog.Builder(context);
+            builder.setTitle("Ride Requests");
 
-        builder.setNegativeButton("Close", DialogInterface.OnClickListener {
-                dialog, id -> dialog.cancel()
-        })
+            builder.setNegativeButton("Close", DialogInterface.OnClickListener {
+                    dialog, id -> dialog.cancel()
+            })
 
-        builder.setCancelable(false)
+            builder.setCancelable(false)
 
-        var requestNames = listRideRequestNames.toTypedArray()
+            var requestNames = listRideRequestNames.toTypedArray()
 
-        builder.setItems(requestNames, DialogInterface.OnClickListener(){ dialogInterface: DialogInterface, i: Int ->
-            //val bundle = bundleOf("userData" to listRideRequests[i])
-            val bundle = bundleOf("chatroomId" to chatRoomId, "requestId" to listRideRequests[i])
-            view.findNavController().navigate(R.id.action_chatroom_to_nav_potential_rider, bundle)
-        })
+            builder.setItems(requestNames, DialogInterface.OnClickListener(){ dialogInterface: DialogInterface, i: Int ->
+                //val bundle = bundleOf("userData" to listRideRequests[i])
+                val bundle = bundleOf("chatroomId" to chatRoomId, "requestId" to listRideRequests[i])
+                view.findNavController().navigate(R.id.action_chatroom_to_nav_potential_rider, bundle)
+            })
 
-        var dialog : AlertDialog = builder.create()
-        dialog.show()
+            var dialog : AlertDialog = builder.create()
+            dialog.show()
         }
     }
 
+    fun setShareLocationListener(view: View){
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("shareLocations").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.d("Ride Request", "Ride Request Updated")
 
+                listSharedLocations.clear()
+                listSharedLocationUserNames.clear()
+
+                for (postSnapshot in dataSnapshot.children) {
+                    var sl : PickedPlace? = postSnapshot.getValue<PickedPlace>()
+                    if (sl != null) {
+                        var location = LatLng(sl.latitude, sl.longitude)
+                        listSharedLocations.add(location)
+                        listSharedLocationUserNames.add(sl.name)
+                    }
+                }
+
+                var active = false
+
+                for(id in listActiveUsers){
+                    if(id == messageUserId){
+                        active = true
+                    }
+                }
+
+                if(active){
+                    showLocationNotificationDialog(view)
+                }
+
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.d("demoo", "cancel")
+            }
+        })
+    }
+
+    fun showLocationNotificationDialog(view: View){
+        if(context!=null){
+            var builder  =  AlertDialog.Builder(context);
+            builder.setTitle("Shared Locations");
+
+            builder.setNegativeButton("Close", DialogInterface.OnClickListener {
+                    dialog, id -> dialog.cancel()
+            })
+
+            builder.setCancelable(false)
+
+            var sharedLocationUserNames = listSharedLocationUserNames.toTypedArray()
+
+            builder.setItems(sharedLocationUserNames, DialogInterface.OnClickListener(){ dialogInterface: DialogInterface, i: Int ->
+                //val bundle = bundleOf("userData" to listRideRequests[i])
+                val bundle = bundleOf("chatroomId" to chatRoomId, "sharedLocationUserName" to listSharedLocationUserNames[i],
+                    "sharedLocationLat" to listSharedLocations[i].latitude, "sharedLocationLng" to listSharedLocations[i].longitude)
+                view.findNavController().navigate(R.id.action_chatroom_to_nav_shared_location, bundle)
+            })
+
+            var dialog : AlertDialog = builder.create()
+            dialog.show()
+        }
+    }
+
+    private fun getLocationPermission() {
+        if (context?.let {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+            == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true
+        } else {
+            ActivityCompat.requestPermissions(
+                context as Activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>,
+                                            grantResults: IntArray) {
+        locationPermissionGranted = false
+        when (requestCode) {
+            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locationPermissionGranted = true
+                }
+            }
+        }
+    }
+
+    private fun getDeviceLocation() {
+        try {
+            if (locationPermissionGranted) {
+                val locationResult = fusedLocationProviderClient.lastLocation
+                locationResult.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Set the map's camera position to the current location of the device.
+                        lastKnownLocation = task.result
+                        Log.d("driver location", lastKnownLocation?.latitude.toString() + " " + lastKnownLocation?.longitude.toString())
+                    } else {
+                        Log.d("demo", "Current location is null. Using defaults.")
+                        Log.e("demo", "Exception: %s", task.exception)
+                    }
+                }
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }
+
+    companion object {
+        private const val DEFAULT_ZOOM = 15
+        private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+    }
 }
 
