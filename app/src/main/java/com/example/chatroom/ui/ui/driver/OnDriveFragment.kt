@@ -43,7 +43,8 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import com.google.maps.android.PolyUtil
 import org.json.JSONObject
-import java.util.ArrayList
+import java.util.*
+import kotlin.concurrent.schedule
 
 
 private var map: GoogleMap? = null
@@ -59,7 +60,6 @@ private var path: MutableList<List<LatLng>> = ArrayList()
 
 
 class OnDriveFragment : Fragment(), OnMapReadyCallback {
-    private var car_location : Marker?= null
     private var location : LocationManager ?=null
     private var _binding: FragmentOnDriveBinding? = null
     private val binding get() = _binding!!
@@ -124,26 +124,12 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
         }
 
         location = context?.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
-
         if (context?.let {
-                ActivityCompat.checkSelfPermission(
-                    it,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
+                ActivityCompat.checkSelfPermission( it,Manifest.permission.ACCESS_FINE_LOCATION)
             } != PackageManager.PERMISSION_GRANTED && context?.let {
-                ActivityCompat.checkSelfPermission(
-                    it,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
+                ActivityCompat.checkSelfPermission(it,Manifest.permission.ACCESS_COARSE_LOCATION)
             } != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return
         }
         location?.requestLocationUpdates( LocationManager.GPS_PROVIDER,  2000L,  10f, locationListenerGPS)
@@ -156,51 +142,29 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
         getLocation()
     }
 
+
     fun initialize() {
         val mapFragment: SupportMapFragment? =
             FragmentManager.findFragment(view?.findViewById(R.id.onDrive_mapView)!!) as? SupportMapFragment
         mapFragment?.getMapAsync(this)
-
     }
 
     fun getLocation() {
         if (rideId != null) {
-
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
                 .child("driverRequests")
-                .child(rideId!!).child("ride").addValueEventListener(object : ValueEventListener {
+                .child(rideId!!).child("drivers").addValueEventListener(object :
+                    ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        Log.d("demo", dataSnapshot.toString())
-                        val curent_ride = dataSnapshot.getValue<RideRequest>()
-                        Log.d("demo", " current ride " + curent_ride?.pickupLocation?.latitude.toString())
-
-                        if (curent_ride != null) {
-                            rider = MapUser(curent_ride.riderInfo, curent_ride.pickupLocation.latitude, curent_ride.pickupLocation.longitude, curent_ride.status)
-                            dropOff = LatLng(curent_ride?.dropoffLocation.latitude, curent_ride?.dropoffLocation.longitude)
+                        for (postSnapshot in dataSnapshot.children) {
+                            driver = postSnapshot.getValue<MapUser>()
+                            if(driver?.status.equals("Accepted"))
+                                Log.d("driver", "driver name" + driver?.driver?.firstName.toString())
+                            Log.d("drive", driver.toString())
                         }
-
-                        Log.d("demo", rider?.lat.toString() + " rider location " + rider?.long.toString())
-                        Log.d("demo", dropOff.toString())
-
-                        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                            .child("driverRequests")
-                            .child(rideId!!).child("drivers").addValueEventListener(object :
-                                ValueEventListener {
-                                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                    for (postSnapshot in dataSnapshot.children) {
-                                        driver = postSnapshot.getValue<MapUser>()
-                                        if(driver?.status.equals("Accepted"))
-                                            Log.d("driver", "driver name" + driver?.driver?.firstName.toString())
-                                        Log.d("drive", driver.toString())
-
-                                    }
-
-                                    updateLocationUI()
-                                }
-
-                                override fun onCancelled(databaseError: DatabaseError) {
-                                }
-                            })
+                        Timer("SettingUp", false).schedule(500) {
+                            rideListner()
+                        }
 
                     }
 
@@ -208,30 +172,57 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
                     }
                 })
 
+
+
         }
     }
 
+   fun rideListner(){
+       MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+           .child("driverRequests")
+           .child(rideId!!).child("ride").addValueEventListener(object : ValueEventListener {
+               override fun onDataChange(dataSnapshot: DataSnapshot) {
+                   Log.d("demo", dataSnapshot.toString())
+                   val curent_ride = dataSnapshot.getValue<RideRequest>()
+                   Log.d("demo", " current ride " + curent_ride?.pickupLocation?.latitude.toString())
+
+                   if (curent_ride != null) {
+                       rider = MapUser(curent_ride.riderInfo, curent_ride.pickupLocation.latitude, curent_ride.pickupLocation.longitude, curent_ride.status)
+                       dropOff = LatLng(curent_ride?.dropoffLocation.latitude, curent_ride?.dropoffLocation.longitude)
+                       updateLocationUI()
+                   }
+
+                   Log.d("demo", rider?.lat.toString() + " rider location " + rider?.long.toString())
+                   Log.d("demo", dropOff.toString())
+               }
+
+               override fun onCancelled(databaseError: DatabaseError) {
+               }
+           })
+   }
     private fun updateLocationUI() {
         if (map == null) {
             return
         }
-        val riderLocation = rider?.lat?.let { rider?.long?.let { it1 -> LatLng(it, it1) } }
-        val driverLocation = driver?.lat?.let { driver?.long?.let { it1 -> LatLng(it, it1) } }
+        map?.clear()
+        var riderLocation = LatLng(0.0,0.0)
+        var driverLocation = LatLng(0.0, 0.0)
+        if(rider!=null && driver!=null){
+         riderLocation = rider?.lat?.let { rider?.long?.let { it1 -> LatLng(it, it1) } }!!
+         driverLocation = driver?.lat?.let { driver?.long?.let { it1 -> LatLng(it, it1) } }!!
+        }
 
         map?.addMarker(riderLocation?.let {
             MarkerOptions().position(it).title(rider?.driver?.firstName)
         })
 
-        if(car_location == null)
-       car_location = map?.addMarker(driverLocation?.let {
-            MarkerOptions().position(it).title(driver?.driver?.firstName).icon(BitmapDescriptorFactory.fromResource(R.drawable.driver_icon))
-        })
-        else
-            updateDriver()
         map?.addMarker(driverLocation?.let {
             dropOff?.let { it1 -> MarkerOptions().position(it1).title("Dropoff") }
         })
 
+        map?.addMarker(driverLocation?.let {
+            MarkerOptions().position(it).title(driver?.driver?.firstName).icon(BitmapDescriptorFactory.fromResource(R.drawable.driver_icon))
+        })
 
             path.clear()
             directionsRequest = object : StringRequest(
@@ -283,9 +274,7 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
 
     }
 
-    private fun updateDriver(){
-        car_location?.position = driver?.lat?.let { LatLng(it, driver!!.long) }
-    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -336,6 +325,7 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
                             .child(rideId!!).child("drivers").child(it).child("long").setValue(longitude)
 
                     }
+
             }
 
             override fun onStatusChanged(
