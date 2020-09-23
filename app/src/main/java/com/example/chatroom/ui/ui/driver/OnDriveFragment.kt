@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.android.volley.Request
 import com.android.volley.Response
@@ -52,7 +53,7 @@ private var rideId: String? = null
 private var rider: MapUser? = null
 private var driver: MapUser? = null
 private var ride: RideRequest? = null
-private var dropOff : LatLng? =null
+private var dropOff : LatLng? = null
 private var directionsRequest: StringRequest? = null
 private var urlDirections: String = "https://maps.googleapis.com/maps/api/directions/json?"
 private var path: MutableList<List<LatLng>> = ArrayList()
@@ -79,25 +80,33 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialize()
+        setDriverArrivedOrCanceledListener(view)
+
 
         binding.onDriveCancelButton.setOnClickListener {
-            //    onDestroy()
+            //    onDestroy()]
+
             val bundle = Bundle()
             bundle.putString("chatroomId", chatRoomId.toString())
 
-            findNavController().navigate(R.id.action_nav_on_drive_to_chatroom, bundle)
+            view.findNavController().navigate(R.id.action_nav_on_drive_to_chatroom, bundle)
+
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
                 .child("driverRequests")
                 .child(rideId!!).removeValue()
 
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
                 .child("activeRides")
+                .child(rideId!!).child("driver").child("status").setValue("DriverCanceled")
+
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                .child("activeRides")
                 .child(rideId!!).removeValue()
+
         }
 
         binding.onDriveDoneButton.setOnClickListener {
             //    ride completed
-            findNavController().navigate(R.id.action_nav_on_drive_to_nav_chatrooms)
 
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
                 .child("activeRides").child(rideId!!.toString()).addListenerForSingleValueEvent(object :
@@ -117,9 +126,17 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
 
                         MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
                             .child("activeRides")
+                            .child(rideId!!).child("driver").child("status").setValue("Completed")
+
+                        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                            .child("activeRides")
                             .child(rideId!!).removeValue()
                     }
                 })
+
+            val bundle = Bundle()
+            bundle.putString("chatroomId", chatRoomId.toString())
+            view.findNavController().navigate(R.id.action_nav_on_drive_to_chatroom, bundle)
 
         }
 
@@ -225,6 +242,39 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
         if(a.distanceTo(b) <= 500)
             Toast.makeText(context, "Rider picked up", Toast.LENGTH_LONG).show()
 
+
+
+       /* MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+            .child("activeRides").child(rideId!!.toString()).addListenerForSingleValueEvent(object :
+                ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("demo", "Firebase event cancelled on getting user data")
+                }
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val completeRide: CompleteRide? = dataSnapshot.getValue<CompleteRide>()
+
+                    Log.d("On Drive Ride", completeRide.toString())
+                    Log.d("On Drive Driver", driver.toString())
+
+                    //val completeRide: CompleteRide = CompleteRide(ride!!, driver!!)
+
+                    MainActivity.dbRef.child("rideHistory").child(rideId.toString()).setValue(completeRide)
+
+                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                        .child("activeRides")
+                        .child(rideId!!).child("driver").child("status").setValue("Completed")
+
+                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                        .child("activeRides")
+                        .child(rideId!!).removeValue()
+                }
+            })
+
+        val bundle = Bundle()
+        bundle.putString("chatroomId", chatRoomId.toString())
+
+        view?.findNavController()?.navigate(R.id.action_nav_on_drive_to_chatroom, bundle)*/
+
         map?.addMarker(riderLocation?.let {
             MarkerOptions().position(it).title(rider?.driver?.firstName)
         })
@@ -289,9 +339,50 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
 
 
 
+    private fun setDriverArrivedOrCanceledListener(view: View){
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("activeRides").child(
+            rideId.toString())
+            .child("driver").child("status").addValueEventListener(object : ValueEventListener
+            {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val status = dataSnapshot.getValue<String>()
+                    Log.d("Status change", status.toString())
+                    if(status == "RiderCanceled"){
+                        showRideCanceledNotification(view)
+                    }
+                    /*else if(status == "Completed"){
+                        showRideCompletedNotification(view)
+                    }*/
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.d("demoo", "cancel")
+                }
+            })
+    }
+
+    fun showRideCanceledNotification(view: View){
+        val builder  =  AlertDialog.Builder(context);
+        builder.setTitle("Ride Status");
+
+        builder.setMessage("This ride was canceled by the rider")
+
+        builder.setNegativeButton("Close", DialogInterface.OnClickListener {
+                dialog, id -> dialog.cancel()
+        })
+
+        builder.setCancelable(false)
+
+        val dialog : AlertDialog = builder.create()
+        dialog.show()
+
+        val bundle = Bundle()
+        bundle.putString("chatroomId", chatRoomId.toString())
+        view.findNavController().navigate(R.id.action_nav_on_drive_to_chatroom, bundle)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        findNavController().navigate(R.id.action_nav_on_drive_to_nav_chatrooms)
+        //findNavController().navigate(R.id.action_nav_on_drive_to_nav_chatrooms)
         MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
             .child("driverRequests")
             .child(rideId!!).removeValue()
