@@ -222,7 +222,7 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
         b.latitude =driverLocation.latitude
         b.longitude= driverLocation.longitude
 
-        if(a.distanceTo(b) <= 500)
+        if(a.distanceTo(b) <= 200)
             Toast.makeText(context, "Rider picked up", Toast.LENGTH_LONG).show()
 
         map?.addMarker(riderLocation?.let {
