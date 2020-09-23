@@ -54,7 +54,7 @@ View Chatrooms
 
 Menu
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Menu.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Menu2.png" width=200>
 - Once logged in there will be a menu that is consistent across every page
 - There are two ways to access the menu, one way is to click the menu button at the top left corner of the
   screen and the other way is to swipe right on the left side of the screen to pull out the menu
@@ -96,8 +96,7 @@ View Users
 
 Chatroom
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/InChatroom.png" width=200>
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/ActiveUsers.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/InChatroom2.png" width=200>
 - The Chatroom page is dependent on which chatroom the users chooses from the list on the View Chatrooms page
 - The page is populated with messages from the current user and other users that have commented on the thread
 - The user can like other people's messages in the chatroom
@@ -113,17 +112,28 @@ Chatroom
   the message in the chatroom
     
   Ride Requests
-  <br />
-  ## Insert mockup images
+<br />
 - The user can share their location with others in the chat. The location is presented as coordinates 
   and clicking them will display a map.
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/SharedLocation.png" width=200>
 - The user can request rides from all users in the chat room. If several pickup offers are received, 
-  the user can choose which request to accept. 
+  the user can choose which request to accept.
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RequestRide.png" width=200>
 - Once a ride is accepted, the user can view the progress of the driver via a real-time location on a 
   map. When the user is picked up, monitoring stops and the ride is marked as complete. If a user leaves 
   the chat room, the trip is finished for both driver and rider.
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/OnDrive.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/WaitingOnRide.png" width=200>
 - Users receiving ride requests are alerted and shown a map indicating that a ride was requested. The request 
   includes user name, pickup and drop off locations.
-- Users can view previous ride details.
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RideRequestNotification.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RideRequestView.png" width=200>
+- Users can view previous ride details. Which shows the pickup location, dropoff location, rider, driver, and a map of the route.
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RideHistory.png" width=200>
 ## elaborate on ride details shown
 
