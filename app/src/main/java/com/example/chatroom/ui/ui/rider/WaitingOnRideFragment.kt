@@ -44,6 +44,7 @@ private var dropoff : LatLng ? =null
 private var directionsRequest: StringRequest? = null
 private var urlDirections: String = "https://maps.googleapis.com/maps/api/directions/json?"
 private var path: MutableList<List<LatLng>> = ArrayList()
+private var polyline : Polyline ?=null
 
 
 class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
@@ -138,6 +139,7 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
         if (map == null) {
             return
         }
+        map?.clear()
         val riderLocation = rider?.lat?.let { rider?.long?.let { it1 -> LatLng(it, it1) } }
         val driverLocation = driver?.lat?.let { driver?.long?.let { it1 -> LatLng(it, it1) } }
 
@@ -145,15 +147,16 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
             MarkerOptions().position(it).title(rider?.driver?.firstName)
         })
 
-        if(car_location == null)
+      //  if(car_location == null)
         car_location = map?.addMarker(MarkerOptions().position(driverLocation!!).title(driver?.driver?.firstName).icon(BitmapDescriptorFactory.fromResource(R.drawable.driver_icon)))
-        else
-            updateDriver()
+//        else
+//            updateDriver()
 
         map?.addMarker(driverLocation?.let {
             dropoff?.let { it1 -> MarkerOptions().position(it1).title("Dropoff") }
         })
 
+        polyline?.remove()
         path.clear()
         directionsRequest = object : StringRequest(
             Request.Method.GET,
@@ -173,9 +176,11 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
                     path.add(PolyUtil.decode(points))
                 }
                 for (i in 0 until path.size) {
-            map!!.addPolyline(
+
+             polyline = map!!.addPolyline(
                         PolylineOptions().addAll(path[i]).color(Color.RED)
                     )
+
                 }
                 // Get bounds
                 val bounds = routes.getJSONObject(0).getJSONObject("bounds")
