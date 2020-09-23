@@ -136,7 +136,9 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
                             if(driver?.status.equals("Accepted"))
                                 driver = postSnapshot.getValue<MapUser>()
                         }
-                        updateLocationUI()
+                        if (context != null) {
+                            updateLocationUI()
+                        }
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
