@@ -280,7 +280,8 @@ class Chatroom : Fragment() {
     }
 
     fun setRideRequestListener(view: View){
-        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests").addValueEventListener(object : ValueEventListener {
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+            .child("rideRequests").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 Log.d("Ride Request", "Ride Request Updated")
 
@@ -309,7 +310,7 @@ class Chatroom : Fragment() {
                     }
                 }
 
-                if(active){
+                if(active && listRideRequests.size > 0){
                     showNotificationDialog(view)
                 }
 

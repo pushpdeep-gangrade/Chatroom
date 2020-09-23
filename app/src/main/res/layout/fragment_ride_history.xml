@@ -5,26 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/chatrooms_page"
-    android:padding="16dp"
-    tools:context=".ui.ui.rider.RequestDriverFragment">
+    tools:context=".ui.ui.ridehistory.RideHistoryFragment"
+    android:padding="16dp">
+
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/driverRecyclerView"
-        android:layout_width="0dp"
+        android:id="@+id/rideHistory_recyclerView"
+        android:layout_width="360dp"
         android:layout_height="600dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.843"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.122" />
-
-    <Button
-        android:id="@+id/driver_cancelButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/action_cancel"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

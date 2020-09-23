@@ -54,6 +54,8 @@
     <string name="profile">Profile</string>
     <string name="update_profile">Update Profile</string>
     <string name="view_chatroom">View Chatrooms</string>
+    <string name="view_ride_history">View Ride History</string>
+
 
     <string name="logout">LOGOUT</string>
     <string name="hello_blank_fragment">Hello fragment</string>

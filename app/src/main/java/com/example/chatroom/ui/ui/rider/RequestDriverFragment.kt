@@ -73,6 +73,16 @@ class RequestDriverFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         getDrivers()
 
+        binding.driverCancelButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("chatroomId", chatRoomId.toString())
+
+            view?.findNavController()!!.navigate(R.id.action_nav_request_driver_to_chatroom, bundle)
+            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                .child("driverRequests")
+                .child(requestId.toString()).removeValue()
+        }
+
     }
 
 
@@ -88,9 +98,8 @@ class RequestDriverFragment : Fragment() {
                     activeUsers.clear()
                     for (postSnapshot in dataSnapshot.children) {
                         var u: MapUser? = postSnapshot.getValue<MapUser>()
-                        if (u != null) {
+                        if (u != null && u.status == "Available") {
                             activeUsers.add(u)
-
                         }
                     }
 

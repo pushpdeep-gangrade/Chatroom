@@ -62,7 +62,7 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         noButton = itemView.findViewById(R.id.driverItem_noButton)
     }
 
-    fun bind(driver: MapUser, view: View?, requestId: String, context: Context, pickupLocationLatLng: LatLng, dropoffLocationLatLng: LatLng) {
+    fun bind(driver: MapUser, view: View?, requestId: String, context: Context, pickupLocationLatLng: LatLng, dropoffLocationLatLng: LatLng, list:  List<MapUser>) {
        /* var geocoder : Geocoder = Geocoder(context, Locale.getDefault());
         var addresses : MutableList<Address>
         addresses = geocoder.getFromLocation(driver.lat, driver.long, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
@@ -73,6 +73,8 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
 
         getDistanceAndTime(pickupLocationLatLng, driver, context)
+
+        Log.d("Drivers List", driver.toString())
 
         driverFullName?.text = driver.driver.firstName.plus(" ").plus(driver.driver.lastName)
         Picasso.get().load(driver.driver.imageUrl).resize(250, 250).into(driverProfilePic)
@@ -94,7 +96,6 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             //        )
             //    }
             //} }
-
 
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests")
                 .child(requestId.toString()).addListenerForSingleValueEvent(object :
@@ -119,23 +120,27 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             /*MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests")
                 .child(requestId.toString()).removeValue()*/
 
+
+            for(driver1 in list){
+                if(driver1.driver.userId != driver.driver.userId){
+                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                        .child("driverRequests").child(requestId).child("drivers")
+                        .child(driver1.driver.userId).child("status").setValue("Rejected")
+                }
+            }
+
             val bundle = Bundle()
             bundle.putString("rideId", requestId)
             view?.findNavController()?.navigate(R.id.action_nav_request_driver_to_nav_waiting_on_ride, bundle)
-
 
         }
 
         noButton?.setOnClickListener {
             Log.d("No Button", "Clicked")
 
-            val bundle = Bundle()
-            bundle.putString("chatroomId", chatRoomId.toString())
-
-            view?.findNavController()!!.navigate(R.id.action_nav_request_driver_to_chatroom, bundle)
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                .child("driverRequests")
-                .child(requestId).removeValue()
+                .child("driverRequests").child(requestId).child("drivers")
+                .child(driver.driver.userId).child("status").setValue("Rejected")
         }
 
     }
@@ -167,6 +172,7 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             },
             Response.ErrorListener { _ ->
             }) {}
+
         val requestQueue = Volley.newRequestQueue(context)
         requestQueue.add(directionsRequest)
 

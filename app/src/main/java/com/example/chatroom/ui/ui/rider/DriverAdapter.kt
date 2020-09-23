@@ -28,6 +28,6 @@ class DriverAdapter(private val list: List<MapUser>, private val view: View?,
 
     override fun onBindViewHolder(holder: DriverViewHolder, position: Int) {
         val driver: MapUser = list[position]
-        holder.bind(driver, view, requestId, context, pickupLocationLatLng, dropoffLocationLatLng)
+        holder.bind(driver, view, requestId, context, pickupLocationLatLng, dropoffLocationLatLng, list)
     }
 }

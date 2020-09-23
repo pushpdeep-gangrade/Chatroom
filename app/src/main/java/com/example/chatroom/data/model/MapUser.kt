@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MapUser(var driver : User = User(),
                 var lat : Double = 0.0,
-                var long : Double = 0.0) {
+                var long : Double = 0.0,
+                var status : String = "") {
 
 
     /*fun getValue(): Map<String, String> {

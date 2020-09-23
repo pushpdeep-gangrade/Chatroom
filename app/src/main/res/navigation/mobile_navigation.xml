@@ -158,4 +158,22 @@
             android:id="@+id/action_nav_shared_location_to_chatroom"
             app:destination="@id/chatroom" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_ride_history"
+        android:name="com.example.chatroom.ui.ui.ridehistory.RideHistoryFragment"
+        android:label="Ride History"
+        tools:layout="@layout/fragment_ride_history" >
+        <action
+            android:id="@+id/action_nav_ride_history_to_nav_ride_details"
+            app:destination="@id/nav_ride_details" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_ride_details"
+        android:name="com.example.chatroom.ui.ui.ridehistory.RideDetailsFragment"
+        android:label="Ride Details"
+        tools:layout="@layout/fragment_ride_details" >
+        <action
+            android:id="@+id/action_nav_ride_details_to_nav_profile"
+            app:destination="@id/nav_profile" />
+    </fragment>
 </navigation>

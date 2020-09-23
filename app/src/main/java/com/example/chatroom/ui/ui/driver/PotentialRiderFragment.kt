@@ -115,10 +115,11 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
 
             val driver =
                 messageUser?.let { it1 -> lastKnownLocation?.latitude?.let { it2 ->
-                    lastKnownLocation?.longitude?.let { it3 ->
-                        MapUser(it1,
-                            it2, it3
-                        )
+                    lastKnownLocation?.longitude?.let { it3 -> "Available".let { it4 ->
+                            MapUser(it1,
+                                it2, it3, it4
+                            )
+                        }
                     }
                 } }
 
