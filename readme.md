@@ -14,7 +14,7 @@ Part 2:
 # Design and Implementation
 Login
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Login.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Login.png" width=150>
 - Login with email and password using Firebase Authentication
 - Clicking the Create Account link takes the user to the Sign Up page
 - Clicking the Forgot Password link takes the user to the Forgot Password page
@@ -22,7 +22,7 @@ Login
 
 Sign Up
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/SignUp.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/SignUp.png" width=150>
 - The user signs up with their first name, last name, email, city, gender, and password
 - The user must also select a profile picture. The profile picture can be selected by clicking the profile 
   image at the top of the page. When the profile image is clicked, the photo gallery on the user's 
@@ -39,7 +39,7 @@ Sign Up
 
 Forgot Password
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/ForgotPassword.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/ForgotPassword.png" width=150>
 - The user is able to reset their password with Firebase Authentication
 - The Forgot Password page has the user input the email so that they can receive a link to reset their password
 - An email will not be sent if the user is not signed up (Given email is not in Firebase)
@@ -47,14 +47,14 @@ Forgot Password
 
 View Chatrooms
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/ViewChatrooms.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/ViewChatrooms.png" width=150>
 - The View Chatrooms page is the default page the user is taken to once they log in
 - It shows a list of all the current chatrooms (pulled from Firebase Realtime Database)
 - Clicking on a chatroom in the list will take you to that particular chatroom
 
 Menu
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Menu2.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Menu2.png" width=150>
 - Once logged in there will be a menu that is consistent across every page
 - There are two ways to access the menu, one way is to click the menu button at the top left corner of the
   screen and the other way is to swipe right on the left side of the screen to pull out the menu
@@ -66,8 +66,8 @@ Menu
   
 Profile
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/PersonalProfile.png" width=200>
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/OthersProfile.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/PersonalProfile.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/OthersProfile.png" width=150>
 - The Profile page shows all of the user's information (first name, last name, gender, city, profile picture)
 - Clicking the Update Profile link takes the user to the Update Profile page
 - This page is also used to show the profile of another user when they are selected from the View Users list.
@@ -75,7 +75,7 @@ Profile
   
 Update Profile
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/EditProfile.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/EditProfile.png" width=150>
 - Update Profile allows the user to to update their information. They can update their first name, last name,
   gender, city and profile picture
 - Clicking Save will upload the new information to Firebase Realtime Database and Firebase Storage
@@ -83,20 +83,20 @@ Update Profile
 
 Create Chatroom
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/CreateChatroom.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/CreateChatroom.png" width=150>
 - The Create Chatroom page allows the user to create their own chatroom
 - The user enters the name for their chatroom and clicks Create
 - Clicking Cancel takes the user back to the View Chatrooms page with no further action
 
 View Users
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/ViewUsers.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/ViewUsers.png" width=150>
 - The View Users page allows the user to view all of the users who are signed up for the app
 - The user can view the profile of another by clicking on their name in the user list
 
 Chatroom
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/InChatroom2.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/InChatroom2.png" width=150>
 - The Chatroom page is dependent on which chatroom the users chooses from the list on the View Chatrooms page
 - The page is populated with messages from the current user and other users that have commented on the thread
 - The user can like other people's messages in the chatroom
@@ -110,30 +110,32 @@ Chatroom
   belongs to the current user)
 - The user can type a message in the edit text at the bottom of the screen and click the Send button to post
   the message in the chatroom
-    
-  Ride Requests
+
+Shared Location
 <br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/SharedLocation.png" width=150>
 - The user can share their location with others in the chat. The location is presented as coordinates 
-  and clicking them will display a map.
+  and clicking them will display a map. The user can also remove their shared location with the same button.
+
+Ride Requests
 <br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/SharedLocation.png" width=200>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RequestRide.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RideRequestNotification.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RideRequestView.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/DriverRequestWaitForAcceptance.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/DriverRequestView.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/OnDrive.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/WaitingOnRide.png" width=150>
 - The user can request rides from all users in the chat room. If several pickup offers are received, 
   the user can choose which request to accept.
-<br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RequestRide.png" width=200>
 - Once a ride is accepted, the user can view the progress of the driver via a real-time location on a 
   map. When the user is picked up, monitoring stops and the ride is marked as complete. If a user leaves 
   the chat room, the trip is finished for both driver and rider.
-<br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/OnDrive.png" width=200>
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/WaitingOnRide.png" width=200>
 - Users receiving ride requests are alerted and shown a map indicating that a ride was requested. The request 
   includes user name, pickup and drop off locations.
-<br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RideRequestNotification.png" width=200>
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RideRequestView.png" width=200>
-- Users can view previous ride details. Which shows the pickup location, dropoff location, rider, driver, and a map of the route.
-<br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RideHistory.png" width=200>
-## elaborate on ride details shown
 
+Ride History
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RideHistory.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RideDetails.png" width=150>
+- Users can view previous ride details. Which shows the pickup location, dropoff location, rider, driver, and a map of the route.
