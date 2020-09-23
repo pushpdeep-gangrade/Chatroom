@@ -1,6 +1,7 @@
 package com.example.chatroom.ui.ui.rider
 
 import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
@@ -147,10 +149,20 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
             MarkerOptions().position(it).title(rider?.driver?.firstName)
         })
 
-      //  if(car_location == null)
+
+        var a = Location("rider")
+        var b = Location("drive")
+
+        a.latitude = riderLocation?.latitude!!
+        a.longitude = riderLocation?.longitude!!
+
+        b.latitude =driverLocation?.latitude!!
+        b.longitude= driverLocation?.longitude!!
+
+        if(a.distanceTo(b) <= 200)
+            Toast.makeText(context, "Rider picked up", Toast.LENGTH_LONG).show()
+
         car_location = map?.addMarker(MarkerOptions().position(driverLocation!!).title(driver?.driver?.firstName).icon(BitmapDescriptorFactory.fromResource(R.drawable.driver_icon)))
-//        else
-//            updateDriver()
 
         map?.addMarker(driverLocation?.let {
             dropoff?.let { it1 -> MarkerOptions().position(it1).title("Dropoff") }

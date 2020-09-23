@@ -162,7 +162,7 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
                                 Log.d("driver", "driver name" + driver?.driver?.firstName.toString())
                             Log.d("drive", driver.toString())
                         }
-                        Timer("SettingUp", false).schedule(500) {
+                        Timer("SettingUp", false).schedule(1000) {
                             rideListner()
                         }
 
@@ -211,6 +211,19 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
          riderLocation = rider?.lat?.let { rider?.long?.let { it1 -> LatLng(it, it1) } }!!
          driverLocation = driver?.lat?.let { driver?.long?.let { it1 -> LatLng(it, it1) } }!!
         }
+
+
+        var a = Location("rider")
+        var b = Location("drive")
+
+        a.latitude = riderLocation.latitude
+        a.longitude = riderLocation.longitude
+
+        b.latitude =driverLocation.latitude
+        b.longitude= driverLocation.longitude
+
+        if(a.distanceTo(b) <= 500)
+            Toast.makeText(context, "Rider picked up", Toast.LENGTH_LONG).show()
 
         map?.addMarker(riderLocation?.let {
             MarkerOptions().position(it).title(rider?.driver?.firstName)
