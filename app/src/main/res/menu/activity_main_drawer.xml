@@ -19,5 +19,8 @@
         <item
             android:id="@+id/nav_ride_history"
             android:title="@string/view_ride_history" />
+        <item
+            android:id="@+id/nav_game_lobby"
+            android:title="@string/nav_game_lobby" />
     </group>
 </menu>

@@ -176,4 +176,22 @@
             android:id="@+id/action_nav_ride_details_to_nav_profile"
             app:destination="@id/nav_profile" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_game_lobby"
+        android:name="com.example.chatroom.ui.ui.game.GameLobbyFragment"
+        android:label="Game Lobby"
+        tools:layout="@layout/fragment_game_lobby" >
+        <action
+            android:id="@+id/action_nav_game_lobby_to_nav_game_room"
+            app:destination="@id/nav_game_room" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_game_room"
+        android:name="com.example.chatroom.ui.ui.game.GameRoomFragment"
+        android:label="Game Room"
+        tools:layout="@layout/fragment_game_room" >
+        <action
+            android:id="@+id/action_nav_game_room_to_nav_game_lobby"
+            app:destination="@id/nav_game_lobby" />
+    </fragment>
 </navigation>
