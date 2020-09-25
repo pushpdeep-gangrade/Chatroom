@@ -105,7 +105,10 @@ class GameRoomFragment : Fragment() {
                     gameMaster = dataSnapshot.getValue<GameMaster>()
                     globalGameMaster = gameMaster
 
-                    if (gameMaster?.playersTurn == "player1") {
+                    if (gameMaster?.isDealing!!) {
+                        playersTurnTextView?.text = "Dealing cards"
+                    }
+                    else if (gameMaster?.playersTurn == "player1") {
                         playersTurnTextView?.text = "Host's Turn"
                     }
                     else if (gameMaster?.playersTurn == "player2") {
