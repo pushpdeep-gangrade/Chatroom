@@ -52,15 +52,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
+        //    mGeoDataClient = Places.getGeoDataClient(this, null);
 
-     //    mGeoDataClient = Places.getGeoDataClient(this, null);
 
+        //   mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
 
-       //   mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
-
-         // mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        val toolbar : MaterialToolbar = findViewById(topAppBar)
-          setSupportActionBar(toolbar)
+        // mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        val toolbar: MaterialToolbar = findViewById(topAppBar)
+        setSupportActionBar(toolbar)
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -73,7 +72,11 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_profile, R.id.nav_create_chatroom, R.id.nav_chatrooms, R.id.nav_users, R.id.nav_ride_history
+                R.id.nav_profile,
+                R.id.nav_create_chatroom,
+                R.id.nav_chatrooms,
+                R.id.nav_users,
+                R.id.nav_ride_history
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -85,16 +88,16 @@ class MainActivity : AppCompatActivity() {
         setUserInfo()
     }
 
-    private fun setUserInfo(){
-        var uid = auth.currentUser?.uid
+    private fun setUserInfo() {
+        val uid = auth.currentUser?.uid
         uid?.let {
             dbRef.child("users").child(uid).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val globaluser = dataSnapshot.getValue<com.example.chatroom.data.model.User>()!!
+                    val globaluser = dataSnapshot.getValue<User>()!!
                     if (globaluser != null) {
-                        userFullname.text =  globaluser.firstName + " " + globaluser.lastName
-                        userEmail.text =  globaluser.email
-                        Picasso.get().load(globaluser.imageUrl).into(userImage);
+                        userFullname.text = globaluser.firstName + " " + globaluser.lastName
+                        userEmail.text = globaluser.email
+                        Picasso.get().load(globaluser.imageUrl).into(userImage)
                     }
                 }
 
@@ -118,7 +121,8 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.logout -> {
                 dbRef.child("activeUsers").child(chatRoomId.toString()).child(
-                    messageUser?.userId.toString()).removeValue()
+                    messageUser?.userId.toString()
+                ).removeValue()
                 auth.signOut()
                 val intent = Intent(baseContext, LoginActivity::class.java)
                 startActivity(intent)
@@ -134,7 +138,7 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    companion object{
+    companion object {
         var db = FirebaseDatabase.getInstance()
         var dbRef = db.reference
         var auth = FirebaseAuth.getInstance()

@@ -47,7 +47,7 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             Log.d("hand", "clicked ${cardColor}${cardValue}: playerNum: ${playerNum}")
 
             val gameMaster = GameRoomFragment.globalGameMaster
-            var playerHand = GameRoomFragment.globalPlayerHand
+            val playerHand = GameRoomFragment.globalPlayerHand
             if (gameMaster != null) {
                 if (gameMaster.playersTurn.last().toString() == playerNum.toString()) {
                     if (gameMaster.centerCard?.get(1) == cardValue[0] || gameMaster.centerCard?.get(0).toString() == cardColor) {
@@ -63,7 +63,7 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                                 override fun onDataChange(snapshot: DataSnapshot) {
                                     playerHand?.clear()
                                     for (postSnapshot in snapshot.children) {
-                                        var card1 = postSnapshot.getValue<String>()
+                                        val card1 = postSnapshot.getValue<String>()
                                         if (card1 != null) {
                                             playerHand?.add(card1)
                                         }
@@ -79,15 +79,6 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
                             })
 
-                        // todo: add logic/ popup for invalid choices
-                        if (gameMaster.centerCard?.get(1) != cardValue[0] && gameMaster.centerCard?.get(0) != cardColor[0]) {
-                           Log.d("choice","Invalid choice")
-                            /* Toast.makeText(
-                                this,
-                                "Invalid choice. Please choose another card",
-                                Toast.LENGTH_LONG
-                            ).show() */
-                        }
                         if (playerNum == 1) {
                             gameMaster.playersTurn = "player2"
                         }
@@ -105,6 +96,27 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                         MainActivity.dbRef.child("games").child("activeGames")
                             .child(gameRequestId).child("gameMaster").setValue(gameMaster)
                     }
+                }
+                else {
+                    // todo: add logic/ popup for invalid choices
+                    Log.d(
+                        "choice",
+                        "Try again: Center card was " + gameMaster.centerCard?.get(1)+gameMaster.centerCard?.get(0) + " You played: " + cardValue[0]+ cardColor[0])
+                    /*  val builder  =  AlertDialog.Builder();
+                      builder.setTitle("Invalid Choice");
+                      builder.setMessage("Use another card or draw.")
+                      builder.setNegativeButton("Ok", DialogInterface.OnClickListener {
+                      dialog, id -> dialog.cancel()
+                       val dialog : AlertDialog = builder.create()
+                       dialog.show()
+
+                       Toast.makeText(
+                                  this,
+                                  "Invalid choice. Please choose another card",
+                                  Toast.LENGTH_LONG
+                              ).show()
+                      */
+
                 }
             }
 
