@@ -8,20 +8,33 @@
     tools:context=".ui.ui.game.GameLobbyFragment">
 
 
-    <ListView
-        android:id="@+id/gameLobby_gameRequestList"
-        android:layout_width="360dp"
-        android:layout_height="600dp"
-        android:layout_margin="8dp"
+    <TextView
+        android:id="@+id/Join_List"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/game_requests"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ListView
+        android:id="@+id/gameLobby_gameRequestList"
+        android:layout_width="340dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/gameLobby_requestGameButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Join_List">
+
+    </ListView>
 
     <Button
         android:id="@+id/gameLobby_requestGameButton"
         android:layout_width="360dp"
         android:layout_height="wrap_content"
-        android:text="Request Game"
+        android:text="@string/request_game"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

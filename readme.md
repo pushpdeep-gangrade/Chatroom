@@ -8,8 +8,9 @@ Rockford Stoller
 https://xd.adobe.com/view/cc32e7b4-613f-4c1b-8ea8-cadbe84acec9-9961/
 
 # Chatroom Demo
-Part 1: https://www.youtube.com/watch?v=PmfODNEfFbY
-Part 2: https://youtu.be/Ylk_P11ix0k
+Part 1: Creating a profile and introduction to group chats. https://www.youtu.be/PmfODNEfFbY
+Part 2: Requesting and accepting rides. https://youtu.be/yFQDB3oLeVI
+Part 3: Playing "Uno" with two users. 
 
 # Design and Implementation
 Login
@@ -138,4 +139,4 @@ Ride History
 <br />
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RideHistory.png" width=150>
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/RideDetails.png" width=150>
-- Users can view previous ride details. Which shows the pickup location, dropoff location, rider, driver, and a map of the route.
+- Users can view previous ride details, including the pickup and dropoff locations, rider, driver, and a map of the route.
