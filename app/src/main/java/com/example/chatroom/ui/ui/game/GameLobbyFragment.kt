@@ -13,11 +13,9 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.navigation.findNavController
 import com.example.chatroom.R
-import com.example.chatroom.data.model.GameRequest
-import com.example.chatroom.data.model.MapUser
+import com.example.chatroom.data.model.*
 import com.example.chatroom.databinding.FragmentGameLobbyBinding
 
-import com.example.chatroom.data.model.User
 import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.ui.chatroom.chatRoomId
 
@@ -74,7 +72,7 @@ class GameLobbyFragment : Fragment() {
         binding.gameLobbyRequestGameButton.setOnClickListener {
             var gameRequestId: UUID = UUID.randomUUID()
             var gameRequest: GameRequest = GameRequest(gameRequestId.toString(),
-                currentUser!!, null)
+                currentUser!!, null, null, null)
 
             currentGameRequest = gameRequest
 
@@ -188,23 +186,39 @@ class GameLobbyFragment : Fragment() {
                 .child("gameRequests").child(gameRequest.gameRequestId)
                 .child("player2").setValue(currentUser)
 
-            MainActivity.dbRef.child("games")
-                .child("activeGames")
-                .child(gameRequest.gameRequestId).child("player1")
-                .child("player1").setValue(changedGameRequest.player1)
+            var cardList = mutableListOf<String>("B0","B1","B2","B3","B4","B5","B6","B7","B8","B9","BSkip","BSkip",
+                "G0","G1","G2","G3","G4","G5","G6","G7","G8","G9","GSkip","GSkip",
+                "R0","R1","R2","R3","R4","R5","R6","R7","R8","R9","RSkip","RSkip",
+                "Y0","Y1","Y2","Y3","Y4","Y5","Y6","Y7","Y8","Y9","YSkip","YSkip",
+                "+4","+4","+4","+4")
+            cardList.shuffle()
+            var activeGame = ActiveGame(changedGameRequest.gameRequestId, changedGameRequest.player1, null,
+                changedGameRequest.player2, null,
+                GameMaster(true, true, "player1", null, cardList, false, false))
 
             MainActivity.dbRef.child("games")
                 .child("activeGames")
-                .child(gameRequest.gameRequestId).child("player2")
-                .child("player2").setValue(changedGameRequest.player2)
+                .child(gameRequest.gameRequestId)
+                .setValue(activeGame)
 
-            MainActivity.dbRef.child("games")
-                .child("activeGames")
-                .child(gameRequest.gameRequestId).child("gameRequestId")
-                .setValue(changedGameRequest.gameRequestId)
+            //MainActivity.dbRef.child("games")
+            //    .child("activeGames")
+            //    .child(gameRequest.gameRequestId).child("player1")
+            //    .setValue(changedGameRequest.player1)
+
+            //MainActivity.dbRef.child("games")
+            //    .child("activeGames")
+            //    .child(gameRequest.gameRequestId).child("player2")
+            //    .setValue(changedGameRequest.player2)
+
+            //MainActivity.dbRef.child("games")
+            //    .child("activeGames")
+            //    .child(gameRequest.gameRequestId).child("gameRequestId")
+            //    .setValue(changedGameRequest.gameRequestId)
 
             val bundle = Bundle()
             bundle.putString("gameRequestId", changedGameRequest.gameRequestId)
+            bundle.putInt("playerNumber", 2)
             view.findNavController().navigate(R.id.action_nav_game_lobby_to_nav_game_room, bundle)
 
         })
@@ -237,6 +251,7 @@ class GameLobbyFragment : Fragment() {
 
         val bundle = Bundle()
         bundle.putString("gameRequestId", currentGameRequest.gameRequestId)
+        bundle.putInt("playerNumber", 1)
         view.findNavController().navigate(R.id.action_nav_game_lobby_to_nav_game_room, bundle)
     }
 
