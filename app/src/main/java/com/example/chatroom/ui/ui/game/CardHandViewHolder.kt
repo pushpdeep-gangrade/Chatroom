@@ -42,12 +42,12 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
         mCardValueTextView?.text = cardValue
         mCardColorTextView?.setBackgroundColor(color)
-        GameRoomFragment.globalGameMaster
 
         mCardColorTextView?.setOnClickListener {
             Log.d("hand", "clicked ${cardColor}${cardValue}: playerNum: ${playerNum}")
 
             val gameMaster = GameRoomFragment.globalGameMaster
+            var playerHand = GameRoomFragment.globalPlayerHand
             if (gameMaster != null) {
                 if (gameMaster.playersTurn.last().toString() == playerNum.toString()) {
                     if (gameMaster.centerCard?.get(1) == cardValue[0] || gameMaster.centerCard?.get(0).toString() == cardColor) {
@@ -55,6 +55,30 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                         MainActivity.dbRef.child("games").child("activeGames")
                             .child(gameRequestId).child("player${playerNum}hand")
                             .child(cardPosition.toString()).removeValue()
+
+                        MainActivity.dbRef.child("games").child("activeGames")
+                            .child(gameRequestId).child("player${playerNum}hand")
+                            .addListenerForSingleValueEvent(object :
+                            ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    playerHand?.clear()
+                                    for (postSnapshot in snapshot.children) {
+                                        var card1 = postSnapshot.getValue<String>()
+                                        if (card1 != null) {
+                                            playerHand?.add(card1)
+                                        }
+                                    }
+                                    MainActivity.dbRef.child("games").child("activeGames")
+                                        .child(gameRequestId).child("player${playerNum}hand")
+                                        .setValue(playerHand)
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+                                    Log.d("demo", "Cancelled")
+                                }
+
+                            })
+
                         // todo: add logic/ popup for invalid choices
                         if (gameMaster.centerCard?.get(1) != cardValue[0] && gameMaster.centerCard?.get(0) != cardColor[0]) {
                            Log.d("choice","Invalid choice")

@@ -70,6 +70,7 @@ class GameRoomFragment : Fragment() {
                                 playerHand.add(card)
                             }
                         }
+                        globalPlayerHand = playerHand
                         updateCards()
                     }
                     override fun onCancelled(databaseError: DatabaseError) {
@@ -88,6 +89,7 @@ class GameRoomFragment : Fragment() {
                                 playerHand.add(card)
                             }
                         }
+                        globalPlayerHand = playerHand
                         updateCards()
                     }
                     override fun onCancelled(databaseError: DatabaseError) {
@@ -215,5 +217,6 @@ class GameRoomFragment : Fragment() {
 
     companion object {
         var globalGameMaster: GameMaster? = null
+        var globalPlayerHand: MutableList<String>? = null
     }
 }
