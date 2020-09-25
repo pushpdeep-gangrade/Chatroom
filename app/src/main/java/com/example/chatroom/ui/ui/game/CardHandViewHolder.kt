@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatroom.R
 import com.example.chatroom.data.model.GameMaster
@@ -46,15 +47,23 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         mCardColorTextView?.setOnClickListener {
             Log.d("hand", "clicked ${cardColor}${cardValue}: playerNum: ${playerNum}")
 
-            var gameMaster = GameRoomFragment.globalGameMaster
+            val gameMaster = GameRoomFragment.globalGameMaster
             if (gameMaster != null) {
-                if (gameMaster.playersTurn?.last().toString() == playerNum.toString()) {
+                if (gameMaster.playersTurn.last().toString() == playerNum.toString()) {
                     if (gameMaster.centerCard?.get(1) == cardValue[0] || gameMaster.centerCard?.get(0).toString() == cardColor) {
                         gameMaster.centerCard = cardColor.plus(cardValue)
                         MainActivity.dbRef.child("games").child("activeGames")
                             .child(gameRequestId).child("player${playerNum}hand")
                             .child(cardPosition.toString()).removeValue()
-
+                        // todo: add logic/ popup for invalid choices
+                        if (gameMaster.centerCard?.get(1) != cardValue[0] && gameMaster.centerCard?.get(0) != cardColor[0]) {
+                           Log.d("choice","Invalid choice")
+                            /* Toast.makeText(
+                                this,
+                                "Invalid choice. Please choose another card",
+                                Toast.LENGTH_LONG
+                            ).show() */
+                        }
                         if (playerNum == 1) {
                             gameMaster.playersTurn = "player2"
                         }
@@ -63,10 +72,10 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                         }
 
                         if (cardValue == "Skip") {
-                            gameMaster?.isSkipTurn = true
+                            gameMaster.isSkipTurn = true
                         }
                         else if (cardValue == "+4") {
-                            gameMaster?.isDraw4Trun = true
+                            gameMaster.isDraw4Trun = true
                         }
 
                         MainActivity.dbRef.child("games").child("activeGames")
