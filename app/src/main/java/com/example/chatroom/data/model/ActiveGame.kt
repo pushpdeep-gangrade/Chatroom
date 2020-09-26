@@ -5,5 +5,6 @@ data class ActiveGame(val gameRequestId: String = "",
                       var player1hand: MutableList<String>? = null,
                       var player2: User? = User(),
                       var player2hand: MutableList<String>? = null,
-                      val gameMaster: GameMaster? = GameMaster() ) {
+                      val gameMaster: GameMaster? = GameMaster(),
+                      var winner: String? = null ) {
 }

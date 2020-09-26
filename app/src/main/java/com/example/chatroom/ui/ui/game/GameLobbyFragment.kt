@@ -194,7 +194,7 @@ class GameLobbyFragment : Fragment() {
             cardList.shuffle()
             var activeGame = ActiveGame(changedGameRequest.gameRequestId, changedGameRequest.player1, null,
                 changedGameRequest.player2, null,
-                GameMaster(true, true, "player1", null, cardList, false, false))
+                GameMaster(true, true, "player1", null, cardList, false, false), null)
 
             MainActivity.dbRef.child("games")
                 .child("activeGames")

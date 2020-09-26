@@ -59,6 +59,35 @@ class GameRoomFragment : Fragment() {
         centerCardValue = binding.currentCardValueTextView
         playersTurnTextView = binding.playersTurnTextView
 
+        //region Winner/Exit Condition Check
+        MainActivity.dbRef.child("games").child("activeGames")
+            .child(gameRequestId).child("winner").addValueEventListener(object :
+                ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val winner = snapshot.getValue<String>()
+
+                    if (winner != null) {
+                        if (winner == "player1") {
+                            Toast.makeText(context, "Host is the winner!", Toast.LENGTH_LONG).show()
+                        }
+                        else if (winner == "player2") {
+                            Toast.makeText(context, "Guest is the winner!", Toast.LENGTH_LONG).show()
+                        }
+                        MainActivity.dbRef.child("games")
+                            .child("activeGames")
+                            .child(gameRequestId).removeValue()
+                        view?.findNavController()?.navigate(R.id.action_nav_game_room_to_nav_game_lobby)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("demo", "Cancelled")
+                }
+
+            })
+        //endregion Winner/Exit Condition Check
+
+        //region PlayerHand Updates
         if (playerNum == 1) {
             MainActivity.dbRef.child("games").child("activeGames")
                 .child(gameRequestId).child("player1hand").addValueEventListener(object : ValueEventListener {
@@ -72,6 +101,7 @@ class GameRoomFragment : Fragment() {
                         }
                         globalPlayerHand = playerHand
                         updateCards()
+                        checkWinner()
                     }
                     override fun onCancelled(databaseError: DatabaseError) {
                         Log.d("demo", "cancel")
@@ -91,13 +121,16 @@ class GameRoomFragment : Fragment() {
                         }
                         globalPlayerHand = playerHand
                         updateCards()
+                        checkWinner()
                     }
                     override fun onCancelled(databaseError: DatabaseError) {
                         Log.d("demo", "cancel")
                     }
                 })
         }
+        //endregion PlayerHand Updates
 
+        //region GameMaster Control Code
         MainActivity.dbRef.child("games").child("activeGames")
             .child(gameRequestId).child("gameMaster").addValueEventListener(object :
                 ValueEventListener {
@@ -105,17 +138,20 @@ class GameRoomFragment : Fragment() {
                     gameMaster = dataSnapshot.getValue<GameMaster>()
                     globalGameMaster = gameMaster
 
-                    if (gameMaster?.isDealing!!) {
-                        playersTurnTextView?.text = "Dealing cards"
-                    }
-                    else if (gameMaster?.playersTurn == "player1") {
-                        playersTurnTextView?.text = "Host's Turn"
-                    }
-                    else if (gameMaster?.playersTurn == "player2") {
-                        playersTurnTextView?.text = "Guest's Turn"
-                    }
+                    if (gameMaster != null && gameMaster?.isDealing != null && gameMaster?.gameIsActive != null) {
+                        //region Turn Indicator
+                        if (gameMaster?.isDealing!!) {
+                            playersTurnTextView?.text = "Dealing cards"
+                        }
+                        else if (gameMaster?.playersTurn == "player1") {
+                            playersTurnTextView?.text = "Host's Turn"
+                        }
+                        else if (gameMaster?.playersTurn == "player2") {
+                            playersTurnTextView?.text = "Guest's Turn"
+                        }
+                        //endregion Turn Indicator
 
-                    if (gameMaster?.isDealing != null && gameMaster?.gameIsActive != null) {
+                        //region Dealing Code
                         if (gameMaster?.centerCard == null) {
                             gameMaster?.centerCard = gameMaster!!.drawpile?.removeAt(0).toString()
                             previousCenterCard = gameMaster?.centerCard
@@ -150,13 +186,56 @@ class GameRoomFragment : Fragment() {
                             MainActivity.dbRef.child("games").child("activeGames")
                                 .child(gameRequestId).child("gameMaster").setValue(gameMaster)
                         }
+                        //endregion Dealing Code
+
+                        if (gameMaster?.playersTurn == "player${playerNum}") {
+                            //region In-Game Code
+                            if (!gameMaster?.isDealing!! && gameMaster?.gameIsActive!!) {
+                                if (gameMaster?.isSkipTurn!!) {
+                                    if (gameMaster?.playersTurn == "player1") {
+                                        gameMaster?.playersTurn = "player2"
+                                    } else if (gameMaster?.playersTurn == "player2") {
+                                        gameMaster?.playersTurn = "player1"
+                                    }
+                                    gameMaster?.isSkipTurn = false
+                                } else if (gameMaster?.isDraw4Trun!!) {
+                                    for (x in 0 until 4) {
+                                        playerHand.add(
+                                            gameMaster!!.drawpile?.removeAt(0).toString()
+                                        )
+                                    }
+                                    if (gameMaster?.playersTurn == "player1") {
+                                        //uncomment if we want +4 to skip other player's turn
+                                        //gameMaster?.playersTurn = "player2"
+                                        MainActivity.dbRef.child("games").child("activeGames")
+                                            .child(gameRequestId).child("player1hand")
+                                            .setValue(playerHand)
+                                    } else if (gameMaster?.playersTurn == "player2") {
+                                        //uncomment if we want +4 to skip other player's turn
+                                        //gameMaster?.playersTurn = "player1"
+                                        MainActivity.dbRef.child("games").child("activeGames")
+                                            .child(gameRequestId).child("player2hand")
+                                            .setValue(playerHand)
+                                    }
+
+                                    gameMaster?.isDraw4Trun = false
+                                }
+                                //else regular turn
+
+                                MainActivity.dbRef.child("games").child("activeGames")
+                                    .child(gameRequestId).child("gameMaster").setValue(gameMaster)
+                            }
+                            //endregion In-Game Code
+                        }
                     }
                 }
                 override fun onCancelled(databaseError: DatabaseError) {
                     Log.d("demo", "cancel")
                 }
             })
+        //endregion GameMaster Control Code
 
+        //region Center Card Updates
         MainActivity.dbRef.child("games").child("activeGames")
             .child(gameRequestId).child("gameMaster").child("centerCard").addValueEventListener(object :
                 ValueEventListener {
@@ -173,10 +252,10 @@ class GameRoomFragment : Fragment() {
 
                     centerCardColor!!.setBackgroundColor(color)
 
-                    if (centerCard?.get(0).toString() == "+") {
-                        centerCardValue!!.text = centerCard.toString()
+                    if (centerCard?.get(0).toString() == "+" || centerCard?.get(1).toString() == "+") {
+                        centerCardValue!!.text = "+4"
                     }
-                    else if (centerCard.toString().length > 2) {
+                    else if (centerCard.toString().length > 3) {
                         centerCardValue!!.text = "Skip"
                     }
                     else {
@@ -187,11 +266,107 @@ class GameRoomFragment : Fragment() {
                     Log.d("demo", "cancel")
                 }
             })
+        //endregion Center Card Updates
+
+        //region Draw Card Button
+        binding.drawCardButton.setOnClickListener {
+            if (gameMaster != null) {
+                if (!gameMaster?.isDealing!! && gameMaster?.gameIsActive!!) {
+                    if (gameMaster?.playersTurn == "player${playerNum}" && !gameMaster?.isDraw4Trun!! && !gameMaster?.isSkipTurn!!) {
+
+                        var tempCard = gameMaster!!.drawpile?.removeAt(0).toString()
+
+                        //region If Drawn Card is +4
+                        //If drawn card is a +4
+                        if (tempCard == "+4") {
+                            val builder  =  AlertDialog.Builder(context);
+                            builder.setTitle("Choose Color");
+
+                            //builder.setNegativeButton("Close", DialogInterface.OnClickListener {
+                            //        dialog, id -> dialog.cancel()
+                            //})
+
+                            val colorOptions = mutableListOf("Blue", "Green", "Red", "Yellow").toTypedArray()
+                            val colorValues = mutableListOf("B", "G", "R", "Y")
+
+                            builder.setCancelable(false)
+
+                            builder.setItems(colorOptions, DialogInterface.OnClickListener(){ dialogInterface: DialogInterface, i: Int ->
+
+                                gameMaster?.centerCard = colorValues[i].plus("+4")
+
+                                if (playerNum == 1) {
+                                    gameMaster?.playersTurn = "player2"
+                                } else if (playerNum == 2) {
+                                    gameMaster?.playersTurn = "player1"
+                                }
+
+                                gameMaster?.isDraw4Trun = true
+
+                                MainActivity.dbRef.child("games").child("activeGames")
+                                    .child(gameRequestId).child("gameMaster").setValue(gameMaster)
+                            })
+
+                            var dialog : AlertDialog = builder.create()
+                            dialog.show()
+                        }
+                        //endregion If Drawn Card is +4
+                        //region If Drawn Card Matches Center (Color/Value)
+                        //If drawn card color matches center card OR if drawn card value matches center card
+                        else if (tempCard[0] == gameMaster?.centerCard!![0] || tempCard[1] == gameMaster?.centerCard!![1]) {
+                            gameMaster?.centerCard = tempCard
+
+                            if (playerNum == 1) {
+                                gameMaster?.playersTurn = "player2"
+                            } else if (playerNum == 2) {
+                                gameMaster?.playersTurn = "player1"
+                            }
+
+                            if (tempCard == "Skip") {
+                                gameMaster?.isSkipTurn = true
+                            }
+
+                            MainActivity.dbRef.child("games").child("activeGames")
+                                .child(gameRequestId).child("gameMaster").setValue(gameMaster)
+                        }
+                        //endregion If Drawn Card Matches Center (Color/Value)
+                        //region Unplayable Card Was Drawn
+                        else {
+                            playerHand.add(tempCard)
+
+                            if (playerNum == 1) {
+                                gameMaster?.playersTurn = "player2"
+                                MainActivity.dbRef.child("games").child("activeGames")
+                                    .child(gameRequestId).child("player1hand").setValue(playerHand)
+                            }
+                            else if (playerNum == 2) {
+                                gameMaster?.playersTurn = "player1"
+                                MainActivity.dbRef.child("games").child("activeGames")
+                                    .child(gameRequestId).child("player2hand").setValue(playerHand)
+                            }
+
+                            MainActivity.dbRef.child("games").child("activeGames")
+                                .child(gameRequestId).child("gameMaster").setValue(gameMaster)
+                        }
+                        //endregion Unplayable Card Was Drawn
+                    }
+                }
+            }
+        }
     }
 
     fun updateCards() {
         binding.cardHandRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.cardHandRecyclerView.adapter = CardHandAdapter(playerHand, gameRequestId, playerNum!!)
+    }
+
+    fun checkWinner() {
+        if (gameMaster != null) {
+            if (!gameMaster?.isDealing!! && playerHand.size == 0) {
+                MainActivity.dbRef.child("games").child("activeGames")
+                    .child(gameRequestId).child("winner").setValue("player${playerNum}")
+            }
+        }
     }
 
     override fun onDestroy() {

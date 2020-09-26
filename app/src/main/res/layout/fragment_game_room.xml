@@ -7,6 +7,16 @@
     tools:context=".ui.ui.game.GameRoomFragment">
 
 
+    <Button
+        android:id="@+id/draw_card_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/action_draw_card"
+        app:layout_constraintBottom_toTopOf="@+id/card_hand_recyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/current_card_color_textView" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/card_hand_recyclerView"
         android:layout_width="0dp"

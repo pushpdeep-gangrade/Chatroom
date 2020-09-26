@@ -34,6 +34,7 @@
     <string name="action_yes">Yes</string>
     <string name="action_no">No</string>
     <string name="action_share_remove_location">Share/Remove Location</string>
+    <string name="action_draw_card">Draw Card</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>

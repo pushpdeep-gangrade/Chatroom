@@ -23,7 +23,7 @@ class CardHandAdapter(private val cards: List<String>, private val gameRequestId
         if (cards[position][0].toString() == "+") {
             value = cards[position]
         }
-        else if (cards[position].length > 2) {
+        else if (cards[position].length > 3) {
             value = "Skip"
         }
         else {
