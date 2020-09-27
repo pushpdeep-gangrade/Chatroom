@@ -1,16 +1,19 @@
 # Authors
-Pushdeep Gangrade
-Katy Mitchell
-Valerie Ray
-Rockford Stoller
+- Pushdeep Gangrade
+- Katy Mitchell
+- Valerie Ray
+- Rockford Stoller
 
-# Chatroom App Mockup
+# Table of Contents
+- [App Mockup](#mockup)
+
+# Chatroom App Mockup <a name="mockup"></a>
 https://xd.adobe.com/view/cc32e7b4-613f-4c1b-8ea8-cadbe84acec9-9961/
 
 # Chatroom Demo
-Part 1: Creating a profile and introduction to group chats. https://www.youtu.be/PmfODNEfFbY
-Part 2: Requesting and accepting rides. https://youtu.be/yFQDB3oLeVI
-Part 3: Playing "Uno" with two users. 
+- Part 1: Creating a profile and introduction to group chats. https://www.youtu.be/PmfODNEfFbY
+- Part 2: Requesting and accepting rides. https://youtu.be/yFQDB3oLeVI
+- Part 3: Playing "Uno" with two users.
 
 # Design and Implementation
 Login
