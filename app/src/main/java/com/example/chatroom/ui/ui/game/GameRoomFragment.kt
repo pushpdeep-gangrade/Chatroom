@@ -36,7 +36,8 @@ class GameRoomFragment : Fragment() {
     private var centerCardColor: TextView? = null
     private var centerCardValue: TextView? = null
     private var playersTurnTextView: TextView? = null
-
+    private var player1Name: String? = "Player 1"
+    private var player2Name: String? = "Player 2"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -49,9 +50,12 @@ class GameRoomFragment : Fragment() {
         // Inflate the layout for this fragment
         gameRequestId = arguments?.getString("gameRequestId").toString()
         playerNum = arguments?.getInt("playerNumber")
+        player1Name = arguments?.getString("p1_name")
+        player2Name = arguments?.getString("p2_name")
 
         _binding = FragmentGameRoomBinding.inflate(inflater, container, false)
-        return binding.root    }
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,14 +73,15 @@ class GameRoomFragment : Fragment() {
                     if (winner != null) {
                         if (winner == "player1") {
                             Toast.makeText(context, "Host is the winner!", Toast.LENGTH_LONG).show()
-                        }
-                        else if (winner == "player2") {
-                            Toast.makeText(context, "Guest is the winner!", Toast.LENGTH_LONG).show()
+                        } else if (winner == "player2") {
+                            Toast.makeText(context, "Guest is the winner!", Toast.LENGTH_LONG)
+                                .show()
                         }
                         MainActivity.dbRef.child("games")
                             .child("activeGames")
                             .child(gameRequestId).removeValue()
-                        view?.findNavController()?.navigate(R.id.action_nav_game_room_to_nav_game_lobby)
+                        view.findNavController()
+                            .navigate(R.id.action_nav_game_room_to_nav_game_lobby)
                     }
                 }
 
@@ -90,11 +95,12 @@ class GameRoomFragment : Fragment() {
         //region PlayerHand Updates
         if (playerNum == 1) {
             MainActivity.dbRef.child("games").child("activeGames")
-                .child(gameRequestId).child("player1hand").addValueEventListener(object : ValueEventListener {
+                .child(gameRequestId).child("player1hand")
+                .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         playerHand.clear()
                         for (postSnapshot in dataSnapshot.children) {
-                            var card = postSnapshot.getValue<String>()
+                            val card = postSnapshot.getValue<String>()
                             if (card != null) {
                                 playerHand.add(card)
                             }
@@ -103,18 +109,19 @@ class GameRoomFragment : Fragment() {
                         updateCards()
                         checkWinner()
                     }
+
                     override fun onCancelled(databaseError: DatabaseError) {
                         Log.d("demo", "cancel")
                     }
                 })
-        }
-        else if (playerNum == 2) {
+        } else if (playerNum == 2) {
             MainActivity.dbRef.child("games").child("activeGames")
-                .child(gameRequestId).child("player2hand").addValueEventListener(object : ValueEventListener {
+                .child(gameRequestId).child("player2hand")
+                .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         playerHand.clear()
                         for (postSnapshot in dataSnapshot.children) {
-                            var card = postSnapshot.getValue<String>()
+                            val card = postSnapshot.getValue<String>()
                             if (card != null) {
                                 playerHand.add(card)
                             }
@@ -123,6 +130,7 @@ class GameRoomFragment : Fragment() {
                         updateCards()
                         checkWinner()
                     }
+
                     override fun onCancelled(databaseError: DatabaseError) {
                         Log.d("demo", "cancel")
                     }
@@ -142,12 +150,10 @@ class GameRoomFragment : Fragment() {
                         //region Turn Indicator
                         if (gameMaster?.isDealing!!) {
                             playersTurnTextView?.text = "Dealing cards"
-                        }
-                        else if (gameMaster?.playersTurn == "player1") {
-                            playersTurnTextView?.text = "Host's Turn"
-                        }
-                        else if (gameMaster?.playersTurn == "player2") {
-                            playersTurnTextView?.text = "Guest's Turn"
+                        } else if (gameMaster?.playersTurn == "player1") {
+                            playersTurnTextView?.text = "$player1Name's Turn"
+                        } else if (gameMaster?.playersTurn == "player2") {
+                            playersTurnTextView?.text = "$player2Name's Turn"
                         }
                         //endregion Turn Indicator
 
@@ -157,19 +163,16 @@ class GameRoomFragment : Fragment() {
                             previousCenterCard = gameMaster?.centerCard
                             MainActivity.dbRef.child("games").child("activeGames")
                                 .child(gameRequestId).child("gameMaster").setValue(gameMaster)
-                        }
-                        else if (gameMaster?.isDealing!! && gameMaster?.gameIsActive!!) {
+                        } else if (gameMaster?.isDealing!! && gameMaster?.gameIsActive!!) {
                             //if dealing is finished
                             if (dealCount <= 0) {
                                 gameMaster?.isDealing = false
-                            }
-                            else {
+                            } else {
                                 if (playerNum == 1 && gameMaster?.playersTurn == "player1") {
                                     playerHand.add(gameMaster!!.drawpile?.removeAt(0).toString())
                                     gameMaster?.playersTurn = "player2"
                                     dealCount -= 1
-                                }
-                                else if (playerNum == 2 && gameMaster?.playersTurn == "player2") {
+                                } else if (playerNum == 2 && gameMaster?.playersTurn == "player2") {
                                     playerHand.add(gameMaster!!.drawpile?.removeAt(0).toString())
                                     gameMaster?.playersTurn = "player1"
                                     dealCount -= 1
@@ -178,8 +181,7 @@ class GameRoomFragment : Fragment() {
                             if (playerNum == 1) {
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("player1hand").setValue(playerHand)
-                            }
-                            else if (playerNum == 2) {
+                            } else if (playerNum == 2) {
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("player2hand").setValue(playerHand)
                             }
@@ -229,6 +231,7 @@ class GameRoomFragment : Fragment() {
                         }
                     }
                 }
+
                 override fun onCancelled(databaseError: DatabaseError) {
                     Log.d("demo", "cancel")
                 }
@@ -237,10 +240,11 @@ class GameRoomFragment : Fragment() {
 
         //region Center Card Updates
         MainActivity.dbRef.child("games").child("activeGames")
-            .child(gameRequestId).child("gameMaster").child("centerCard").addValueEventListener(object :
+            .child(gameRequestId).child("gameMaster").child("centerCard")
+            .addValueEventListener(object :
                 ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    var centerCard = dataSnapshot.getValue<String>()
+                    val centerCard = dataSnapshot.getValue<String>()
 
                     var color = Color.GRAY
                     when (centerCard?.get(0).toString()) {
@@ -252,16 +256,17 @@ class GameRoomFragment : Fragment() {
 
                     centerCardColor!!.setBackgroundColor(color)
 
-                    if (centerCard?.get(0).toString() == "+" || centerCard?.get(1).toString() == "+") {
+                    if (centerCard?.get(0).toString() == "+" || centerCard?.get(1)
+                            .toString() == "+"
+                    ) {
                         centerCardValue!!.text = "+4"
-                    }
-                    else if (centerCard.toString().length > 3) {
+                    } else if (centerCard.toString().length > 3) {
                         centerCardValue!!.text = "Skip"
-                    }
-                    else {
+                    } else {
                         centerCardValue!!.text = centerCard?.get(1).toString()
                     }
                 }
+
                 override fun onCancelled(databaseError: DatabaseError) {
                     Log.d("demo", "cancel")
                 }
@@ -274,40 +279,44 @@ class GameRoomFragment : Fragment() {
                 if (!gameMaster?.isDealing!! && gameMaster?.gameIsActive!!) {
                     if (gameMaster?.playersTurn == "player${playerNum}" && !gameMaster?.isDraw4Trun!! && !gameMaster?.isSkipTurn!!) {
 
-                        var tempCard = gameMaster!!.drawpile?.removeAt(0).toString()
+                        val tempCard = gameMaster!!.drawpile?.removeAt(0).toString()
 
                         //region If Drawn Card is +4
                         //If drawn card is a +4
                         if (tempCard == "+4") {
-                            val builder  =  AlertDialog.Builder(context);
-                            builder.setTitle("Choose Color");
+                            val builder = AlertDialog.Builder(context)
+                            builder.setTitle("Choose Color")
 
                             //builder.setNegativeButton("Close", DialogInterface.OnClickListener {
                             //        dialog, id -> dialog.cancel()
                             //})
 
-                            val colorOptions = mutableListOf("Blue", "Green", "Red", "Yellow").toTypedArray()
+                            val colorOptions =
+                                mutableListOf("Blue", "Green", "Red", "Yellow").toTypedArray()
                             val colorValues = mutableListOf("B", "G", "R", "Y")
 
                             builder.setCancelable(false)
 
-                            builder.setItems(colorOptions, DialogInterface.OnClickListener(){ dialogInterface: DialogInterface, i: Int ->
+                            builder.setItems(
+                                colorOptions,
+                                { dialogInterface: DialogInterface, i: Int ->
 
-                                gameMaster?.centerCard = colorValues[i].plus("+4")
+                                    gameMaster?.centerCard = colorValues[i].plus("+4")
 
-                                if (playerNum == 1) {
-                                    gameMaster?.playersTurn = "player2"
-                                } else if (playerNum == 2) {
-                                    gameMaster?.playersTurn = "player1"
-                                }
+                                    if (playerNum == 1) {
+                                        gameMaster?.playersTurn = "player2"
+                                    } else if (playerNum == 2) {
+                                        gameMaster?.playersTurn = "player1"
+                                    }
 
-                                gameMaster?.isDraw4Trun = true
+                                    gameMaster?.isDraw4Trun = true
 
-                                MainActivity.dbRef.child("games").child("activeGames")
-                                    .child(gameRequestId).child("gameMaster").setValue(gameMaster)
-                            })
+                                    MainActivity.dbRef.child("games").child("activeGames")
+                                        .child(gameRequestId).child("gameMaster")
+                                        .setValue(gameMaster)
+                                })
 
-                            var dialog : AlertDialog = builder.create()
+                            val dialog: AlertDialog = builder.create()
                             dialog.show()
                         }
                         //endregion If Drawn Card is +4
@@ -338,8 +347,7 @@ class GameRoomFragment : Fragment() {
                                 gameMaster?.playersTurn = "player2"
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("player1hand").setValue(playerHand)
-                            }
-                            else if (playerNum == 2) {
+                            } else if (playerNum == 2) {
                                 gameMaster?.playersTurn = "player1"
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("player2hand").setValue(playerHand)
@@ -356,8 +364,10 @@ class GameRoomFragment : Fragment() {
     }
 
     fun updateCards() {
-        binding.cardHandRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        binding.cardHandRecyclerView.adapter = CardHandAdapter(playerHand, gameRequestId, playerNum!!)
+        binding.cardHandRecyclerView.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.cardHandRecyclerView.adapter =
+            CardHandAdapter(playerHand, gameRequestId, playerNum!!)
     }
 
     fun checkWinner() {
@@ -376,21 +386,21 @@ class GameRoomFragment : Fragment() {
             .child("activeGames")
             .child(gameRequestId).removeValue()
 
-       /* val builder  =  AlertDialog.Builder(context);
-        builder.setTitle("Game Room");
+        /* val builder  =  AlertDialog.Builder(context);
+         builder.setTitle("Game Room");
 
-        builder.setMessage("Player has left the game")
+         builder.setMessage("Player has left the game")
 
-        builder.setNegativeButton("Ok", DialogInterface.OnClickListener {
-                dialog, id -> dialog.cancel()
-        })
+         builder.setNegativeButton("Ok", DialogInterface.OnClickListener {
+                 dialog, id -> dialog.cancel()
+         })
 
-        builder.setCancelable(false)
+         builder.setCancelable(false)
 
-        val dialog : AlertDialog = builder.create()
-        dialog.show()
+         val dialog : AlertDialog = builder.create()
+         dialog.show()
 
-        view?.findNavController()?.navigate(R.id.action_nav_game_room_to_nav_game_lobby)*/
+         view?.findNavController()?.navigate(R.id.action_nav_game_room_to_nav_game_lobby)*/
     }
 
     companion object {
