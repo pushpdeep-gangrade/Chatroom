@@ -179,10 +179,19 @@ class GameRoomFragment : Fragment() {
                         if (gameMaster?.isDealing!!) {
                             playersTurnTextView?.text = "Dealing cards"
                         } else if (gameMaster?.playersTurn == "player1") {
-                            playersTurnTextView?.text = "$player1Name's Turn"
+                            if (player1Name != null) {
+                                playersTurnTextView?.text = "$player1Name's Turn"
+                            }
+                            else {
+                                playersTurnTextView?.text = "Player 1's Turn"
+                            }
                         } else if (gameMaster?.playersTurn == "player2") {
-                            playersTurnTextView?.text = "$player2Name's Turn"
-                        }
+                            if (player2Name != null) {
+                                playersTurnTextView?.text = "$player2Name's Turn"
+                            }
+                            else {
+                                playersTurnTextView?.text = "Player 2's Turn"
+                            }                        }
                         //endregion Turn Indicator
 
                         //region Dealing Code

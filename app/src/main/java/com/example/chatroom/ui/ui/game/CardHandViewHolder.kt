@@ -54,12 +54,12 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             val gameMaster = GameRoomFragment.globalGameMaster
             val playerHand = GameRoomFragment.globalPlayerHand
             if (gameMaster != null) {
-                if (!gameMaster.isDealing && !gameMaster.isDraw4Trun && !gameMaster.isSkipTurn) {
+                if (!gameMaster.isDealing && !gameMaster.isDraw4Turn && !gameMaster.isSkipTurn) {
                     if (gameMaster.playersTurn.last().toString() == playerNum.toString()) {
                         //region +4 Logic
                         if (cardValue == "+4") {
-                            val builder  =  AlertDialog.Builder(this.itemView.context);
-                            builder.setTitle("Choose Color");
+                            val builder  =  AlertDialog.Builder(this.itemView.context)
+                            builder.setTitle("Choose Color")
 
                             //builder.setNegativeButton("Close", DialogInterface.OnClickListener {
                             //        dialog, id -> dialog.cancel()
@@ -70,7 +70,7 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
                             builder.setCancelable(false)
 
-                            builder.setItems(colorOptions, DialogInterface.OnClickListener(){ dialogInterface: DialogInterface, i: Int ->
+                            builder.setItems(colorOptions, { dialogInterface: DialogInterface, i: Int ->
 
                                 gameMaster.centerCard = colorValues[i].plus(cardValue)
 
@@ -108,19 +108,19 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                                 }
 
                                 if (cardValue == "+4") {
-                                    gameMaster.isDraw4Trun = true
+                                    gameMaster.isDraw4Turn = true
                                 }
 
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("gameMaster").setValue(gameMaster)
                             })
 
-                            var dialog : AlertDialog = builder.create()
+                            val dialog : AlertDialog = builder.create()
                             dialog.show()
                         }
                         //endregion +4 Logic
                         //region Matching Card Value/Color Logic OR If Game Starts with +4 (if it is a played +4 it will have a color [i.e. G+4, R+4, etc])
-                        else if (gameMaster.centerCard?.get(1) == cardValue[0] || gameMaster.centerCard?.get(0).toString() == cardColor || gameMaster?.centerCard == "+4") {
+                        else if (gameMaster.centerCard?.get(1) == cardValue[0] || gameMaster.centerCard?.get(0).toString() == cardColor || gameMaster.centerCard == "+4") {
 
                             gameMaster.centerCard = cardColor.plus(cardValue)
 
@@ -185,7 +185,7 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                         // todo: add logic/ popup for not player's turn
                         Log.d(
                             "choice",
-                            "Please wait: you are player${playerNum} but it is ${gameMaster?.playersTurn}'s turn"
+                            "Please wait: you are player${playerNum} but it is ${gameMaster.playersTurn}'s turn"
                         )
                         /*  val builder  =  AlertDialog.Builder();
                         builder.setTitle("Invalid Choice");
@@ -229,7 +229,7 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             //                        gameMaster?.isSkipTurn = true
             //                    }
             //                    else if (cardValue == "+4") {
-            //                        gameMaster?.isDraw4Trun = true
+            //                        gameMaster?.isDraw4Turn = true
             //                    }
 
             //                    MainActivity.dbRef.child("games").child(gameRequestId).child("gameMaster").setValue(gameMaster)
