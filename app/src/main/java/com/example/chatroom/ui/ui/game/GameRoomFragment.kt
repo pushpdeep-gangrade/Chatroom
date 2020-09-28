@@ -40,6 +40,8 @@ class GameRoomFragment : Fragment() {
     private var playersDB: DatabaseReference = MainActivity.db.getReference()
     private var player1Name: String? = "Player 1"
     private var player2Name: String? = "Player 2"
+    private var tempCard: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -316,7 +318,7 @@ class GameRoomFragment : Fragment() {
                 if (!gameMaster?.isDealing!! && gameMaster?.gameIsActive!!) {
                     if (gameMaster?.playersTurn == "player${playerNum}" && !gameMaster?.isDraw4Turn!! && !gameMaster?.isSkipTurn!!) {
 
-                        val tempCard = gameMaster!!.drawpile?.removeAt(0).toString()
+                        tempCard = gameMaster!!.drawpile?.removeAt(0).toString()
 
                         //region If Drawn Card is +4
                         //If drawn card is a +4
@@ -359,7 +361,7 @@ class GameRoomFragment : Fragment() {
                         //endregion If Drawn Card is +4
                         //region If Drawn Card Matches Center (Color/Value)
                         //If drawn card color matches center card OR if drawn card value matches center card
-                        else if (tempCard[0] == gameMaster?.centerCard!![0] || tempCard[1] == gameMaster?.centerCard!![1]) {
+                        else if (tempCard!![0] == gameMaster?.centerCard!![0] || tempCard!![1] == gameMaster?.centerCard!![1]) {
                             gameMaster?.centerCard = tempCard
 
                             if (playerNum == 1) {
@@ -378,9 +380,10 @@ class GameRoomFragment : Fragment() {
                         //endregion If Drawn Card Matches Center (Color/Value)
                         //region Unplayable Card Was Drawn
                         else {
-                            playerHand.add(tempCard)
+                            playerHand.add(tempCard!!)
+                            tempCard = gameMaster!!.drawpile?.removeAt(0).toString()
 
-                            if (playerNum == 1) {
+/*                            if (playerNum == 1) {
                                 gameMaster?.playersTurn = "player2"
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("player1hand").setValue(playerHand)
@@ -391,7 +394,7 @@ class GameRoomFragment : Fragment() {
                             }
 
                             MainActivity.dbRef.child("games").child("activeGames")
-                                .child(gameRequestId).child("gameMaster").setValue(gameMaster)
+                                .child(gameRequestId).child("gameMaster").setValue(gameMaster)*/
                         }
                         //endregion Unplayable Card Was Drawn
                     }

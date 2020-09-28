@@ -130,7 +130,7 @@ class GameLobbyFragment : Fragment() {
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
-                    Log.d("demoo", "cancel")
+                    Log.d("demo", "cancel")
                 }
             })
     }
