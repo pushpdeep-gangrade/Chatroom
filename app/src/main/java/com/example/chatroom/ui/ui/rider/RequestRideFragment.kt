@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -24,7 +25,6 @@ import com.android.volley.toolbox.Volley
 import com.example.chatroom.R
 import com.example.chatroom.data.model.PickedPlace
 import com.example.chatroom.data.model.RideRequest
-import com.example.chatroom.data.model.User
 import com.example.chatroom.databinding.FragmentRequestRideBinding
 import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.ui.chatroom.chatRoomId
@@ -36,16 +36,15 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.Places.createClient
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.maps.android.PolyUtil
-import kotlinx.android.synthetic.main.chat_item.view.*
-import kotlinx.android.synthetic.main.fragment_request_ride.*
 import org.json.JSONObject
 import java.util.*
 
@@ -60,6 +59,8 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
     var path: MutableList<List<LatLng>> = ArrayList()
     var urlDirections: String = "https://maps.googleapis.com/maps/api/directions/json?"
     var directionsRequest: StringRequest? = null
+    var pickUpAutoComplete : AutocompleteSupportFragment? = null
+    var dropOffAutoComplete : AutocompleteSupportFragment? = null
 
     private var map: GoogleMap? = null
 
@@ -79,6 +80,7 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
         initialize()
 
+
         binding.submitRequestButton.setOnClickListener {
             if (pickupLocationPlace.name != "" && dropoffLocationPlace.name != "") {
                 var requestId: UUID = UUID.randomUUID()
@@ -94,9 +96,14 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
                     .child("rideRequests").child(requestId.toString()).setValue(rideRequest)
 
                 val bundle =
-                    bundleOf("chatroomId" to chatRoomId, "requestId" to requestId.toString(),
-                        "pickupLatitude" to pickupLocationLatLng!!.latitude.toString(), "pickupLongitude" to pickupLocationLatLng!!.longitude.toString(),
-                        "dropoffLatitude" to dropoffLocationLatLng!!.latitude.toString(), "dropoffLongitude" to dropoffLocationLatLng!!.longitude.toString())
+                    bundleOf(
+                        "chatroomId" to chatRoomId,
+                        "requestId" to requestId.toString(),
+                        "pickupLatitude" to pickupLocationLatLng!!.latitude.toString(),
+                        "pickupLongitude" to pickupLocationLatLng!!.longitude.toString(),
+                        "dropoffLatitude" to dropoffLocationLatLng!!.latitude.toString(),
+                        "dropoffLongitude" to dropoffLocationLatLng!!.longitude.toString()
+                    )
                 view.findNavController()
                     .navigate(R.id.action_nav_request_ride_to_nav_request_driver, bundle)//, bundle)
             } else {
@@ -109,7 +116,12 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap?) {
         map = googleMap
         if (!Places.isInitialized()) {
-            context?.let { Places.initialize(it, requireContext().resources.getString(R.string.api_key)) };
+            context?.let {
+                Places.initialize(
+                    it,
+                    requireContext().resources.getString(R.string.api_key)
+                )
+            };
         }
 
         getLocationPermission()
@@ -117,9 +129,9 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
         val placesClient = context?.let { Places.createClient(it) }
 
 
-        val pickUpAutoComplete =
+        pickUpAutoComplete =
             FragmentManager.findFragment(view?.findViewById(R.id.pickup_location_edittext)!!) as AutocompleteSupportFragment
-        pickUpAutoComplete.setPlaceFields(
+        pickUpAutoComplete!!.setPlaceFields(
             listOf(
                 Place.Field.ID,
                 Place.Field.NAME,
@@ -127,7 +139,8 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
             )
         )
 
-        pickUpAutoComplete.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+
+        pickUpAutoComplete!!.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 var lat: Double = 0.0
                 var long: Double = 0.0
@@ -209,9 +222,9 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
         })
 
 
-        val dropOffAutoComplete =
+         dropOffAutoComplete =
             FragmentManager.findFragment(view?.findViewById(R.id.dropoff_location_edittext)!!) as AutocompleteSupportFragment
-        dropOffAutoComplete.setPlaceFields(
+        dropOffAutoComplete!!.setPlaceFields(
             listOf(
                 Place.Field.ID,
                 Place.Field.NAME,
@@ -219,7 +232,7 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
             )
         )
 
-        dropOffAutoComplete.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+        dropOffAutoComplete!!.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 var lat: Double = 0.0
                 var long: Double = 0.0
@@ -299,17 +312,27 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
 
         })
 
-        binding.requestRideClearMarkersButton.setOnClickListener {
-            googleMap?.clear()
-            updateLocationUI()
-            pickUpAutoComplete.setText("")
-            dropOffAutoComplete.setText("")
-            pickupLocationPlace = PickedPlace()
-            pickupLocationLatLng = null
-            dropoffLocationPlace = PickedPlace()
-            dropoffLocationLatLng = null
-            path = ArrayList()
+
+        pickUpAutoComplete!!.view?.findViewById<View>(R.id.places_autocomplete_clear_button)
+            ?.setOnClickListener {
+                clearMap()
+            }
+
+        dropOffAutoComplete!!.view?.findViewById<View>(R.id.places_autocomplete_clear_button)?.setOnClickListener{
+            clearMap()
         }
+    }
+
+    fun clearMap() {
+        map?.clear()
+        updateLocationUI()
+        pickUpAutoComplete?.setText("")
+        dropOffAutoComplete?.setText("")
+        pickupLocationPlace = PickedPlace()
+        pickupLocationLatLng = null
+        dropoffLocationPlace = PickedPlace()
+        dropoffLocationLatLng = null
+        path = ArrayList()
     }
 
     fun initialize() {
