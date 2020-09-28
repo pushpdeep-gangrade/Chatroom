@@ -30,7 +30,6 @@ class GameLobbyFragment : Fragment() {
     private var listGameRequests: MutableList<GameRequest> = ArrayList()
     private var listGameRequestsNames: MutableList<String> = ArrayList()
     private var currentGameRequest: GameRequest = GameRequest()
-    var player2Name: String = "Player 2"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -157,10 +156,10 @@ class GameLobbyFragment : Fragment() {
                                 "Game Request Name",
                                 gr.player1.firstName.plus(" ").plus(gr.player1.lastName)
                             )
-                            if (player2Name.equals("Player 2") || player2Name.equals("")) {
-                                player2Name = gr.player2!!.firstName
-                            }
-                            Log.d("players", "Player 2 is: " + player2Name + ".")
+                            /*                          if (player2Name.equals("Player 2") || player2Name.equals("")) {
+                                                          player2Name = gr.player2!!.firstName
+                                                      }
+                                                      Log.d("players", "Player 2 is: " + player2Name + ".")*/
                         }
                     }
 
@@ -269,14 +268,6 @@ class GameLobbyFragment : Fragment() {
         val bundle = Bundle()
         bundle.putString("gameRequestId", currentGameRequest.gameRequestId)
         bundle.putInt("playerNumber", 1)
-        bundle.putString("p1_name", currentGameRequest.player1.firstName)
-        bundle.putString("p2_name", player2Name)
-        Log.d(
-            "players",
-            "Player 1: " + currentGameRequest.player1.firstName + " Player 2: " + player2Name
-        )
         view.findNavController().navigate(R.id.action_nav_game_lobby_to_nav_game_room, bundle)
     }
-
-
 }

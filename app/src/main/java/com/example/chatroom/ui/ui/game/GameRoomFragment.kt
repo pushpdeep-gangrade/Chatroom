@@ -20,6 +20,7 @@ import com.example.chatroom.databinding.FragmentGameRoomBinding
 import com.example.chatroom.ui.MainActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 
@@ -36,6 +37,7 @@ class GameRoomFragment : Fragment() {
     private var centerCardColor: TextView? = null
     private var centerCardValue: TextView? = null
     private var playersTurnTextView: TextView? = null
+    private var playersDB: DatabaseReference = MainActivity.db.getReference()
     private var player1Name: String? = "Player 1"
     private var player2Name: String? = "Player 2"
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,9 +51,8 @@ class GameRoomFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         gameRequestId = arguments?.getString("gameRequestId").toString()
+        Log.d("names", gameRequestId)
         playerNum = arguments?.getInt("playerNumber")
-        player1Name = arguments?.getString("p1_name")
-        player2Name = arguments?.getString("p2_name")
 
         _binding = FragmentGameRoomBinding.inflate(inflater, container, false)
         return binding.root
@@ -138,6 +139,34 @@ class GameRoomFragment : Fragment() {
         }
         //endregion PlayerHand Updates
 
+        // Get player names
+        playersDB.child("games").child("active games").child(gameRequestId).child("player1")
+            .child("firstName")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    player1Name = snapshot.getValue<String>()
+                    Log.d("names", "Player 1: " + player1Name)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("demo", "cancel")
+                }
+            })
+
+        MainActivity.dbRef.child("games").child("active games").child(gameRequestId)
+            .child("player2").child("firstName")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    player2Name = snapshot.getValue<String>()
+                    Log.d("names", "Player 2: " + player2Name)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("demo", "cancel")
+                }
+            })
+
+
         //region GameMaster Control Code
         MainActivity.dbRef.child("games").child("activeGames")
             .child(gameRequestId).child("gameMaster").addValueEventListener(object :
@@ -145,7 +174,6 @@ class GameRoomFragment : Fragment() {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     gameMaster = dataSnapshot.getValue<GameMaster>()
                     globalGameMaster = gameMaster
-
                     if (gameMaster != null && gameMaster?.isDealing != null && gameMaster?.gameIsActive != null) {
                         //region Turn Indicator
                         if (gameMaster?.isDealing!!) {
@@ -200,7 +228,7 @@ class GameRoomFragment : Fragment() {
                                         gameMaster?.playersTurn = "player1"
                                     }
                                     gameMaster?.isSkipTurn = false
-                                } else if (gameMaster?.isDraw4Trun!!) {
+                                } else if (gameMaster?.isDraw4Turn!!) {
                                     for (x in 0 until 4) {
                                         playerHand.add(
                                             gameMaster!!.drawpile?.removeAt(0).toString()
@@ -220,7 +248,7 @@ class GameRoomFragment : Fragment() {
                                             .setValue(playerHand)
                                     }
 
-                                    gameMaster?.isDraw4Trun = false
+                                    gameMaster?.isDraw4Turn = false
                                 }
                                 //else regular turn
 
@@ -277,7 +305,7 @@ class GameRoomFragment : Fragment() {
         binding.drawCardButton.setOnClickListener {
             if (gameMaster != null) {
                 if (!gameMaster?.isDealing!! && gameMaster?.gameIsActive!!) {
-                    if (gameMaster?.playersTurn == "player${playerNum}" && !gameMaster?.isDraw4Trun!! && !gameMaster?.isSkipTurn!!) {
+                    if (gameMaster?.playersTurn == "player${playerNum}" && !gameMaster?.isDraw4Turn!! && !gameMaster?.isSkipTurn!!) {
 
                         val tempCard = gameMaster!!.drawpile?.removeAt(0).toString()
 
@@ -309,7 +337,7 @@ class GameRoomFragment : Fragment() {
                                         gameMaster?.playersTurn = "player1"
                                     }
 
-                                    gameMaster?.isDraw4Trun = true
+                                    gameMaster?.isDraw4Turn = true
 
                                     MainActivity.dbRef.child("games").child("activeGames")
                                         .child(gameRequestId).child("gameMaster")

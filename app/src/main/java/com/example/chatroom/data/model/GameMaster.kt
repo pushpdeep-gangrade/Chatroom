@@ -8,6 +8,5 @@ data class GameMaster(var isDealing: Boolean = true,
                       var playersTurn: String = "player1",
                       var centerCard: String? = null,
                       var drawpile: MutableList<String>? = null,
-                      var isDraw4Trun: Boolean = false,
-                      var isSkipTurn: Boolean = false) {
-}
+                      var isDraw4Turn: Boolean = false,
+                      var isSkipTurn: Boolean = false)
