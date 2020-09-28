@@ -370,7 +370,7 @@ class GameRoomFragment : Fragment() {
                                 gameMaster?.playersTurn = "player1"
                             }
 
-                            if (tempCard == "Skip") {
+                            if (tempCard!!.length > 3) {
                                 gameMaster?.isSkipTurn = true
                             }
 
@@ -381,20 +381,20 @@ class GameRoomFragment : Fragment() {
                         //region Unplayable Card Was Drawn
                         else {
                             playerHand.add(tempCard!!)
-                            tempCard = gameMaster!!.drawpile?.removeAt(0).toString()
+                            //tempCard = gameMaster!!.drawpile?.removeAt(0).toString()
 
-/*                            if (playerNum == 1) {
-                                gameMaster?.playersTurn = "player2"
+                            if (playerNum == 1) {
+                                //gameMaster?.playersTurn = "player2"
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("player1hand").setValue(playerHand)
                             } else if (playerNum == 2) {
-                                gameMaster?.playersTurn = "player1"
+                                //gameMaster?.playersTurn = "player1"
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("player2hand").setValue(playerHand)
                             }
 
                             MainActivity.dbRef.child("games").child("activeGames")
-                                .child(gameRequestId).child("gameMaster").setValue(gameMaster)*/
+                                .child(gameRequestId).child("gameMaster").setValue(gameMaster)
                         }
                         //endregion Unplayable Card Was Drawn
                     }
