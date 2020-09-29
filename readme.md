@@ -162,7 +162,7 @@ https://xd.adobe.com/view/cc32e7b4-613f-4c1b-8ea8-cadbe84acec9-9961/
   flipped over and set aside to begin the discard pile. Further game rules: https://en.wikipedia.org/wiki/Uno_(card_game)
 <br/>
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Player Turn.png" width=150>
-- The game screen indicates whose turn it is by labeling the center card pile "<FirstName>'s Turn"
+- The game screen indicates whose turn it is by labeling the center card pile "FirstName's Turn"
 <br/>
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Uno.png" width=150>
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Winner.png" width=150>
