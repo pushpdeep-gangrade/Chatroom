@@ -77,7 +77,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_chatrooms,
                 R.id.nav_users,
                 R.id.nav_ride_history,
-                R.id.nav_game_lobby
+                R.id.nav_game_lobby,
+                R.id.nav_game_room
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

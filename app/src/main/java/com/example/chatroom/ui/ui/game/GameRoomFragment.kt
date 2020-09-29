@@ -13,7 +13,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatroom.R
@@ -47,20 +50,14 @@ class GameRoomFragment : Fragment() {
     private var tempCard: String? = null
     private var gameWinner: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
         gameRequestId = arguments?.getString("gameRequestId").toString()
         Log.d("names", gameRequestId)
         playerNum = arguments?.getInt("playerNumber")
-
         _binding = FragmentGameRoomBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -81,11 +78,20 @@ class GameRoomFragment : Fragment() {
 
                     if (winner != null) {
                         if (winner == "player1") {
-                            Toast.makeText(context, "${player1Name} is the winner!", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                context,
+                                "${player1Name} is the winner!",
+                                Toast.LENGTH_LONG
+                            ).show()
                         } else if (winner == "player2") {
-                            Toast.makeText(context, "${player2Name} is the winner!", Toast.LENGTH_LONG)
+                            Toast.makeText(
+                                context,
+                                "${player2Name} is the winner!",
+                                Toast.LENGTH_LONG
+                            )
                                 .show()
                         }
+
                         MainActivity.dbRef.child("games")
                             .child("activeGames")
                             .child(gameRequestId).removeValue()
@@ -206,26 +212,24 @@ class GameRoomFragment : Fragment() {
 
                     var otherPlayer: String = ""
 
-                    if(playerNum == 1){
+                    if (playerNum == 1) {
                         otherPlayer = "player2"
-                    }
-                    else if(playerNum == 2){
+                    } else if (playerNum == 2) {
                         otherPlayer = "player1"
                     }
 
                     Log.d("Player Num", "$playerNum ".plus(otherPlayer))
 
 
-                    if(otherPlayer == "player2" && player1Name != null && gameWinner == null){
+                    if (otherPlayer == "player2" && player1Name != null && gameWinner == null) {
                         //Log.d("Player Left", "Player 2 left")
-                        if(player2Name == null){
+                        if (player2Name == null) {
                             leaveGameDialog(view)
                             Log.d("Player Left", "Player 2 left")
                         }
-                    }
-                    else if(otherPlayer == "player1" && player2Name != null && gameWinner == null){
+                    } else if (otherPlayer == "player1" && player2Name != null && gameWinner == null) {
                         //Log.d("Player Left", "Player 1 left 2")
-                        if(player1Name == null){
+                        if (player1Name == null) {
                             leaveGameDialog(view)
                             Log.d("Player Left", "Player 1 left")
 
@@ -250,21 +254,19 @@ class GameRoomFragment : Fragment() {
 
                     var otherPlayer: String = ""
 
-                    if(playerNum == 1){
+                    if (playerNum == 1) {
                         otherPlayer = "player2"
-                    }
-                    else if(playerNum == 2){
+                    } else if (playerNum == 2) {
                         otherPlayer = "player1"
                     }
 
-                    if(otherPlayer == "player2" && player1Name != null && gameWinner == null){
-                        if(player2Name == null){
+                    if (otherPlayer == "player2" && player1Name != null && gameWinner == null) {
+                        if (player2Name == null) {
                             leaveGameDialog(view)
                             Log.d("Player Left", "Player 2 left")
                         }
-                    }
-                    else if(otherPlayer == "player1" && player2Name != null && gameWinner == null){
-                        if(player1Name == null){
+                    } else if (otherPlayer == "player1" && player2Name != null && gameWinner == null) {
+                        if (player1Name == null) {
                             leaveGameDialog(view)
                             Log.d("Player Left", "Player 1 left")
 
@@ -280,20 +282,18 @@ class GameRoomFragment : Fragment() {
             })
 
 
-
         //region GameMaster Control Code
         MainActivity.dbRef.child("games").child("activeGames")
             .child(gameRequestId).child("gameMaster").addValueEventListener(object :
                 ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     gameMaster = dataSnapshot.getValue<GameMaster>()
-                    if(gameMaster?.drawpile != null || gameMaster?.discardPile != null){
+                    if (gameMaster?.drawpile != null || gameMaster?.discardPile != null) {
                         gameMaster = checkDrawPile(gameMaster)
+                    } else {
                         binding.drawCardButton.isEnabled = true
                     }
-                    else{
-                        binding.drawCardButton.isEnabled = false
-                    }
+
                     globalGameMaster = gameMaster
                     Log.d("Draw Pile", gameMaster?.drawpile.toString())
                     if (gameMaster != null && gameMaster?.isDealing != null && gameMaster?.gameIsActive != null) {
@@ -302,18 +302,17 @@ class GameRoomFragment : Fragment() {
                             playersTurnTextView?.text = getString(R.string.dealing)
                         } else if (gameMaster?.playersTurn == "player1") {
                             if (player1Name != null) {
-                                playersTurnTextView?.text = getString(R.string.turn,player1Name)
-                            }
-                            else {
+                                playersTurnTextView?.text = getString(R.string.turn, player1Name)
+                            } else {
                                 playersTurnTextView?.text = getString(R.string.p1turn)
                             }
                         } else if (gameMaster?.playersTurn == "player2") {
                             if (player2Name != null) {
-                                playersTurnTextView?.text = getString(R.string.turn,player2Name)
-                            }
-                            else {
+                                playersTurnTextView?.text = getString(R.string.turn, player2Name)
+                            } else {
                                 playersTurnTextView?.text = getString(R.string.p2turn)
-                            }                        }
+                            }
+                        }
                         //endregion Turn Indicator
 
                         //region Dealing Code
@@ -321,7 +320,7 @@ class GameRoomFragment : Fragment() {
                             gameMaster?.centerCard = gameMaster!!.drawpile?.removeAt(0).toString()
                             previousCenterCard = gameMaster?.centerCard
 
-                            if(gameMaster?.discardPile == null){
+                            if (gameMaster?.discardPile == null) {
                                 gameMaster?.discardPile = ArrayList()
                             }
 
@@ -372,10 +371,9 @@ class GameRoomFragment : Fragment() {
                                     for (x in 0 until 4) {
                                         //gameMaster = checkDrawPile(gameMaster)
 
-                                        if(gameMaster!!.drawpile?.size == 0){
+                                        if (gameMaster!!.drawpile?.size == 0) {
                                             break
-                                        }
-                                        else{
+                                        } else {
                                             playerHand.add(
                                                 gameMaster!!.drawpile?.removeAt(0).toString()
                                             )
@@ -480,7 +478,7 @@ class GameRoomFragment : Fragment() {
 
                                     gameMaster?.centerCard = colorValues[i].plus("+4")
 
-                                    if(gameMaster?.discardPile == null){
+                                    if (gameMaster?.discardPile == null) {
                                         gameMaster?.discardPile = ArrayList()
                                     }
 
@@ -511,7 +509,7 @@ class GameRoomFragment : Fragment() {
                         else if (tempCard!![0] == gameMaster?.centerCard!![0] || tempCard!![1] == gameMaster?.centerCard!![1]) {
                             gameMaster?.centerCard = tempCard
 
-                            if(gameMaster?.discardPile == null){
+                            if (gameMaster?.discardPile == null) {
                                 gameMaster?.discardPile = ArrayList()
                             }
 
@@ -570,16 +568,13 @@ class GameRoomFragment : Fragment() {
             if (!gameMaster?.isDealing!! && playerHand.size == 1) {
                 if (playerNum == 1) {
                     Toast.makeText(context, "${player1Name} has UNO!", Toast.LENGTH_SHORT).show()
-                }
-                else if (playerNum == 2) {
+                } else if (playerNum == 2) {
                     Toast.makeText(context, "${player2Name} has UNO!", Toast.LENGTH_SHORT).show()
                 }
-            }
-            else if (!gameMaster?.isDealing!! && otherPlayerHand.size == 1) {
+            } else if (!gameMaster?.isDealing!! && otherPlayerHand.size == 1) {
                 if (playerNum == 1) {
                     Toast.makeText(context, "${player2Name} has UNO!", Toast.LENGTH_SHORT).show()
-                }
-                else if (playerNum == 2) {
+                } else if (playerNum == 2) {
                     Toast.makeText(context, "${player1Name} has UNO!", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -594,79 +589,84 @@ class GameRoomFragment : Fragment() {
     fun checkDrawPile(gameMaster: GameMaster?): GameMaster? {
         var newGameMaster = gameMaster
 
-        if(newGameMaster?.drawpile == null){
+        if (newGameMaster?.drawpile == null) {
             newGameMaster?.discardPile?.shuffle()
             newGameMaster?.drawpile = newGameMaster?.discardPile!!
             //newGameMaster.discardPile!!.clear()
 
             newGameMaster.drawpile?.shuffle()
 
-            /*MainActivity.dbRef.child("games").child("activeGames")
-                .child(gameRequestId).child("gameMaster").setValue(newGameMaster).addOnCompleteListener {
-                    newGameMaster.discardPile!!.clear()
 
-                    MainActivity.dbRef.child("games").child("activeGames")
-                        .child(gameRequestId).child("gameMaster").child("discardPile").removeValue()
+            MainActivity.dbRef.child("games").child("activeGames")
+                .child(gameRequestId).child("gameMaster").setValue(newGameMaster)
+                .addOnCompleteListener {
 
-                    binding.drawCardButton.isEnabled = true
+                    /*MainActivity.dbRef.child("games").child("activeGames")
+                        .child(gameRequestId).child("gameMaster").setValue(newGameMaster).addOnCompleteListener {
+        >>>>>>> b7abf9829b0589e1de5183fae18dc6ed02392d15
+                            newGameMaster.discardPile!!.clear()
+
+                            MainActivity.dbRef.child("games").child("activeGames")
+                                .child(gameRequestId).child("gameMaster").child("discardPile").removeValue()
+
+                            binding.drawCardButton.isEnabled = true
+                        }
+
+        */
                 }
-
-*/
         }
 
-        return newGameMaster
-    }
-
-    fun leaveGameDialog(view: View){
-        val builder  =  AlertDialog.Builder(context);
-        builder.setTitle("Game Room");
-
-        builder.setMessage("Your opponent has left the game")
-
-        builder.setNegativeButton("Ok", DialogInterface.OnClickListener {
-                dialog, id -> dialog.cancel()
-        })
-
-        builder.setCancelable(false)
-
-        val dialog : AlertDialog = builder.create()
-        dialog.show()
-
-        MainActivity.dbRef.child("games")
-            .child("activeGames")
-            .child(gameRequestId).removeValue()
-
-
-        var navController = parentFragment?.let {
-            NavHostFragment.findNavController(
-                it
-            )
-        }
-        navController?.navigate(R.id.action_nav_game_room_to_nav_game_lobby)
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        var currentPlayer: String = ""
-
-        if(playerNum == 1){
-            currentPlayer = "player1"
-        }
-        else if(playerNum == 2){
-            currentPlayer = "player2"
-        }
-
-        MainActivity.dbRef.child("games")
-            .child("activeGames")
-            .child(gameRequestId).child(currentPlayer).removeValue()
-
+            return newGameMaster
 
     }
 
-    companion object {
-        var globalGameMaster: GameMaster? = null
-        var globalPlayerHand: MutableList<String>? = null
+        fun leaveGameDialog(view: View) {
+            val builder = AlertDialog.Builder(context);
+            builder.setTitle("Game Room");
+
+            builder.setMessage("Your opponent has left the game")
+
+            builder.setNegativeButton("Ok", DialogInterface.OnClickListener { dialog, id ->
+                dialog.cancel()
+            })
+
+            builder.setCancelable(false)
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+
+            MainActivity.dbRef.child("games")
+                .child("activeGames")
+                .child(gameRequestId).removeValue()
+
+
+            var navController = parentFragment?.let {
+                NavHostFragment.findNavController(
+                    it
+                )
+            }
+            navController?.navigate(R.id.action_nav_game_room_to_nav_game_lobby)
+        }
+
+        override fun onDestroy() {
+            super.onDestroy()
+
+            var currentPlayer: String = ""
+
+            if (playerNum == 1) {
+                currentPlayer = "player1"
+            } else if (playerNum == 2) {
+                currentPlayer = "player2"
+            }
+
+            MainActivity.dbRef.child("games")
+                .child("activeGames")
+                .child(gameRequestId).child(currentPlayer).removeValue()
+
+
+        }
+        companion object {
+            var globalGameMaster: GameMaster? = null
+            var globalPlayerHand: MutableList<String>? = null
+        }
     }
-}
