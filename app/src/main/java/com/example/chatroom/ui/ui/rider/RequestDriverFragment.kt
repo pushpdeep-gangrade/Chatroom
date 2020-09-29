@@ -7,6 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.Request
@@ -74,15 +77,20 @@ class RequestDriverFragment : Fragment() {
         getDrivers()
 
         binding.driverCancelButton.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString("chatroomId", chatRoomId.toString())
-
-            view?.findNavController()!!.navigate(R.id.action_nav_request_driver_to_chatroom, bundle)
-            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                .child("driverRequests")
-                .child(requestId.toString()).removeValue()
+           removeRideFromFirebase()
         }
+    }
 
+
+
+    fun removeRideFromFirebase(){
+        val bundle = Bundle()
+        bundle.putString("chatroomId", chatRoomId.toString())
+
+        view?.findNavController()!!.navigate(R.id.action_nav_request_driver_to_chatroom, bundle)
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+            .child("driverRequests")
+            .child(requestId.toString()).removeValue()
     }
 
 
@@ -90,7 +98,6 @@ class RequestDriverFragment : Fragment() {
         Log.d("Current Chatroom", chatRoomId.toString())
         MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
             .child(requestId.toString()).child("drivers").addValueEventListener(object :
-            //MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests").child("drivers").addValueEventListener(object :
 
                 ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {

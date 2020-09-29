@@ -98,7 +98,6 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-
         return binding.root
     }
 
@@ -120,7 +119,7 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
                     }
                 } }
 
-         //
+
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
                 .child("driverRequests").child(requestId).child("drivers").child(MainActivity.auth.currentUser?.uid.toString())
                 .setValue(driver)
@@ -248,7 +247,7 @@ class PotentialRiderFragment : Fragment(), OnMapReadyCallback {
                                     Log.d("maps-test", "LatLngs: ${northeastLat}, ${northeastLng} | ${southwestLat}, ${southwestLng}")
                                     map?.addMarker(
                                         MarkerOptions().position(LatLng(pickupLocationPlace.latitude, pickupLocationPlace.longitude)!!)
-                                            .title(pickupLocationPlace.name))
+                                            .title(pickupLocationPlace.name).icon(BitmapDescriptorFactory.fromResource(R.drawable.pickup_marker)))
                                     map?.addMarker(
                                         MarkerOptions().position(LatLng(dropoffLocationPlace.latitude, dropoffLocationPlace.longitude)!!)
                                             .title(dropoffLocationPlace.name))

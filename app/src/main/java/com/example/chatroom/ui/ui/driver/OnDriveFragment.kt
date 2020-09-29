@@ -53,15 +53,14 @@ private var rideId: String? = null
 private var rider: MapUser? = null
 private var driver: MapUser? = null
 private var ride: RideRequest? = null
-private var dropOff : LatLng? = null
+private var dropOff: LatLng? = null
 private var directionsRequest: StringRequest? = null
 private var urlDirections: String = "https://maps.googleapis.com/maps/api/directions/json?"
 private var path: MutableList<List<LatLng>> = ArrayList()
 
 
-
 class OnDriveFragment : Fragment(), OnMapReadyCallback {
-    private var location : LocationManager ?=null
+    private var location: LocationManager? = null
     private var _binding: FragmentOnDriveBinding? = null
     private val binding get() = _binding!!
 
@@ -84,7 +83,6 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
 
 
         binding.onDriveCancelButton.setOnClickListener {
-            //    onDestroy()]
 
             val bundle = Bundle()
             bundle.putString("chatroomId", chatRoomId.toString())
@@ -106,23 +104,23 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
         }
 
         binding.onDriveDoneButton.setOnClickListener {
-            //    ride completed
 
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                .child("activeRides").child(rideId!!.toString()).addListenerForSingleValueEvent(object :
+                .child("activeRides").child(rideId!!.toString())
+                .addListenerForSingleValueEvent(object :
                     ValueEventListener {
                     override fun onCancelled(error: DatabaseError) {
                         Log.d("demo", "Firebase event cancelled on getting user data")
                     }
+
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         val completeRide: CompleteRide? = dataSnapshot.getValue<CompleteRide>()
 
                         Log.d("On Drive Ride", completeRide.toString())
                         Log.d("On Drive Driver", driver.toString())
 
-                        //val completeRide: CompleteRide = CompleteRide(ride!!, driver!!)
-
-                        MainActivity.dbRef.child("rideHistory").child(rideId.toString()).setValue(completeRide)
+                        MainActivity.dbRef.child("rideHistory").child(rideId.toString())
+                            .setValue(completeRide)
 
                         MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
                             .child("activeRides")
@@ -142,14 +140,19 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
 
         location = context?.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
         if (context?.let {
-                ActivityCompat.checkSelfPermission( it,Manifest.permission.ACCESS_FINE_LOCATION)
+                ActivityCompat.checkSelfPermission(it, Manifest.permission.ACCESS_FINE_LOCATION)
             } != PackageManager.PERMISSION_GRANTED && context?.let {
-                ActivityCompat.checkSelfPermission(it,Manifest.permission.ACCESS_COARSE_LOCATION)
+                ActivityCompat.checkSelfPermission(it, Manifest.permission.ACCESS_COARSE_LOCATION)
             } != PackageManager.PERMISSION_GRANTED
         ) {
             return
         }
-        location?.requestLocationUpdates( LocationManager.GPS_PROVIDER,  2000L,  10f, locationListenerGPS)
+        location?.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            2000L,
+            10f,
+            locationListenerGPS
+        )
 
 
     }
@@ -175,8 +178,11 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         for (postSnapshot in dataSnapshot.children) {
                             driver = postSnapshot.getValue<MapUser>()
-                            if(driver?.status.equals("Accepted"))
-                                Log.d("driver", "driver name" + driver?.driver?.firstName.toString())
+                            if (driver?.status.equals("Accepted"))
+                                Log.d(
+                                    "driver",
+                                    "driver name" + driver?.driver?.firstName.toString()
+                                )
                             Log.d("drive", driver.toString())
                         }
                         Timer("SettingUp", false).schedule(1000) {
@@ -190,43 +196,57 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
                 })
 
 
-
         }
     }
 
-   fun rideListner(){
-       MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-           .child("driverRequests")
-           .child(rideId!!).child("ride").addValueEventListener(object : ValueEventListener {
-               override fun onDataChange(dataSnapshot: DataSnapshot) {
-                   Log.d("demo", dataSnapshot.toString())
-                   val curent_ride = dataSnapshot.getValue<RideRequest>()
-                   Log.d("demo", " current ride " + curent_ride?.pickupLocation?.latitude.toString())
+    fun rideListner() {
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+            .child("driverRequests")
+            .child(rideId!!).child("ride").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    Log.d("demo", dataSnapshot.toString())
+                    val curent_ride = dataSnapshot.getValue<RideRequest>()
+                    Log.d(
+                        "demo",
+                        " current ride " + curent_ride?.pickupLocation?.latitude.toString()
+                    )
 
-                   if (curent_ride != null) {
-                       rider = MapUser(curent_ride.riderInfo, curent_ride.pickupLocation.latitude, curent_ride.pickupLocation.longitude, curent_ride.status)
-                       dropOff = LatLng(curent_ride?.dropoffLocation.latitude, curent_ride?.dropoffLocation.longitude)
-                       updateLocationUI()
-                   }
+                    if (curent_ride != null) {
+                        rider = MapUser(
+                            curent_ride.riderInfo,
+                            curent_ride.pickupLocation.latitude,
+                            curent_ride.pickupLocation.longitude,
+                            curent_ride.status
+                        )
+                        dropOff = LatLng(
+                            curent_ride?.dropoffLocation.latitude,
+                            curent_ride?.dropoffLocation.longitude
+                        )
+                        updateLocationUI()
+                    }
 
-                   Log.d("demo", rider?.lat.toString() + " rider location " + rider?.long.toString())
-                   Log.d("demo", dropOff.toString())
-               }
+                    Log.d(
+                        "demo",
+                        rider?.lat.toString() + " rider location " + rider?.long.toString()
+                    )
+                    Log.d("demo", dropOff.toString())
+                }
 
-               override fun onCancelled(databaseError: DatabaseError) {
-               }
-           })
-   }
+                override fun onCancelled(databaseError: DatabaseError) {
+                }
+            })
+    }
+
     private fun updateLocationUI() {
         if (map == null) {
             return
         }
         map?.clear()
-        var riderLocation = LatLng(0.0,0.0)
+        var riderLocation = LatLng(0.0, 0.0)
         var driverLocation = LatLng(0.0, 0.0)
-        if(rider!=null && driver!=null){
-         riderLocation = rider?.lat?.let { rider?.long?.let { it1 -> LatLng(it, it1) } }!!
-         driverLocation = driver?.lat?.let { driver?.long?.let { it1 -> LatLng(it, it1) } }!!
+        if (rider != null && driver != null) {
+            riderLocation = rider?.lat?.let { rider?.long?.let { it1 -> LatLng(it, it1) } }!!
+            driverLocation = driver?.lat?.let { driver?.long?.let { it1 -> LatLng(it, it1) } }!!
         }
 
 
@@ -236,47 +256,15 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
         a.latitude = riderLocation.latitude
         a.longitude = riderLocation.longitude
 
-        b.latitude =driverLocation.latitude
-        b.longitude= driverLocation.longitude
+        b.latitude = driverLocation.latitude
+        b.longitude = driverLocation.longitude
 
-        if(a.distanceTo(b) <= 200)
+        if (a.distanceTo(b) <= 200)
             Toast.makeText(context, "Rider picked up", Toast.LENGTH_LONG).show()
-
-
-
-       /* MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-            .child("activeRides").child(rideId!!.toString()).addListenerForSingleValueEvent(object :
-                ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                    Log.d("demo", "Firebase event cancelled on getting user data")
-                }
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val completeRide: CompleteRide? = dataSnapshot.getValue<CompleteRide>()
-
-                    Log.d("On Drive Ride", completeRide.toString())
-                    Log.d("On Drive Driver", driver.toString())
-
-                    //val completeRide: CompleteRide = CompleteRide(ride!!, driver!!)
-
-                    MainActivity.dbRef.child("rideHistory").child(rideId.toString()).setValue(completeRide)
-
-                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                        .child("activeRides")
-                        .child(rideId!!).child("driver").child("status").setValue("Completed")
-
-                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                        .child("activeRides")
-                        .child(rideId!!).removeValue()
-                }
-            })
-
-        val bundle = Bundle()
-        bundle.putString("chatroomId", chatRoomId.toString())
-
-        view?.findNavController()?.navigate(R.id.action_nav_on_drive_to_chatroom, bundle)*/
 
         map?.addMarker(riderLocation?.let {
             MarkerOptions().position(it).title(rider?.driver?.firstName)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pickup_marker))
         })
 
         map?.addMarker(driverLocation?.let {
@@ -284,95 +272,97 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
         })
 
         map?.addMarker(driverLocation?.let {
-            MarkerOptions().position(it).title(driver?.driver?.firstName).icon(BitmapDescriptorFactory.fromResource(R.drawable.driver_icon))
+            MarkerOptions().position(it).title(driver?.driver?.firstName)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.driver_icon))
         })
 
-            path.clear()
-            directionsRequest = object : StringRequest(
-                Request.Method.GET,
-                urlDirections
-                    .plus("key=${context?.resources?.getString(R.string.api_key)}")
-                    .plus("&origin=${driverLocation?.latitude},${driverLocation?.longitude}")
-                    .plus("&destination=${riderLocation?.latitude},${riderLocation?.longitude}"),
-                Response.Listener<String> { response ->
-                    val jsonResponse = JSONObject(response)
-                    // Get routes
-                    val routes = jsonResponse.getJSONArray("routes")
-                    val legs = routes.getJSONObject(0).getJSONArray("legs")
-                    val steps = legs.getJSONObject(0).getJSONArray("steps")
-                    for (i in 0 until steps.length()) {
-                        val points = steps.getJSONObject(i).getJSONObject("polyline")
-                            .getString("points")
-                        path.add(PolyUtil.decode(points))
-                    }
-                    for (i in 0 until path.size) {
-                        map!!.addPolyline(
-                            PolylineOptions().addAll(path[i]).color(Color.RED)
-                        )
-                    }
-                    // Get bounds
-                    val bounds = routes.getJSONObject(0).getJSONObject("bounds")
-                    val northeastLat = bounds.getJSONObject("northeast").getDouble("lat")
-                    val northeastLng = bounds.getJSONObject("northeast").getDouble("lng")
-                    val southwestLat = bounds.getJSONObject("southwest").getDouble("lat")
-                    val southwestLng = bounds.getJSONObject("southwest").getDouble("lng")
-                    Log.d(
-                        "maps-test",
-                        "LatLngs: ${northeastLat}, ${northeastLng} | ${southwestLat}, ${southwestLng}"
+        path.clear()
+        directionsRequest = object : StringRequest(
+            Request.Method.GET,
+            urlDirections
+                .plus("key=${context?.resources?.getString(R.string.api_key)}")
+                .plus("&origin=${driverLocation?.latitude},${driverLocation?.longitude}")
+                .plus("&destination=${riderLocation?.latitude},${riderLocation?.longitude}"),
+            Response.Listener<String> { response ->
+                val jsonResponse = JSONObject(response)
+                // Get routes
+                val routes = jsonResponse.getJSONArray("routes")
+                val legs = routes.getJSONObject(0).getJSONArray("legs")
+                val steps = legs.getJSONObject(0).getJSONArray("steps")
+                for (i in 0 until steps.length()) {
+                    val points = steps.getJSONObject(i).getJSONObject("polyline")
+                        .getString("points")
+                    path.add(PolyUtil.decode(points))
+                }
+                for (i in 0 until path.size) {
+                    map!!.addPolyline(
+                        PolylineOptions().addAll(path[i]).color(Color.RED)
                     )
-                    map?.moveCamera(
-                        CameraUpdateFactory.newLatLngBounds(
-                            LatLngBounds(
-                                LatLng(southwestLat, southwestLng),
-                                LatLng(northeastLat, northeastLng)
-                            ), 100
-                        )
+                }
+                // Get bounds
+                val bounds = routes.getJSONObject(0).getJSONObject("bounds")
+                val northeastLat = bounds.getJSONObject("northeast").getDouble("lat")
+                val northeastLng = bounds.getJSONObject("northeast").getDouble("lng")
+                val southwestLat = bounds.getJSONObject("southwest").getDouble("lat")
+                val southwestLng = bounds.getJSONObject("southwest").getDouble("lng")
+                Log.d(
+                    "maps-test",
+                    "LatLngs: ${northeastLat}, ${northeastLng} | ${southwestLat}, ${southwestLng}"
+                )
+                map?.moveCamera(
+                    CameraUpdateFactory.newLatLngBounds(
+                        LatLngBounds(
+                            LatLng(southwestLat, southwestLng),
+                            LatLng(northeastLat, northeastLng)
+                        ), 100
                     )
-                },
-                Response.ErrorListener { _ ->
-                }) {}
-            val requestQueue = Volley.newRequestQueue(context)
-            requestQueue.add(directionsRequest)
+                )
+            },
+            Response.ErrorListener { _ ->
+            }) {}
+        val requestQueue = Volley.newRequestQueue(context)
+        requestQueue.add(directionsRequest)
 
 
     }
 
 
-
-    private fun setDriverArrivedOrCanceledListener(view: View){
-        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("activeRides").child(
-            rideId.toString())
-            .child("driver").child("status").addValueEventListener(object : ValueEventListener
-            {
+    private fun setDriverArrivedOrCanceledListener(view: View) {
+        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("activeRides")
+            .child(
+                rideId.toString()
+            )
+            .child("driver").child("status").addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val status = dataSnapshot.getValue<String>()
                     Log.d("Status change", status.toString())
-                    if(status == "RiderCanceled"){
+                    if (status == "RiderCanceled") {
                         showRideCanceledNotification(view)
                     }
                     /*else if(status == "Completed"){
                         showRideCompletedNotification(view)
                     }*/
                 }
+
                 override fun onCancelled(databaseError: DatabaseError) {
                     Log.d("demoo", "cancel")
                 }
             })
     }
 
-    fun showRideCanceledNotification(view: View){
-        val builder  =  AlertDialog.Builder(context);
+    fun showRideCanceledNotification(view: View) {
+        val builder = AlertDialog.Builder(context);
         builder.setTitle("Ride Status");
 
         builder.setMessage("This ride was canceled by the rider")
 
-        builder.setNegativeButton("Close", DialogInterface.OnClickListener {
-                dialog, id -> dialog.cancel()
+        builder.setNegativeButton("Close", DialogInterface.OnClickListener { dialog, id ->
+            dialog.cancel()
         })
 
         builder.setCancelable(false)
 
-        val dialog : AlertDialog = builder.create()
+        val dialog: AlertDialog = builder.create()
         dialog.show()
 
         val bundle = Bundle()
@@ -382,7 +372,6 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
 
     override fun onDestroy() {
         super.onDestroy()
-        //findNavController().navigate(R.id.action_nav_on_drive_to_nav_chatrooms)
         MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
             .child("driverRequests")
             .child(rideId!!).removeValue()
@@ -423,12 +412,13 @@ class OnDriveFragment : Fragment(), OnMapReadyCallback {
                         .child(rideId!!).child("drivers").child(it).child("lat").setValue(latitude)
                 }
 
-                    driver?.driver?.userId?.let {
-                        MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                            .child("driverRequests")
-                            .child(rideId!!).child("drivers").child(it).child("long").setValue(longitude)
+                driver?.driver?.userId?.let {
+                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+                        .child("driverRequests")
+                        .child(rideId!!).child("drivers").child(it).child("long")
+                        .setValue(longitude)
 
-                    }
+                }
 
             }
 

@@ -49,7 +49,9 @@
             app:destination="@id/nav_chatrooms" />
         <action
             android:id="@+id/action_updateProfile_to_nav_profile"
-            app:destination="@id/nav_profile" />
+            app:destination="@id/nav_profile"
+            app:popUpTo="@id/nav_profile"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/nav_create_chatroom"
@@ -68,13 +70,14 @@
         <action
             android:id="@+id/action_chatroom_to_profile"
             app:destination="@id/nav_profile"
-            />
+            app:popUpTo="@id/chatroom" />
         <action
             android:id="@+id/action_chatroom_to_nav_request_ride"
             app:destination="@id/nav_request_ride" />
         <action
             android:id="@+id/action_chatroom_to_nav_potential_rider"
-            app:destination="@id/nav_potential_rider" />
+            app:destination="@id/nav_potential_rider"
+            app:popUpTo="@id/chatroom" />
         <action
             android:id="@+id/action_chatroom_to_nav_shared_location"
             app:destination="@id/nav_shared_location" />
@@ -96,10 +99,12 @@
         tools:layout="@layout/fragment_request_driver" >
         <action
             android:id="@+id/action_nav_request_driver_to_nav_waiting_on_ride"
-            app:destination="@id/nav_waiting_on_ride" />
+            app:destination="@id/nav_waiting_on_ride"
+            app:popUpTo="@id/chatroom" />
         <action
             android:id="@+id/action_nav_request_driver_to_chatroom"
-            app:destination="@id/chatroom" />
+            app:destination="@id/chatroom"
+            app:popUpTo="@id/chatroom" />
     </fragment>
     <fragment
         android:id="@+id/nav_wait_for_accept"
@@ -108,10 +113,12 @@
         tools:layout="@layout/fragment_wait_for_accept" >
         <action
             android:id="@+id/action_nav_wait_for_accept_to_chatroom"
-            app:destination="@id/chatroom" />
+            app:destination="@id/chatroom"
+            app:popUpTo="@id/chatroom" />
         <action
             android:id="@+id/action_nav_wait_for_accept_to_nav_on_drive"
-            app:destination="@id/nav_on_drive" />
+            app:destination="@id/nav_on_drive"
+            app:popUpTo="@id/chatroom" />
     </fragment>
     <fragment
         android:id="@+id/nav_waiting_on_ride"
@@ -120,10 +127,12 @@
         tools:layout="@layout/fragment_waiting_on_ride" >
         <action
             android:id="@+id/action_nav_waiting_on_ride_to_nav_chatrooms"
-            app:destination="@id/nav_chatrooms" />
+            app:destination="@id/nav_chatrooms"
+            app:popUpTo="@id/nav_chatrooms" />
         <action
             android:id="@+id/action_nav_waiting_on_ride_to_chatroom"
-            app:destination="@id/chatroom" />
+            app:destination="@id/chatroom"
+            app:popUpTo="@id/chatroom" />
     </fragment>
     <fragment
         android:id="@+id/nav_potential_rider"
@@ -135,7 +144,8 @@
             app:destination="@id/chatroom" />
         <action
             android:id="@+id/action_nav_potential_rider_to_nav_wait_for_accept"
-            app:destination="@id/nav_wait_for_accept" />
+            app:destination="@id/nav_wait_for_accept"
+            app:popUpTo="@id/chatroom" />
     </fragment>
     <fragment
         android:id="@+id/nav_on_drive"
@@ -147,7 +157,8 @@
             app:destination="@id/nav_chatrooms" />
         <action
             android:id="@+id/action_nav_on_drive_to_chatroom"
-            app:destination="@id/chatroom" />
+            app:destination="@id/chatroom"
+            app:popUpTo="@id/chatroom" />
     </fragment>
     <fragment
         android:id="@+id/nav_shared_location"

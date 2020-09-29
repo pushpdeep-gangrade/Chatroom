@@ -73,9 +73,7 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
         setDriverArrivedOrCanceledListener(view)
 
         binding.waitingOnRideCancelButton.setOnClickListener {
-            //   onDestroy()
-
-            val bundle = Bundle()
+                      val bundle = Bundle()
             bundle.putString("chatroomId", chatRoomId.toString())
 
             view.findNavController().navigate(R.id.action_nav_waiting_on_ride_to_chatroom, bundle)
@@ -90,9 +88,9 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
             MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
                 .child("activeRides")
                 .child(rideId!!).removeValue()
-
-
         }
+
+
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
@@ -157,7 +155,7 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
         val driverLocation = driver?.lat?.let { driver?.long?.let { it1 -> LatLng(it, it1) } }
 
         map?.addMarker(riderLocation?.let {
-            MarkerOptions().position(it).title(rider?.driver?.firstName)
+            MarkerOptions().position(it).title(rider?.driver?.firstName).icon(BitmapDescriptorFactory.fromResource(R.drawable.pickup_marker))
         })
 
 
@@ -302,7 +300,7 @@ class WaitingOnRideFragment : Fragment(), OnMapReadyCallback {
 
     override fun onDestroy() {
         super.onDestroy()
-        //findNavController().navigate(R.id.action_nav_waiting_on_ride_to_nav_chatrooms)
+
         MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
             .child("driverRequests")
             .child(rideId!!).removeValue()

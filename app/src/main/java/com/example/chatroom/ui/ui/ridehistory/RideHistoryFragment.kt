@@ -16,6 +16,7 @@ import com.example.chatroom.ui.MainActivity
 import com.example.chatroom.ui.ui.chatroom.*
 import com.example.chatroom.ui.ui.rider.DriverAdapter
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -48,7 +49,7 @@ class RideHistoryFragment : Fragment() {
                 for (postSnapshot in dataSnapshot.children) {
                     var cr : CompleteRide? = postSnapshot.getValue<CompleteRide>()
                     if (cr != null) {
-                        if(cr.driver.driver.userId == MainActivity.auth.currentUser?.uid.toString() || cr.rideRequest.riderInfo.userId == MainActivity.auth.currentUser?.uid.toString()){
+                        if(cr.driver.driver.userId == FirebaseAuth.getInstance().currentUser?.uid.toString() || cr.rideRequest.riderInfo.userId == FirebaseAuth.getInstance().currentUser?.uid.toString()){
                             listCompletedRides.add(cr)
                             Log.d("Completed Rides", cr.toString())
                         }

@@ -33,10 +33,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -165,7 +162,7 @@ class RideDetailsFragment : Fragment(), OnMapReadyCallback {
 
                 map?.addMarker(
                     MarkerOptions().position(LatLng(rideRequest!!.pickupLocation.latitude, rideRequest!!.pickupLocation.longitude)!!)
-                        .title(rideRequest!!.pickupLocation.name))
+                        .title(rideRequest!!.pickupLocation.name).icon(BitmapDescriptorFactory.fromResource(R.drawable.pickup_marker)))
                 map?.addMarker(
                     MarkerOptions().position(LatLng(rideRequest!!.dropoffLocation.latitude, rideRequest!!.dropoffLocation.longitude)!!)
                         .title(rideRequest!!.dropoffLocation.name))
