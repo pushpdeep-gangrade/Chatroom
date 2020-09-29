@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatroom.R
 import com.example.chatroom.data.model.ActiveGame
@@ -44,6 +45,7 @@ class GameRoomFragment : Fragment() {
     private var player1Name: String? = "Player 1"
     private var player2Name: String? = "Player 2"
     private var tempCard: String? = null
+    private var gameWinner: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +77,7 @@ class GameRoomFragment : Fragment() {
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val winner = snapshot.getValue<String>()
+                    gameWinner = winner
 
                     if (winner != null) {
                         if (winner == "player1") {
@@ -86,8 +89,16 @@ class GameRoomFragment : Fragment() {
                         MainActivity.dbRef.child("games")
                             .child("activeGames")
                             .child(gameRequestId).removeValue()
-                        view.findNavController()
-                            .navigate(R.id.action_nav_game_room_to_nav_game_lobby)
+
+                        var navController = parentFragment?.let {
+                            NavHostFragment.findNavController(
+                                it
+                            )
+                        }
+                        navController?.navigate(R.id.action_nav_game_room_to_nav_game_lobby)
+
+                        /*view.findNavController()
+                            .navigate(R.id.action_nav_game_room_to_nav_game_lobby)*/
                     }
                 }
 
@@ -186,10 +197,41 @@ class GameRoomFragment : Fragment() {
 
         // Get player names
         MainActivity.dbRef.child("games").child("activeGames").child(gameRequestId)
-            .child("player1").child("firstName")
-            .addListenerForSingleValueEvent(object : ValueEventListener {
+            .child("player1")
+            .child("firstName")
+            .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     player1Name = snapshot.getValue<String>()
+                    Log.d("Player Left", "Player 1 left")
+
+                    var otherPlayer: String = ""
+
+                    if(playerNum == 1){
+                        otherPlayer = "player2"
+                    }
+                    else if(playerNum == 2){
+                        otherPlayer = "player1"
+                    }
+
+                    Log.d("Player Num", "$playerNum ".plus(otherPlayer))
+
+
+                    if(otherPlayer == "player2" && player1Name != null && gameWinner == null){
+                        //Log.d("Player Left", "Player 2 left")
+                        if(player2Name == null){
+                            leaveGameDialog(view)
+                            Log.d("Player Left", "Player 2 left")
+                        }
+                    }
+                    else if(otherPlayer == "player1" && player2Name != null && gameWinner == null){
+                        //Log.d("Player Left", "Player 1 left 2")
+                        if(player1Name == null){
+                            leaveGameDialog(view)
+                            Log.d("Player Left", "Player 1 left")
+
+                        }
+                    }
+
                     Log.d("names", "Player 1: " + player1Name)
                 }
 
@@ -199,10 +241,36 @@ class GameRoomFragment : Fragment() {
             })
 
         MainActivity.dbRef.child("games").child("activeGames").child(gameRequestId)
-            .child("player2").child("firstName")
-            .addListenerForSingleValueEvent(object : ValueEventListener {
+            .child("player2")
+            .child("firstName")
+            .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     player2Name = snapshot.getValue<String>()
+                    Log.d("Player Left", "Player 2 left")
+
+                    var otherPlayer: String = ""
+
+                    if(playerNum == 1){
+                        otherPlayer = "player2"
+                    }
+                    else if(playerNum == 2){
+                        otherPlayer = "player1"
+                    }
+
+                    if(otherPlayer == "player2" && player1Name != null && gameWinner == null){
+                        if(player2Name == null){
+                            leaveGameDialog(view)
+                            Log.d("Player Left", "Player 2 left")
+                        }
+                    }
+                    else if(otherPlayer == "player1" && player2Name != null && gameWinner == null){
+                        if(player1Name == null){
+                            leaveGameDialog(view)
+                            Log.d("Player Left", "Player 1 left")
+
+                        }
+                    }
+
                     Log.d("names", "Player 2: " + player2Name)
                 }
 
@@ -210,6 +278,7 @@ class GameRoomFragment : Fragment() {
                     Log.d("demo", "cancel")
                 }
             })
+
 
 
         //region GameMaster Control Code
@@ -366,7 +435,7 @@ class GameRoomFragment : Fragment() {
                     ) {
                         centerCardValue!!.text = "+4"
                     } else if (centerCard.toString().length > 3) {
-                        centerCardValue!!.text = getString(R.string.skip)
+                        centerCardValue!!.text = "Skip"
                         centerCardValue!!.setTextSize(30F)
                     } else {
                         centerCardValue!!.setTextSize(60F)
@@ -548,28 +617,52 @@ class GameRoomFragment : Fragment() {
         return newGameMaster
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    fun leaveGameDialog(view: View){
+        val builder  =  AlertDialog.Builder(context);
+        builder.setTitle("Game Room");
+
+        builder.setMessage("Your opponent has left the game")
+
+        builder.setNegativeButton("Ok", DialogInterface.OnClickListener {
+                dialog, id -> dialog.cancel()
+        })
+
+        builder.setCancelable(false)
+
+        val dialog : AlertDialog = builder.create()
+        dialog.show()
 
         MainActivity.dbRef.child("games")
             .child("activeGames")
             .child(gameRequestId).removeValue()
 
-        /* val builder  =  AlertDialog.Builder(context);
-         builder.setTitle("Game Room");
 
-         builder.setMessage("Player has left the game")
+        var navController = parentFragment?.let {
+            NavHostFragment.findNavController(
+                it
+            )
+        }
+        navController?.navigate(R.id.action_nav_game_room_to_nav_game_lobby)
+    }
 
-         builder.setNegativeButton("Ok", DialogInterface.OnClickListener {
-                 dialog, id -> dialog.cancel()
-         })
 
-         builder.setCancelable(false)
+    override fun onDestroy() {
+        super.onDestroy()
 
-         val dialog : AlertDialog = builder.create()
-         dialog.show()
+        var currentPlayer: String = ""
 
-         view?.findNavController()?.navigate(R.id.action_nav_game_room_to_nav_game_lobby)*/
+        if(playerNum == 1){
+            currentPlayer = "player1"
+        }
+        else if(playerNum == 2){
+            currentPlayer = "player2"
+        }
+
+        MainActivity.dbRef.child("games")
+            .child("activeGames")
+            .child(gameRequestId).child(currentPlayer).removeValue()
+
+
     }
 
     companion object {

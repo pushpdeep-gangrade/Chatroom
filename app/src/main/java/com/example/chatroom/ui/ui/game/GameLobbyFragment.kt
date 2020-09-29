@@ -3,6 +3,7 @@ package com.example.chatroom.ui.ui.game
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.example.chatroom.R
 import com.example.chatroom.data.model.*
 import com.example.chatroom.databinding.FragmentGameLobbyBinding
 import com.example.chatroom.ui.MainActivity
+import com.example.chatroom.ui.ui.chatroom.chatRoomId
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -48,7 +50,6 @@ class GameLobbyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setGameRequestListener()
 
         MainActivity.dbRef.child("users").child(MainActivity.auth.currentUser?.uid.toString())
             .addListenerForSingleValueEvent(object :
@@ -59,6 +60,7 @@ class GameLobbyFragment : Fragment() {
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     currentUser = dataSnapshot.getValue<User>()
+                    setGameRequestListener()
                     Log.d("Current User", currentUser.toString())
                 }
             })
@@ -82,8 +84,7 @@ class GameLobbyFragment : Fragment() {
 
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Game Request")
-
-            builder.setMessage("Waiting for another player to join...")
+            builder.setMessage("Waiting for another player to join... ")
 
             builder.setNegativeButton("Cancel", { dialog, id ->
 
@@ -99,13 +100,30 @@ class GameLobbyFragment : Fragment() {
             val dialog: AlertDialog = builder.create()
             dialog.show()
 
-            setPlayerTwoListener(gameRequest, view, dialog)
+            val timer = object: CountDownTimer(30000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                   dialog.setMessage("Waiting for another player to join... ".plus(millisUntilFinished/1000))
+                }
 
+                override fun onFinish() {
+                    dialog.setMessage("Could not find another player. Please make a new request.")
+
+                    MainActivity.dbRef.child("games")
+                        .child("gameRequests")
+                        .child(gameRequest.gameRequestId).removeValue()
+
+                    //dialog.cancel()
+                }
+            }
+
+            timer.start()
+
+            setPlayerTwoListener(gameRequest, view, dialog, timer)
 
         }
     }
 
-    private fun setPlayerTwoListener(gameRequest: GameRequest, view: View, dialog: AlertDialog) {
+    private fun setPlayerTwoListener(gameRequest: GameRequest, view: View, dialog: AlertDialog, timer: CountDownTimer) {
         MainActivity.dbRef.child("games").child("gameRequests")
             .child(gameRequest.gameRequestId).child("player2")
             .addValueEventListener(object :
@@ -117,6 +135,8 @@ class GameLobbyFragment : Fragment() {
                     if (u != null) {
 
                         dialog.cancel()
+
+                        timer.cancel()
 
                         showPlayerJoinedNotification(view)
 
@@ -211,6 +231,9 @@ class GameLobbyFragment : Fragment() {
                 changedGameRequest.player2, null,
                 GameMaster(true, true, "player1", null, cardList, false, false, mutableListOf<String>()), null
             )
+
+            Log.d("Player 1 Join", changedGameRequest.player1.toString())
+            Log.d("Player 2 Join", changedGameRequest.player2.toString())
 
             MainActivity.dbRef.child("games")
                 .child("activeGames")
