@@ -51,23 +51,19 @@ import java.time.format.FormatStyle
 
 var messageUser : User? = null
 var messageUserId: String = ""
-
 private var listchats = mutableListOf<Chat>()
 private var listActiveUsers = mutableListOf<String>()
 private var listActiveUsersNames = mutableListOf<String>()
 private var listActiveUserImageURLs = mutableListOf<String>()
-
 private var listRideRequests = mutableListOf<String>()
 private var listRideRequestsObjects = mutableListOf<RideRequest>()
 private var listRideRequestNames= mutableListOf<String>()
-
 private var listSharedLocationUserNames = mutableListOf<String>()
 private var listSharedLocations = mutableListOf<LatLng>()
 private var locationIsShared = false
 private var locationPermissionGranted = false
 private var lastKnownLocation: Location? = null
 private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-
 private var activeUsers  = mutableListOf<User>()
 var chatRoomId : String? = null
 
@@ -107,7 +103,7 @@ class Chatroom : Fragment() {
                    Log.d("demo", "Firebase event cancelled on getting user data")
                 }
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    messageUser = dataSnapshot.getValue<com.example.chatroom.data.model.User>()
+                    messageUser = dataSnapshot.getValue<User>()
                     Log.d("Message User", messageUser?.userId.toString() + " whaaaaaaaaaaaaaaaaaaaaaaaaaaat")
                     messageUserId = messageUser?.userId.toString()
                     MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("listActiveUsers").child(messageUser?.userId.toString()).setValue(
@@ -117,10 +113,10 @@ class Chatroom : Fragment() {
             })
 
         binding.chatroomActiveUsers.setOnClickListener {
-            var builder  =  AlertDialog.Builder(context);
-            builder.setTitle("Active Users");
+            val builder  =  AlertDialog.Builder(context)
+            builder.setTitle("Active Users")
 
-            builder.setNegativeButton("Close", DialogInterface.OnClickListener {
+            builder.setNegativeButton("Close", {
                     dialog, id -> dialog.cancel()
             })
 
@@ -129,7 +125,7 @@ class Chatroom : Fragment() {
             //var userNames = Array<String>(listActiveUsers.size){ i -> listActiveUsersNames[i] }
             var userNames = listActiveUsersNames.toTypedArray()
 
-            builder.setItems(userNames, DialogInterface.OnClickListener(){ dialogInterface: DialogInterface, i: Int ->
+            builder.setItems(userNames, { dialogInterface: DialogInterface, i: Int ->
                 val bundle = bundleOf("userData" to listActiveUsers[i])
                 view.findNavController().navigate(R.id.action_chatroom_to_profile, bundle)
             })
@@ -323,8 +319,8 @@ class Chatroom : Fragment() {
 
     fun showNotificationDialog(view: View){
         if(context!=null){
-            var builder  =  AlertDialog.Builder(context);
-            builder.setTitle("Ride Requests");
+            var builder  =  AlertDialog.Builder(context)
+            builder.setTitle("Ride Requests")
 
             builder.setNegativeButton("Close", DialogInterface.OnClickListener {
                     dialog, id -> dialog.cancel()
@@ -383,8 +379,8 @@ class Chatroom : Fragment() {
 
     fun showLocationNotificationDialog(view: View){
         if(context!=null){
-            var builder  =  AlertDialog.Builder(context);
-            builder.setTitle("Shared Locations");
+            var builder  =  AlertDialog.Builder(context)
+            builder.setTitle("Shared Locations")
 
             builder.setNegativeButton("Close", DialogInterface.OnClickListener {
                     dialog, id -> dialog.cancel()
