@@ -209,7 +209,7 @@ class GameLobbyFragment : Fragment() {
             val activeGame = ActiveGame(
                 changedGameRequest.gameRequestId, changedGameRequest.player1, null,
                 changedGameRequest.player2, null,
-                GameMaster(true, true, "player1", null, cardList, false, false), null
+                GameMaster(true, true, "player1", null, cardList, false, false, mutableListOf<String>()), null
             )
 
             MainActivity.dbRef.child("games")

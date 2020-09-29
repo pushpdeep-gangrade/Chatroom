@@ -84,6 +84,18 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                                     .child(gameRequestId).child("player${playerNum}hand")
                                     .child(cardPosition.toString()).removeValue()
 
+                                if(gameMaster.discardPile == null){
+                                    gameMaster.discardPile = ArrayList()
+                                }
+
+                                gameMaster.discardPile?.add(cardValue)
+
+                                Log.d("Discard Pile", gameMaster.discardPile.toString())
+
+                                MainActivity.dbRef.child("games").child("activeGames")
+                                    .child(gameRequestId).child("gameMaster").setValue(gameMaster)
+
+
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("player${playerNum}hand")
                                     .addListenerForSingleValueEvent(object :
@@ -133,6 +145,18 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                             MainActivity.dbRef.child("games").child("activeGames")
                                 .child(gameRequestId).child("player${playerNum}hand")
                                 .child(cardPosition.toString()).removeValue()
+
+                            if(gameMaster.discardPile == null){
+                                gameMaster.discardPile = ArrayList()
+                            }
+
+                            gameMaster.discardPile?.add(cardColor.plus(cardValue))
+
+                            Log.d("Discard Pile", gameMaster.discardPile.toString())
+
+                            MainActivity.dbRef.child("games").child("activeGames")
+                                .child(gameRequestId).child("gameMaster").setValue(gameMaster)
+
 
                             MainActivity.dbRef.child("games").child("activeGames")
                                 .child(gameRequestId).child("player${playerNum}hand")
