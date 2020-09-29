@@ -284,15 +284,13 @@ class GameRoomFragment : Fragment() {
                 ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val centerCard = dataSnapshot.getValue<String>()
-
-                    var color = Color.GRAY
+                    var color = Color.BLACK
                     when (centerCard?.get(0).toString()) {
-                        "B" -> color = Color.BLUE
-                        "G" -> color = Color.GREEN
-                        "R" -> color = Color.RED
-                        "Y" -> color = Color.YELLOW
+                        "B" -> color = Color.parseColor("#1879A8")
+                        "G" -> color = Color.parseColor("#5AB00D")
+                        "R" -> color = Color.parseColor("#E63E27")
+                        "Y" -> color = Color.parseColor("#F0DD1D")
                     }
-
                     centerCardColor!!.setBackgroundColor(color)
 
                     if (centerCard?.get(0).toString() == "+" || centerCard?.get(1)
@@ -301,7 +299,9 @@ class GameRoomFragment : Fragment() {
                         centerCardValue!!.text = "+4"
                     } else if (centerCard.toString().length > 3) {
                         centerCardValue!!.text = "Skip"
+                        centerCardValue!!.setTextSize(30F)
                     } else {
+                        centerCardValue!!.setTextSize(60F)
                         centerCardValue!!.text = centerCard?.get(1).toString()
                     }
                 }
