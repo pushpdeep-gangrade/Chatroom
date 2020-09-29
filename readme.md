@@ -152,11 +152,17 @@ https://xd.adobe.com/view/cc32e7b4-613f-4c1b-8ea8-cadbe84acec9-9961/
 # Game Feature <a name="game"></a>
 <br />
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/GR Join.png" width=150>
-- Users can go to the "Game Lobby" from the app menu to play the card game UNO.
+- Users can go to the "Game Lobby" from the app menu to play the card game UNO. The game begins after a user 
+  requests a game in the lobby and another user joins the game. 
 - The cards are numbered from 0 to 9, and colored Red, Green, Yellow, and Blue. There are also 2 per color of
   each of the special cards, Skip and Draw 4
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Dealing.png" width=150>
 - At the beginning of the game each user is dealt 7 cards, and the top card of the remaining deck is
   flipped over and set aside to begin the discard pile. Further game rules: https://en.wikipedia.org/wiki/Uno_(card_game)
-- The game begins after a user requests a game in the lobby and another user joins the game. It ends when one user finishes their cards.
-- The game screen indicates whose turn it is by labeling the center card pile "Guest Turn" or "Host Turn".
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Player Turn.png" width=150>
+- The game screen indicates whose turn it is by labeling the center card pile "<FirstName>'s Turn"
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Uno.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Winner.png" width=150>
+- If either user gets down to one card in their hand, the screen will flash "Uno!" The game ends when
+  one user finishes their cards
 
