@@ -179,20 +179,20 @@ class GameRoomFragment : Fragment() {
                     if (gameMaster != null && gameMaster?.isDealing != null && gameMaster?.gameIsActive != null) {
                         //region Turn Indicator
                         if (gameMaster?.isDealing!!) {
-                            playersTurnTextView?.text = "Dealing cards"
+                            playersTurnTextView?.text = R.string.dealing.toString()
                         } else if (gameMaster?.playersTurn == "player1") {
                             if (player1Name != null) {
-                                playersTurnTextView?.text = "$player1Name's Turn"
+                                playersTurnTextView?.text = getString(R.string.turn,player1Name)
                             }
                             else {
-                                playersTurnTextView?.text = "Player 1's Turn"
+                                playersTurnTextView?.text = R.string.p1turn.toString()
                             }
                         } else if (gameMaster?.playersTurn == "player2") {
                             if (player2Name != null) {
-                                playersTurnTextView?.text = "$player2Name's Turn"
+                                playersTurnTextView?.text = getString(R.string.turn,player2Name)
                             }
                             else {
-                                playersTurnTextView?.text = "Player 2's Turn"
+                                playersTurnTextView?.text = R.string.p2turn.toString()
                             }                        }
                         //endregion Turn Indicator
 
@@ -298,7 +298,7 @@ class GameRoomFragment : Fragment() {
                     ) {
                         centerCardValue!!.text = "+4"
                     } else if (centerCard.toString().length > 3) {
-                        centerCardValue!!.text = "Skip"
+                        centerCardValue!!.text = R.string.skip.toString()
                         centerCardValue!!.setTextSize(30F)
                     } else {
                         centerCardValue!!.setTextSize(60F)
@@ -412,6 +412,9 @@ class GameRoomFragment : Fragment() {
 
     fun checkWinner() {
         if (gameMaster != null) {
+            if (!gameMaster?.isDealing!! && playerHand.size == 1) {
+                Toast.makeText(context, "UNO!", Toast.LENGTH_LONG).show()
+            }
             if (!gameMaster?.isDealing!! && playerHand.size == 0) {
                 MainActivity.dbRef.child("games").child("activeGames")
                     .child(gameRequestId).child("winner").setValue("player${playerNum}")
