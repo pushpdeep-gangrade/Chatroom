@@ -13,7 +13,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatroom.R
 import com.example.chatroom.data.model.ActiveGame
@@ -45,20 +48,14 @@ class GameRoomFragment : Fragment() {
     private var player2Name: String? = "Player 2"
     private var tempCard: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
         gameRequestId = arguments?.getString("gameRequestId").toString()
         Log.d("names", gameRequestId)
         playerNum = arguments?.getInt("playerNumber")
-
         _binding = FragmentGameRoomBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -83,9 +80,11 @@ class GameRoomFragment : Fragment() {
                             Toast.makeText(context, "Guest is the winner!", Toast.LENGTH_LONG)
                                 .show()
                         }
+
                         MainActivity.dbRef.child("games")
                             .child("activeGames")
                             .child(gameRequestId).removeValue()
+
                         view.findNavController()
                             .navigate(R.id.action_nav_game_room_to_nav_game_lobby)
                     }
@@ -178,10 +177,9 @@ class GameRoomFragment : Fragment() {
                 ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     gameMaster = dataSnapshot.getValue<GameMaster>()
-                    if(gameMaster?.drawpile != null || gameMaster?.discardPile != null){
+                    if (gameMaster?.drawpile != null || gameMaster?.discardPile != null) {
                         gameMaster = checkDrawPile(gameMaster)
-                    }
-                    else{
+                    } else {
                         binding.drawCardButton.isEnabled = false
                     }
                     globalGameMaster = gameMaster
@@ -192,18 +190,17 @@ class GameRoomFragment : Fragment() {
                             playersTurnTextView?.text = getString(R.string.dealing)
                         } else if (gameMaster?.playersTurn == "player1") {
                             if (player1Name != null) {
-                                playersTurnTextView?.text = getString(R.string.turn,player1Name)
-                            }
-                            else {
+                                playersTurnTextView?.text = getString(R.string.turn, player1Name)
+                            } else {
                                 playersTurnTextView?.text = getString(R.string.p1turn)
                             }
                         } else if (gameMaster?.playersTurn == "player2") {
                             if (player2Name != null) {
-                                playersTurnTextView?.text = getString(R.string.turn,player2Name)
-                            }
-                            else {
+                                playersTurnTextView?.text = getString(R.string.turn, player2Name)
+                            } else {
                                 playersTurnTextView?.text = getString(R.string.p2turn)
-                            }                        }
+                            }
+                        }
                         //endregion Turn Indicator
 
                         //region Dealing Code
@@ -211,7 +208,7 @@ class GameRoomFragment : Fragment() {
                             gameMaster?.centerCard = gameMaster!!.drawpile?.removeAt(0).toString()
                             previousCenterCard = gameMaster?.centerCard
 
-                            if(gameMaster?.discardPile == null){
+                            if (gameMaster?.discardPile == null) {
                                 gameMaster?.discardPile = ArrayList()
                             }
 
@@ -262,10 +259,9 @@ class GameRoomFragment : Fragment() {
                                     for (x in 0 until 4) {
                                         //gameMaster = checkDrawPile(gameMaster)
 
-                                        if(gameMaster!!.drawpile?.size == 0){
+                                        if (gameMaster!!.drawpile?.size == 0) {
                                             break
-                                        }
-                                        else{
+                                        } else {
                                             playerHand.add(
                                                 gameMaster!!.drawpile?.removeAt(0).toString()
                                             )
@@ -370,7 +366,7 @@ class GameRoomFragment : Fragment() {
 
                                     gameMaster?.centerCard = colorValues[i].plus("+4")
 
-                                    if(gameMaster?.discardPile == null){
+                                    if (gameMaster?.discardPile == null) {
                                         gameMaster?.discardPile = ArrayList()
                                     }
 
@@ -401,7 +397,7 @@ class GameRoomFragment : Fragment() {
                         else if (tempCard!![0] == gameMaster?.centerCard!![0] || tempCard!![1] == gameMaster?.centerCard!![1]) {
                             gameMaster?.centerCard = tempCard
 
-                            if(gameMaster?.discardPile == null){
+                            if (gameMaster?.discardPile == null) {
                                 gameMaster?.discardPile = ArrayList()
                             }
 
@@ -470,7 +466,7 @@ class GameRoomFragment : Fragment() {
     fun checkDrawPile(gameMaster: GameMaster?): GameMaster? {
         var newGameMaster = gameMaster
 
-        if(newGameMaster?.drawpile == null){
+        if (newGameMaster?.drawpile == null) {
             newGameMaster?.discardPile?.shuffle()
             newGameMaster?.drawpile = newGameMaster?.discardPile!!
             //newGameMaster.discardPile!!.clear()
@@ -478,7 +474,8 @@ class GameRoomFragment : Fragment() {
             newGameMaster.drawpile?.shuffle()
 
             MainActivity.dbRef.child("games").child("activeGames")
-                .child(gameRequestId).child("gameMaster").setValue(newGameMaster).addOnCompleteListener {
+                .child(gameRequestId).child("gameMaster").setValue(newGameMaster)
+                .addOnCompleteListener {
                     newGameMaster.discardPile!!.clear()
 
                     MainActivity.dbRef.child("games").child("activeGames")
