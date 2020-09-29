@@ -58,7 +58,7 @@
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="4dp"
             android:text="Rider"
-            android:textSize="11sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
