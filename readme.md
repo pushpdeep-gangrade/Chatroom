@@ -151,6 +151,7 @@ https://xd.adobe.com/view/cc32e7b4-613f-4c1b-8ea8-cadbe84acec9-9961/
 
 # Game Feature <a name="game"></a>
 <br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/GR Join.png" width=150>
 - Users can go to the "Game Lobby" from the app menu to play the card game UNO.
 - The cards are numbered from 0 to 9, and colored Red, Green, Yellow, and Blue. There are also 2 per color of
   each of the special cards, Skip and Draw 4
