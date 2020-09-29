@@ -9,12 +9,13 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dropoff_rider"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/divider7"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/pickup_driver"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_percent=".45">
 
         <TextView
             android:id="@+id/textView4"
@@ -24,7 +25,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="4dp"
             android:text="Dropoff Location:"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -40,6 +41,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="4dp"
             android:text="TextView"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -69,12 +71,13 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/pickup_driver"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/dropoff_rider"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_percent=".45">
 
         <TextView
             android:id="@+id/textView6"
@@ -84,7 +87,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="4dp"
             android:text="Pickup Location:"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -101,7 +104,7 @@
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="4dp"
             android:text="Driver"
-            android:textSize="11sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -118,6 +121,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="4dp"
             android:text="TextView"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -125,5 +129,25 @@
             app:layout_constraintTop_toBottomOf="@+id/textView6"
             app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/divider7"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="@+id/dropoff_rider"
+        app:layout_constraintStart_toStartOf="@+id/pickup_driver"
+        app:layout_constraintTop_toBottomOf="@+id/divider8" />
+
+    <View
+        android:id="@+id/divider8"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toBottomOf="@+id/pickup_driver"
+        app:layout_constraintEnd_toStartOf="@+id/dropoff_rider"
+        app:layout_constraintStart_toEndOf="@+id/pickup_driver"
+        app:layout_constraintTop_toTopOf="@+id/pickup_driver" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

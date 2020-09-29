@@ -8,37 +8,50 @@
     android:padding="16px"
     tools:context=".ui.ui.driver.OnDriveFragment">
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <fragment
         android:id="@+id/onDrive_mapView"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="320dp"
-        android:layout_height="400dp"
-        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/onDrive_cancelButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent=".7"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.07999998"
+        app:layout_constraintWidth_percent="1"
         tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 
 
     <Button
         android:id="@+id/onDrive_cancelButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginBottom="44dp"
-        android:text="Cancel"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_edittext"
+        android:text="@string/action_cancel"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent=".42" />
 
     <Button
         android:id="@+id/onDrive_doneButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="36dp"
-        android:layout_marginBottom="44dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+
+        android:background="@drawable/rounded_edittext"
         android:text="Done"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/onDrive_cancelButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/onDrive_cancelButton"
+        app:layout_constraintTop_toTopOf="@+id/onDrive_cancelButton"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_percent=".42" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,16 +10,17 @@
 
     <LinearLayout
         android:id="@+id/rideDetails_riderDetailsContainer"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        app:layout_constraintWidth_percent=".48"
         android:background="#B2FFFFFF"
         android:orientation="horizontal"
         android:padding="4dp"
         app:layout_constraintStart_toStartOf="@+id/textView8"
         app:layout_constraintTop_toBottomOf="@+id/textView8">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/rideDetails_riderProfilePic"
             android:layout_width="80dp"
             android:layout_height="80dp"
@@ -51,8 +52,9 @@
 
     <LinearLayout
         android:id="@+id/rideDetails_driverDetailsContainer"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintWidth_percent=".48"
         android:background="#B2FFFFFF"
         android:orientation="horizontal"
         android:padding="4dp"
@@ -62,7 +64,7 @@
         app:layout_constraintStart_toEndOf="@+id/rideDetails_riderDetailsContainer"
         app:layout_constraintTop_toTopOf="@+id/rideDetails_riderDetailsContainer">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/rideDetails_driverProfilePic"
             android:layout_width="80dp"
             android:layout_height="80dp"
@@ -134,9 +136,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="8dp"
             android:text="@string/prompt_pickup_location"
-            android:textSize="20sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -146,10 +148,10 @@
             android:id="@+id/rideDetails_dropoffLocationLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="@string/prompt_dropoff_location"
-            android:textSize="20sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -196,11 +198,13 @@
         android:id="@+id/rideDetails_mapView"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="0dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="36dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/rideDetails_rideInfoContainer"
+        app:layout_constraintHeight_percent=".60"
         app:layout_constraintStart_toStartOf="@+id/rideDetails_rideInfoContainer"
         app:layout_constraintTop_toBottomOf="@+id/rideDetails_rideInfoContainer"
+        app:layout_constraintVertical_bias="1.0"
         tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

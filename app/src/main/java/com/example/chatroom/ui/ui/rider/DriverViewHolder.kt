@@ -58,19 +58,9 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         driverFullName = itemView.findViewById(R.id.driverItem_fullName)
         driverLocation  = itemView.findViewById(R.id.driverItem_location)
         driverEta= itemView.findViewById(R.id.driverItem_ETA)
-        yesButton  = itemView.findViewById(R.id.driverItem_yesButton)
-        noButton = itemView.findViewById(R.id.driverItem_noButton)
     }
 
     fun bind(driver: MapUser, view: View?, requestId: String, context: Context, pickupLocationLatLng: LatLng, dropoffLocationLatLng: LatLng, list:  List<MapUser>) {
-       /* var geocoder : Geocoder = Geocoder(context, Locale.getDefault());
-        var addresses : MutableList<Address>
-        addresses = geocoder.getFromLocation(driver.lat, driver.long, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        val address = addresses[0]
-            .getAddressLine(0)
-        val city = addresses[0].locality
-        val state = addresses[0].adminArea*/
-
 
         getDistanceAndTime(pickupLocationLatLng, driver, context)
 
@@ -78,70 +68,13 @@ class DriverViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
         driverFullName?.text = driver.driver.firstName.plus(" ").plus(driver.driver.lastName)
         Picasso.get().load(driver.driver.imageUrl).resize(250, 250).into(driverProfilePic)
-        //driverLocation!!.text = driver.lat.toString().plus(" ").plus(driver.long.toString())
-        //driverLocation!!.text = address
 
-        yesButton?.setOnClickListener {
-            Log.d("Yes Button", "Clicked")
-
-            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
-                .child(requestId).child("drivers").child(driver.driver.userId)
-                .child("status").setValue("Accepted")
-
-
-            //var rider = messageUser?.let { it1 -> RequestRideFragment.lastKnownLocation?.latitude?.let { it2 ->
-            //    RequestRideFragment.lastKnownLocation?.longitude?.let { it3 ->
-            //        MapUser(MainActivity.auth.currentUser?.uid.toString(), it1,
-            //            it2, it3
-            //        )
-            //    }
-            //} }
-
-            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests")
-                .child(requestId.toString()).addListenerForSingleValueEvent(object :
-                ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                    Log.d("demo", "Firebase event cancelled on getting user data")
-                }
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    var ride: RideRequest? = dataSnapshot.getValue<RideRequest>()
-                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("driverRequests")
-                        .child(requestId).child("ride").setValue(ride)
-
-                    var completeRide: CompleteRide = CompleteRide(ride!!, driver)
-
-                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                        .child("activeRides").child(requestId).setValue(completeRide)
-
-
-                }
-            })
-
-            /*MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("rideRequests")
-                .child(requestId.toString()).removeValue()*/
-
-
-            for(driver1 in list){
-                if(driver1.driver.userId != driver.driver.userId){
-                    MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                        .child("driverRequests").child(requestId).child("drivers")
-                        .child(driver1.driver.userId).child("status").setValue("Rejected")
-                }
-            }
-
-            val bundle = Bundle()
-            bundle.putString("rideId", requestId)
-            view?.findNavController()?.navigate(R.id.action_nav_request_driver_to_nav_waiting_on_ride, bundle)
-
-        }
-
-        noButton?.setOnClickListener {
-            Log.d("No Button", "Clicked")
-
-            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
-                .child("driverRequests").child(requestId).child("drivers")
-                .child(driver.driver.userId).child("status").setValue("Rejected")
-        }
+//        noButton?.setOnClickListener {
+//            Log.d("No Button", "Clicked")
+//            MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString())
+//                .child("driverRequests").child(requestId).child("drivers")
+//                .child(driver.driver.userId).child("status").setValue("Rejected")
+//        }
 
     }
 

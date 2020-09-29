@@ -36,14 +36,12 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.firebase.auth.FirebaseAuth
 import com.google.maps.android.PolyUtil
 import org.json.JSONObject
 import java.util.*
@@ -59,11 +57,9 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
     var path: MutableList<List<LatLng>> = ArrayList()
     var urlDirections: String = "https://maps.googleapis.com/maps/api/directions/json?"
     var directionsRequest: StringRequest? = null
-    var pickUpAutoComplete : AutocompleteSupportFragment? = null
-    var dropOffAutoComplete : AutocompleteSupportFragment? = null
-
+    var pickUpAutoComplete: AutocompleteSupportFragment? = null
+    var dropOffAutoComplete: AutocompleteSupportFragment? = null
     private var map: GoogleMap? = null
-
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val defaultLocation = LatLng(-33.8523341, 151.2106085)
     private var locationPermissionGranted = false
@@ -79,7 +75,6 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialize()
-
 
         binding.submitRequestButton.setOnClickListener {
             if (pickupLocationPlace.name != "" && dropoffLocationPlace.name != "") {
@@ -158,7 +153,7 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
 
                 googleMap?.addMarker(
                     MarkerOptions().position(pickupLocationLatLng!!)
-                        .title(place.name)
+                        .title(place.name).icon(BitmapDescriptorFactory.fromResource(R.drawable.pickup_marker))
                 )
 
                 if (pickupLocationLatLng != null && dropoffLocationLatLng != null) {
@@ -222,7 +217,7 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
         })
 
 
-         dropOffAutoComplete =
+        dropOffAutoComplete =
             FragmentManager.findFragment(view?.findViewById(R.id.dropoff_location_edittext)!!) as AutocompleteSupportFragment
         dropOffAutoComplete!!.setPlaceFields(
             listOf(
@@ -318,9 +313,10 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
                 clearMap()
             }
 
-        dropOffAutoComplete!!.view?.findViewById<View>(R.id.places_autocomplete_clear_button)?.setOnClickListener{
-            clearMap()
-        }
+        dropOffAutoComplete!!.view?.findViewById<View>(R.id.places_autocomplete_clear_button)
+            ?.setOnClickListener {
+                clearMap()
+            }
     }
 
     fun clearMap() {
@@ -414,7 +410,7 @@ class RequestRideFragment : Fragment(), OnMapReadyCallback {
                             val rider =
                                 LatLng(lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
 
-                            map?.addMarker(MarkerOptions().position(rider).title("Rider"))
+                            map?.addMarker(MarkerOptions().position(rider).title("Rider").icon(BitmapDescriptorFactory.fromResource(R.drawable.user_marker)))
                             map?.moveCamera(
                                 CameraUpdateFactory.newLatLngZoom(
                                     rider, DEFAULT_ZOOM.toFloat()

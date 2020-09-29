@@ -121,10 +121,13 @@ class RequestDriverFragment : Fragment() {
     fun updateActiveUsers() {
         binding.driverRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.driverRecyclerView.adapter = DriverAdapter(activeUsers, view, requestId.toString(),
+        binding.driverRecyclerView.adapter = DriverAdapter(
+            activeUsers, view, requestId.toString(),
             pickupLocationLatLng, dropoffLocationLatLng
         )
-    }
+
+        }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
