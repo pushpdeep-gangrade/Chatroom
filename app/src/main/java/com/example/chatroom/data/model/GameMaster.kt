@@ -9,4 +9,5 @@ data class GameMaster(var isDealing: Boolean = true,
                       var centerCard: String? = null,
                       var drawpile: MutableList<String>? = null,
                       var isDraw4Turn: Boolean = false,
-                      var isSkipTurn: Boolean = false)
+                      var isSkipTurn: Boolean = false,
+                      var discardPile: MutableList<String>? = null)

@@ -3,6 +3,7 @@ package com.example.chatroom.ui.ui.game
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.graphics.Color
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatroom.R
@@ -23,6 +25,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
 
 
 class GameRoomFragment : Fragment() {
@@ -175,24 +178,31 @@ class GameRoomFragment : Fragment() {
                 ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     gameMaster = dataSnapshot.getValue<GameMaster>()
+                    if(gameMaster?.drawpile != null || gameMaster?.discardPile != null){
+                        gameMaster = checkDrawPile(gameMaster)
+                    }
+                    else{
+                        binding.drawCardButton.isEnabled = false
+                    }
                     globalGameMaster = gameMaster
+                    Log.d("Draw Pile", gameMaster?.drawpile.toString())
                     if (gameMaster != null && gameMaster?.isDealing != null && gameMaster?.gameIsActive != null) {
                         //region Turn Indicator
                         if (gameMaster?.isDealing!!) {
-                            playersTurnTextView?.text = "Dealing cards"
+                            playersTurnTextView?.text = getString(R.string.dealing)
                         } else if (gameMaster?.playersTurn == "player1") {
                             if (player1Name != null) {
-                                playersTurnTextView?.text = "$player1Name's Turn"
+                                playersTurnTextView?.text = getString(R.string.turn,player1Name)
                             }
                             else {
-                                playersTurnTextView?.text = "Player 1's Turn"
+                                playersTurnTextView?.text = getString(R.string.p1turn)
                             }
                         } else if (gameMaster?.playersTurn == "player2") {
                             if (player2Name != null) {
-                                playersTurnTextView?.text = "$player2Name's Turn"
+                                playersTurnTextView?.text = getString(R.string.turn,player2Name)
                             }
                             else {
-                                playersTurnTextView?.text = "Player 2's Turn"
+                                playersTurnTextView?.text = getString(R.string.p2turn)
                             }                        }
                         //endregion Turn Indicator
 
@@ -200,6 +210,15 @@ class GameRoomFragment : Fragment() {
                         if (gameMaster?.centerCard == null) {
                             gameMaster?.centerCard = gameMaster!!.drawpile?.removeAt(0).toString()
                             previousCenterCard = gameMaster?.centerCard
+
+                            if(gameMaster?.discardPile == null){
+                                gameMaster?.discardPile = ArrayList()
+                            }
+
+                            gameMaster?.discardPile?.add(gameMaster?.centerCard!!)
+
+                            Log.d("Discard Pile", gameMaster?.discardPile.toString())
+
                             MainActivity.dbRef.child("games").child("activeGames")
                                 .child(gameRequestId).child("gameMaster").setValue(gameMaster)
                         } else if (gameMaster?.isDealing!! && gameMaster?.gameIsActive!!) {
@@ -241,9 +260,17 @@ class GameRoomFragment : Fragment() {
                                     gameMaster?.isSkipTurn = false
                                 } else if (gameMaster?.isDraw4Turn!!) {
                                     for (x in 0 until 4) {
-                                        playerHand.add(
-                                            gameMaster!!.drawpile?.removeAt(0).toString()
-                                        )
+                                        //gameMaster = checkDrawPile(gameMaster)
+
+                                        if(gameMaster!!.drawpile?.size == 0){
+                                            break
+                                        }
+                                        else{
+                                            playerHand.add(
+                                                gameMaster!!.drawpile?.removeAt(0).toString()
+                                            )
+                                        }
+
                                     }
                                     if (gameMaster?.playersTurn == "player1") {
                                         //uncomment if we want +4 to skip other player's turn
@@ -284,15 +311,13 @@ class GameRoomFragment : Fragment() {
                 ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val centerCard = dataSnapshot.getValue<String>()
-
-                    var color = Color.GRAY
+                    var color = Color.BLACK
                     when (centerCard?.get(0).toString()) {
-                        "B" -> color = Color.BLUE
-                        "G" -> color = Color.GREEN
-                        "R" -> color = Color.RED
-                        "Y" -> color = Color.YELLOW
+                        "B" -> color = Color.parseColor("#1879A8")
+                        "G" -> color = Color.parseColor("#5AB00D")
+                        "R" -> color = Color.parseColor("#E63E27")
+                        "Y" -> color = Color.parseColor("#F0DD1D")
                     }
-
                     centerCardColor!!.setBackgroundColor(color)
 
                     if (centerCard?.get(0).toString() == "+" || centerCard?.get(1)
@@ -300,8 +325,10 @@ class GameRoomFragment : Fragment() {
                     ) {
                         centerCardValue!!.text = "+4"
                     } else if (centerCard.toString().length > 3) {
-                        centerCardValue!!.text = "Skip"
+                        centerCardValue!!.text = getString(R.string.skip)
+                        centerCardValue!!.setTextSize(30F)
                     } else {
+                        centerCardValue!!.setTextSize(60F)
                         centerCardValue!!.text = centerCard?.get(1).toString()
                     }
                 }
@@ -326,6 +353,7 @@ class GameRoomFragment : Fragment() {
                             val builder = AlertDialog.Builder(context)
                             builder.setTitle("Choose Color")
 
+
                             //builder.setNegativeButton("Close", DialogInterface.OnClickListener {
                             //        dialog, id -> dialog.cancel()
                             //})
@@ -341,6 +369,15 @@ class GameRoomFragment : Fragment() {
                                 { dialogInterface: DialogInterface, i: Int ->
 
                                     gameMaster?.centerCard = colorValues[i].plus("+4")
+
+                                    if(gameMaster?.discardPile == null){
+                                        gameMaster?.discardPile = ArrayList()
+                                    }
+
+                                    gameMaster?.discardPile?.add("+4")
+
+                                    Log.d("Discard Pile", gameMaster?.discardPile.toString())
+
 
                                     if (playerNum == 1) {
                                         gameMaster?.playersTurn = "player2"
@@ -363,6 +400,14 @@ class GameRoomFragment : Fragment() {
                         //If drawn card color matches center card OR if drawn card value matches center card
                         else if (tempCard!![0] == gameMaster?.centerCard!![0] || tempCard!![1] == gameMaster?.centerCard!![1]) {
                             gameMaster?.centerCard = tempCard
+
+                            if(gameMaster?.discardPile == null){
+                                gameMaster?.discardPile = ArrayList()
+                            }
+
+                            gameMaster?.discardPile?.add(gameMaster?.centerCard!!)
+
+                            Log.d("Discard Pile", gameMaster?.discardPile.toString())
 
                             if (playerNum == 1) {
                                 gameMaster?.playersTurn = "player2"
@@ -412,11 +457,40 @@ class GameRoomFragment : Fragment() {
 
     fun checkWinner() {
         if (gameMaster != null) {
+            if (!gameMaster?.isDealing!! && playerHand.size == 1) {
+                Toast.makeText(context, "UNO!", Toast.LENGTH_LONG).show()
+            }
             if (!gameMaster?.isDealing!! && playerHand.size == 0) {
                 MainActivity.dbRef.child("games").child("activeGames")
                     .child(gameRequestId).child("winner").setValue("player${playerNum}")
             }
         }
+    }
+
+    fun checkDrawPile(gameMaster: GameMaster?): GameMaster? {
+        var newGameMaster = gameMaster
+
+        if(newGameMaster?.drawpile == null){
+            newGameMaster?.discardPile?.shuffle()
+            newGameMaster?.drawpile = newGameMaster?.discardPile!!
+            //newGameMaster.discardPile!!.clear()
+
+            newGameMaster.drawpile?.shuffle()
+
+            MainActivity.dbRef.child("games").child("activeGames")
+                .child(gameRequestId).child("gameMaster").setValue(newGameMaster).addOnCompleteListener {
+                    newGameMaster.discardPile!!.clear()
+
+                    MainActivity.dbRef.child("games").child("activeGames")
+                        .child(gameRequestId).child("gameMaster").child("discardPile").removeValue()
+
+                    binding.drawCardButton.isEnabled = true
+                }
+
+
+        }
+
+        return newGameMaster
     }
 
     override fun onDestroy() {

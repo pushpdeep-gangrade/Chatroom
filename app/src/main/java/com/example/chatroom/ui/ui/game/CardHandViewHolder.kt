@@ -37,15 +37,21 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
     fun bind(cardValue: String, cardColor: String, gameRequestId: String, playerNum: Int, cardPosition: Int) {
         //default gray for +4
-        var color = Color.GRAY
+        var color = Color.BLACK
         when (cardColor) {
-            "B" -> color = Color.BLUE
-            "G" -> color = Color.GREEN
-            "R" -> color = Color.RED
-            "Y" -> color = Color.YELLOW
+            "B" -> color = Color.parseColor("#1879A8")
+            "G" -> color = Color.parseColor("#5AB00D")
+            "R" -> color = Color.parseColor("#E63E27")
+            "Y" -> color = Color.parseColor("#F0DD1D")
         }
 
         mCardValueTextView?.text = cardValue
+        if (mCardValueTextView?.text?.equals("Skip")!!) {
+            mCardValueTextView!!.setTextSize(30F)
+        }
+        else {
+            mCardValueTextView!!.setTextSize(60F)
+        }
         mCardColorTextView?.setBackgroundColor(color)
 
         mCardColorTextView?.setOnClickListener {
@@ -77,6 +83,18 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("player${playerNum}hand")
                                     .child(cardPosition.toString()).removeValue()
+
+                                if(gameMaster.discardPile == null){
+                                    gameMaster.discardPile = ArrayList()
+                                }
+
+                                gameMaster.discardPile?.add(cardValue)
+
+                                Log.d("Discard Pile", gameMaster.discardPile.toString())
+
+                                MainActivity.dbRef.child("games").child("activeGames")
+                                    .child(gameRequestId).child("gameMaster").setValue(gameMaster)
+
 
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("player${playerNum}hand")
@@ -127,6 +145,18 @@ class CardHandViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                             MainActivity.dbRef.child("games").child("activeGames")
                                 .child(gameRequestId).child("player${playerNum}hand")
                                 .child(cardPosition.toString()).removeValue()
+
+                            if(gameMaster.discardPile == null){
+                                gameMaster.discardPile = ArrayList()
+                            }
+
+                            gameMaster.discardPile?.add(cardColor.plus(cardValue))
+
+                            Log.d("Discard Pile", gameMaster.discardPile.toString())
+
+                            MainActivity.dbRef.child("games").child("activeGames")
+                                .child(gameRequestId).child("gameMaster").setValue(gameMaster)
+
 
                             MainActivity.dbRef.child("games").child("activeGames")
                                 .child(gameRequestId).child("player${playerNum}hand")

@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Chatroom</string>
-    <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_re_enter_password">Re-enter Password</string>
@@ -53,25 +52,23 @@
     <string name="game_requests">Game Requests</string>
     <string name="action_settings">Settings</string>
     <string name="request_game">Request Game</string>
-
     <string name="view_users">View Users</string>
     <string name="profile">Profile</string>
     <string name="update_profile">Update Profile</string>
     <string name="view_chatroom">View Chatrooms</string>
     <string name="view_ride_history">View Ride History</string>
-
-
     <string name="logout">LOGOUT</string>
     <string name="hello_blank_fragment">Hello fragment</string>
     <string name="save">Save</string>
     <string name="send">Send message</string>
-
+    <string name="num">#</string>
     <string name="type_message">Type message here…</string>
-
     <string name="active_user">Active Users</string>
-
-
     <string name="old_api_key">AIzaSyBuIvBN797lPyHRIASQJzk77k0ry-UZTCI</string>
-    <!--    <string name="api_key">AIzaSyB7hpRkVng8CeIQTZ73OZyEGZbUQfDVn7s</string>-->
     <string name="api_key">AIzaSyDutinEyrC4GMb5QyTSr0ROrcAlHDBL5sA</string>
+    <string name="dealing">Dealing Cards</string>
+    <string name="p1turn">Player 1\'s Turn</string>
+    <string name="p2turn">Player 2\'s Turn</string>
+    <string name="turn">%1$s\'s Turn</string>
+    <string name="skip">Skip</string>
 </resources>
