@@ -66,8 +66,8 @@
     <string name="old_api_key">AIzaSyBuIvBN797lPyHRIASQJzk77k0ry-UZTCI</string>
     <string name="api_key">AIzaSyDutinEyrC4GMb5QyTSr0ROrcAlHDBL5sA</string>
     <string name="dealing">Dealing Cards</string>
-    <string name="p1turn">\Player 1\'s Turn</string>
-    <string name="p2turn">\Player 2\'s Turn</string>
+    <string name="p1turn">Player 1\'s Turn</string>
+    <string name="p2turn">Player 2\'s Turn</string>
     <string name="turn">%1$s\'s Turn</string>
     <string name="skip">Skip</string>
 </resources>

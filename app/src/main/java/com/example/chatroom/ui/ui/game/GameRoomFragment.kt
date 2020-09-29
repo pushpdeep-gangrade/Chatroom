@@ -179,20 +179,20 @@ class GameRoomFragment : Fragment() {
                     if (gameMaster != null && gameMaster?.isDealing != null && gameMaster?.gameIsActive != null) {
                         //region Turn Indicator
                         if (gameMaster?.isDealing!!) {
-                            playersTurnTextView?.text = R.string.dealing.toString()
+                            playersTurnTextView?.text = getString(R.string.dealing)
                         } else if (gameMaster?.playersTurn == "player1") {
                             if (player1Name != null) {
                                 playersTurnTextView?.text = getString(R.string.turn,player1Name)
                             }
                             else {
-                                playersTurnTextView?.text = R.string.p1turn.toString()
+                                playersTurnTextView?.text = getString(R.string.p1turn)
                             }
                         } else if (gameMaster?.playersTurn == "player2") {
                             if (player2Name != null) {
                                 playersTurnTextView?.text = getString(R.string.turn,player2Name)
                             }
                             else {
-                                playersTurnTextView?.text = R.string.p2turn.toString()
+                                playersTurnTextView?.text = getString(R.string.p2turn)
                             }                        }
                         //endregion Turn Indicator
 
@@ -298,7 +298,7 @@ class GameRoomFragment : Fragment() {
                     ) {
                         centerCardValue!!.text = "+4"
                     } else if (centerCard.toString().length > 3) {
-                        centerCardValue!!.text = R.string.skip.toString()
+                        centerCardValue!!.text = getString(R.string.skip)
                         centerCardValue!!.setTextSize(30F)
                     } else {
                         centerCardValue!!.setTextSize(60F)
