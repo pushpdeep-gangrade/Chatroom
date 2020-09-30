@@ -12,7 +12,7 @@
 - [Game Feature](#game)
 
 # Chatroom App Mockup <a name="mockup"></a>
-https://xd.adobe.com/view/cc32e7b4-613f-4c1b-8ea8-cadbe84acec9-9961/
+https://xd.adobe.com/view/525bdc8e-0b41-4276-8b8b-92965ac3aa8d-0708/
 
 # Chatroom Demo <a name="demo"></a>
 - Part 1: Creating a profile and introduction to group chats. https://www.youtu.be/PmfODNEfFbY
