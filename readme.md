@@ -17,7 +17,7 @@ https://xd.adobe.com/view/cc32e7b4-613f-4c1b-8ea8-cadbe84acec9-9961/
 # Chatroom Demo <a name="demo"></a>
 - Part 1: Creating a profile and introduction to group chats. https://www.youtu.be/PmfODNEfFbY
 - Part 2: Requesting and accepting rides. https://youtu.be/yFQDB3oLeVI
-- Part 3: Playing "Uno" with two users.
+- Part 3: Playing "Uno" with two users. https://youtu.be/j_2SDM5q4Z8
 
 # Design and Implementation <a name="design"></a>
 ## Login
