@@ -282,6 +282,40 @@ class GameRoomFragment : Fragment() {
             })
         //endregion Get player names
 
+        //region Center Card Updates
+        MainActivity.dbRef.child("games").child("activeGames")
+            .child(gameRequestId).child("gameMaster").child("centerCard")
+            .addValueEventListener(object :
+                ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val centerCard = dataSnapshot.getValue<String>()
+                    var color = Color.BLACK
+                    when (centerCard?.get(0).toString()) {
+                        "B" -> color = Color.parseColor("#1879A8")
+                        "G" -> color = Color.parseColor("#5AB00D")
+                        "R" -> color = Color.parseColor("#E63E27")
+                        "Y" -> color = Color.parseColor("#F0DD1D")
+                    }
+                    centerCardColor!!.setBackgroundColor(color)
+
+                    if (centerCard?.get(0).toString() == "+" || centerCard?.get(1)
+                            .toString() == "+"
+                    ) {
+                        centerCardValue!!.text = "+4"
+                    } else if (centerCard.toString().length > 3) {
+                        centerCardValue!!.text = "Skip"
+                        centerCardValue!!.setTextSize(30F)
+                    } else {
+                        centerCardValue!!.setTextSize(60F)
+                        centerCardValue!!.text = centerCard?.get(1).toString()
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.d("demo", "cancel")
+                }
+            })
+        //endregion Center Card Updates
 
         //region GameMaster Control Code
         MainActivity.dbRef.child("games").child("activeGames")
@@ -317,7 +351,7 @@ class GameRoomFragment : Fragment() {
                         //endregion Turn Indicator
 
                         //region Dealing Code
-                        if (gameMaster?.centerCard == null) {
+                        if (gameMaster?.centerCard == null && gameMaster?.playersTurn!! == "player${playerNum}") {
                             gameMaster?.centerCard = gameMaster!!.drawpile?.removeAt(0).toString()
                             previousCenterCard = gameMaster?.centerCard
 
@@ -331,7 +365,7 @@ class GameRoomFragment : Fragment() {
 
                             MainActivity.dbRef.child("games").child("activeGames")
                                 .child(gameRequestId).child("gameMaster").setValue(gameMaster)
-                        } else if (gameMaster?.isDealing!! && gameMaster?.gameIsActive!!) {
+                        } else if (gameMaster?.isDealing!! && gameMaster?.gameIsActive!! && gameMaster?.playersTurn!! == "player${playerNum}") {
                             //if dealing is finished
                             if (dealCount <= 0) {
                                 gameMaster?.isDealing = false
@@ -412,41 +446,6 @@ class GameRoomFragment : Fragment() {
                 }
             })
         //endregion GameMaster Control Code
-
-        //region Center Card Updates
-        MainActivity.dbRef.child("games").child("activeGames")
-            .child(gameRequestId).child("gameMaster").child("centerCard")
-            .addValueEventListener(object :
-                ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val centerCard = dataSnapshot.getValue<String>()
-                    var color = Color.BLACK
-                    when (centerCard?.get(0).toString()) {
-                        "B" -> color = Color.parseColor("#1879A8")
-                        "G" -> color = Color.parseColor("#5AB00D")
-                        "R" -> color = Color.parseColor("#E63E27")
-                        "Y" -> color = Color.parseColor("#F0DD1D")
-                    }
-                    centerCardColor!!.setBackgroundColor(color)
-
-                    if (centerCard?.get(0).toString() == "+" || centerCard?.get(1)
-                            .toString() == "+"
-                    ) {
-                        centerCardValue!!.text = "+4"
-                    } else if (centerCard.toString().length > 3) {
-                        centerCardValue!!.text = "Skip"
-                        centerCardValue!!.setTextSize(30F)
-                    } else {
-                        centerCardValue!!.setTextSize(60F)
-                        centerCardValue!!.text = centerCard?.get(1).toString()
-                    }
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    Log.d("demo", "cancel")
-                }
-            })
-        //endregion Center Card Updates
 
         //region Draw Card Button
         binding.drawCardButton.setOnClickListener {
@@ -559,6 +558,7 @@ class GameRoomFragment : Fragment() {
                 }
             }
         }
+        //endregion Draw Card Button
     }
 
     fun updateCards() {
