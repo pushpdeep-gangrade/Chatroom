@@ -201,7 +201,7 @@ class GameRoomFragment : Fragment() {
         }
         //endregion PlayerHand Updates
 
-        // Get player names
+        //region Get player names
         MainActivity.dbRef.child("games").child("activeGames").child(gameRequestId)
             .child("player1")
             .child("firstName")
@@ -280,6 +280,7 @@ class GameRoomFragment : Fragment() {
                     Log.d("demo", "cancel")
                 }
             })
+        //endregion Get player names
 
 
         //region GameMaster Control Code
@@ -537,11 +538,15 @@ class GameRoomFragment : Fragment() {
                             //tempCard = gameMaster!!.drawpile?.removeAt(0).toString()
 
                             if (playerNum == 1) {
-                                //gameMaster?.playersTurn = "player2"
+                                //Comment out if user should draw more than 1 card on a turn if not playable
+                                gameMaster?.playersTurn = "player2"
+
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("player1hand").setValue(playerHand)
                             } else if (playerNum == 2) {
-                                //gameMaster?.playersTurn = "player1"
+                                //Comment out if user should draw more than 1 card on a turn if not playable
+                                gameMaster?.playersTurn = "player1"
+
                                 MainActivity.dbRef.child("games").child("activeGames")
                                     .child(gameRequestId).child("player2hand").setValue(playerHand)
                             }

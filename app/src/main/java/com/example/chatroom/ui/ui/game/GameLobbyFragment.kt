@@ -219,10 +219,10 @@ class GameLobbyFragment : Fragment() {
                 .child("player2").setValue(currentUser)
 
             val cardList = mutableListOf<String>(
-                "B0", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "BSkip", "BSkip",
-                "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "GSkip", "GSkip",
-                "R0", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "RSkip", "RSkip",
-                "Y0", "Y1", "Y2", "Y3", "Y4", "Y5", "Y6", "Y7", "Y8", "Y9", "YSkip", "YSkip",
+                "B0", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "BSkip",
+                "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "GSkip",
+                "R0", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "RSkip",
+                "Y0", "Y1", "Y2", "Y3", "Y4", "Y5", "Y6", "Y7", "Y8", "Y9", "YSkip",
                 "+4", "+4", "+4", "+4"
             )
             cardList.shuffle()
