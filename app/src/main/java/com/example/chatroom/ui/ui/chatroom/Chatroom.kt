@@ -185,6 +185,11 @@ class Chatroom : Fragment() {
             view.findNavController().navigate(R.id.action_chatroom_to_nav_request_ride, bundle2)
         }
 
+        binding.talkToText.setOnClickListener {
+            //THIS IS WHERE WE WOULD SETUP CODE TO RECORD USER SPEECH AND CONVERT TO TEXT.
+            Log.d("New Feature","Chatroom.kt file, where Speech to Text translation/creation feature is to be added")
+        }
+
         // this would be deleted. Just for testing layouts at the moment -------------------------------------------------------------------
         binding.requestRideButton.setOnLongClickListener {
             val bundle3 = Bundle()

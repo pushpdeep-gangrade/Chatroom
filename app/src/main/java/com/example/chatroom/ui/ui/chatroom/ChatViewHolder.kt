@@ -26,6 +26,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     private var mTvLikes: TextView? = null
     private var mTvMsg: TextView? = null
     private var mTvtime: TextView? = null
+    private var mTranslateButton: TextView? = null
 
     init {
         mUserImage = itemView.findViewById(R.id.user_image_chat)
@@ -35,6 +36,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
        mTvLikes  = itemView.findViewById(R.id.no_likes)
        mTvMsg = itemView.findViewById(R.id.message_chat)
         mTvtime = itemView.findViewById(R.id.time_chat)
+        mTranslateButton = itemView.findViewById(R.id.iv_translate_button)
 
     }
     fun bind(chat: Chat) {
@@ -59,6 +61,14 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
              var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child("chatList").child(chat.messageId)
             onLiked(ref)
 
+        }
+
+        mTranslateButton?.setOnClickListener() {
+            //This is where the code for
+            // 1. Text to Text
+            // 2. Text to Talk
+            //will go
+            Log.d("New Feature","ChatViewHolder.kt file, where Text to Talk and Text to Text translations features are to be added")
         }
     }
 

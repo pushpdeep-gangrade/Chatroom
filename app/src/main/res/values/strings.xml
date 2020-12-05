@@ -71,4 +71,6 @@
     <string name="p2turn">Player 2\'s Turn</string>
     <string name="turn">%1$s\'s Turn</string>
     <string name="skip">Skip</string>
+    <string name="talk_to_text">Talk to Text</string>
+    <string name="translate_button">Translate</string>
 </resources>
