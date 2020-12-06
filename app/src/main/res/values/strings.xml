@@ -73,4 +73,11 @@
     <string name="skip">Skip</string>
     <string name="talk_to_text">Talk to Text</string>
     <string name="translate_button">Translate</string>
+    <string name="translate_message_dialog_title">Translate Message</string>
+    <string name="text_to_text_rb_text">Text to Text</string>
+    <string name="text_to_talk_rb_text">Text to Talk</string>
+    <string name="translate_message_from_label">From</string>
+    <string name="translate_message_to_label">To</string>
+    <string name="translate_message_submit_text">Submit</string>
+    <string name="translate_message_cancel_text">Cancel</string>
 </resources>

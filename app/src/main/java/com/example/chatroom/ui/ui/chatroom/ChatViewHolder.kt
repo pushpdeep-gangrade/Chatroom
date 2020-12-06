@@ -1,21 +1,22 @@
 package com.example.chatroom.ui.ui.chatroom
 
+import android.app.AlertDialog
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatroom.R
-import com.example.chatroom.ui.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.google.firebase.ktx.Firebase
+import com.loopj.android.http.AsyncHttpClient
+import com.loopj.android.http.JsonHttpResponseHandler
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.MainScope
-import kotlinx.serialization.json.Json.Default.context
+import cz.msebera.android.httpclient.Header
+import org.json.JSONArray
+import org.json.JSONObject
 
 class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.chat_item, parent, false)) {
@@ -39,7 +40,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         mTranslateButton = itemView.findViewById(R.id.iv_translate_button)
 
     }
-    fun bind(chat: Chat) {
+    fun bind(chat: Chat, context: Context) {
         mTvUser?.text = chat.userfname.plus(" ").plus(chat.userlname)
         mTvLikes?.text = chat.likesMap.size.toString()
         mTvMsg?.text = chat.message
@@ -64,12 +65,158 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         }
 
         mTranslateButton?.setOnClickListener() {
-            //This is where the code for
-            // 1. Text to Text
-            // 2. Text to Talk
-            //will go
+            setTranslateMessageDialog(context)
             Log.d("New Feature","ChatViewHolder.kt file, where Text to Talk and Text to Text translations features are to be added")
         }
+    }
+
+    private fun setTranslateMessageDialog(context: Context) {
+        val url =
+            "https://api.cognitive.microsofttranslator.com/languages?api-version=3.0"
+
+        val client: AsyncHttpClient = AsyncHttpClient()
+        val arrStringName: ArrayList<String> = ArrayList()
+        val arrLanguageObjects: ArrayList<Language> = ArrayList()
+
+        val builder = AlertDialog.Builder(context);
+        val view: View = View.inflate(context, R.layout.translate_message_dialog, null)
+
+        val cancel: TextView = view.findViewById<TextView>(R.id.translateMessageDialog_cancelButton)
+        val submit: TextView = view.findViewById<TextView>(R.id.translateMessageDialog_submitButton)
+        val fromLanguageSpinner: Spinner = view.findViewById<Spinner>(R.id.translateMessageDialog_fromLanguageSpinner)
+        val toLanguageSpinner: Spinner = view.findViewById<Spinner>(R.id.translateMessageDialog_toLanguageSpinner)
+        val radioGroup: RadioGroup = view.findViewById<RadioGroup>(R.id.translateMessageDialog_radioGroup)
+        val progressBar: ProgressBar = view.findViewById<ProgressBar>(R.id.translateMessageDialog_progressBar)
+
+        var selectedRadioButton: String = ""
+        var fromSpinnerLanguageSelected: String = ""
+        var toSpinnerLanguageSelected: String = ""
+
+        progressBar.visibility = View.VISIBLE
+        submit.isEnabled = false
+
+        radioGroup.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
+            val radio: RadioButton = view.findViewById(checkedId)
+            selectedRadioButton = radio.text.toString()
+            Toast.makeText(context," On checked change : ${radio.text}",
+                Toast.LENGTH_SHORT).show()
+        })
+
+        builder.setView(view);
+        val dialog: AlertDialog = builder.create()
+
+        cancel.setOnClickListener {
+            Log.d("Cancel", "Hit cancel")
+
+            dialog.cancel()
+
+        }
+
+        submit.setOnClickListener {
+            Log.d("Submit", "Hit submit")
+
+            //Logic for translating text goes here
+            Log.d("Selected", "Method: " + selectedRadioButton
+                    + "\nFrom Spinner Language: " + fromSpinnerLanguageSelected
+                    + "\nTo Spinner Language: " + toSpinnerLanguageSelected)
+
+            if(selectedRadioButton.equals("")){
+                Toast.makeText(context,"Please select a translation method",
+                    Toast.LENGTH_SHORT).show()
+            }
+            else if(selectedRadioButton.equals("Text to Text")){
+                //Grab message text and selected translation method and make API call
+
+            }
+            else if(selectedRadioButton.equals("Text to Talk")){
+                //Grab message text and selected translation method and make API call
+            }
+        }
+
+        dialog.show()
+
+        client.get(url, object : JsonHttpResponseHandler()
+        {
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?)
+            {
+                if(response != null){
+
+                    Log.d("Response", response.toString())
+                    val translationObj: JSONObject = JSONObject(response.toString()).getJSONObject("translation")
+                    val keys: Iterator<String> = translationObj.keys()
+
+
+                    while (keys.hasNext()) {
+                        val key = keys.next()
+
+                        val value: JSONObject = translationObj.getJSONObject(key)
+
+                        val name: String = value.getString("name")
+                        val nativeName: String = value.getString("nativeName")
+                        val dir: String = value.getString("dir")
+
+                        val language: Language = Language(key, name, nativeName, dir)
+
+                        arrStringName.add(name)
+                        arrLanguageObjects.add(language)
+
+                        // Do something...
+
+                        Log.d("Objects", key + ": " + value)
+                    }
+
+                    val adapter = ArrayAdapter(context,
+                        android.R.layout.simple_spinner_item, arrStringName)
+                    fromLanguageSpinner.adapter = adapter
+                    toLanguageSpinner.adapter = adapter
+
+                    toSpinnerLanguageSelected = arrStringName.get(0)
+                    fromSpinnerLanguageSelected = arrStringName.get(0)
+
+                    fromLanguageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                        override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                        }
+
+                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                            fromSpinnerLanguageSelected = arrStringName.get(position)
+                        }
+
+                    }
+
+                    toLanguageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                        override fun onNothingSelected(parent: AdapterView<*>?) {
+                        }
+
+                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                            toSpinnerLanguageSelected = arrStringName.get(position)
+                        }
+
+                    }
+
+                    progressBar.visibility = View.INVISIBLE
+                    submit.isEnabled = true
+
+
+                }else{
+
+                    Toast.makeText(context,"Failed to get languages",
+                        Toast.LENGTH_SHORT).show()
+
+                    progressBar.visibility = View.INVISIBLE
+
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<Header>?, e: Throwable, response: JSONArray?)
+            {
+                Toast.makeText(context,"Failed to get languages",
+                    Toast.LENGTH_SHORT).show()
+
+                progressBar.visibility = View.INVISIBLE
+
+            }
+        })
     }
 
     private fun onLiked(postRef: DatabaseReference) {

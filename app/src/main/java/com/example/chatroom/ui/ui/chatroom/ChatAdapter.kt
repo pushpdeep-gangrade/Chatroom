@@ -1,10 +1,11 @@
 package com.example.chatroom.ui.ui.chatroom
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class ChatAdapter(private val list: List<Chat>)
+class ChatAdapter(private val list: List<Chat>, private val context: Context)
     : RecyclerView.Adapter<ChatViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
@@ -16,7 +17,7 @@ class ChatAdapter(private val list: List<Chat>)
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val msg: Chat = list[position]
-        holder.bind(msg)
+        holder.bind(msg, context)
 
 
     }

@@ -232,7 +232,7 @@ class Chatroom : Fragment() {
     fun updateAdapter(){
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
-            adapter = ChatAdapter(listchats)
+            adapter = ChatAdapter(listchats, context)
         }
     }
 
