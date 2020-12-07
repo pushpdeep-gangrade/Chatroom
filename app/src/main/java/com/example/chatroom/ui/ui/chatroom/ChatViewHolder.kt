@@ -127,6 +127,31 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             else if(selectedRadioButton.equals("Text to Text")){
                 //Grab message text and selected translation method and make API call
 
+                //This is how you will get the proper value for the selected languages
+                Log.d("From Language",(arrLanguageObjects.filter { it.name == fromSpinnerLanguageSelected })[0].key)
+                Log.d("To Language",(arrLanguageObjects.filter { it.name == toSpinnerLanguageSelected })[0].key)
+                Log.d("Message to Translate", mTvMsg?.text.toString())
+
+                //This is the body that needs to be sent to the api
+                //URL if you run nodemon ./server.js: http://localhost:8080/translate/textToText
+                /*
+                {
+                    "from":"en",
+                    "to":["it"],
+                    "message":"This is the message to translate"
+                }
+                */
+                //The response will look like this
+                /*
+                {
+                    "translations": [
+                        {
+                            "text": "Questo è il messaggio da tradurre",
+                            "to": "it"
+                        }
+                    ]
+                }
+                */
             }
             else if(selectedRadioButton.equals("Text to Talk")){
                 //Grab message text and selected translation method and make API call
