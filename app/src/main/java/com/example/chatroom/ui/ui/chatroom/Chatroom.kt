@@ -695,6 +695,7 @@ class Chatroom : Fragment() {
                         // Do what you want with the recognized text.
 
                         //CALL THE TRANSLATION API HERE!!!!!!
+                        binding.inputMessage.setText(recognizedText)
                         Log.d("Call the translation API here, with desired { to:, from:, message: }",recognizedText)
                     }
                 }
