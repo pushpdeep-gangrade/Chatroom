@@ -355,7 +355,7 @@ class Chatroom : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        speechRecognizer!!.destroy()
+//        speechRecognizer!!.destroy()
         Log.d("Active Status", "Destroy: User is no longer active")
         Log.d("IDs", "${chatRoomId} ${messageUser?.userId} $messageUserId")
         MainActivity.dbRef.child("chatrooms").child(chatRoomId.toString()).child("listActiveUsers")
