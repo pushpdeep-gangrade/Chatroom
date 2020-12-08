@@ -3,6 +3,7 @@ package com.example.chatroom.ui.ui.chatroom
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -76,7 +77,7 @@ private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 private var activeUsers = mutableListOf<User>()
 var chatRoomId: String? = null
 private val RECORD_REQUEST_CODE = 101
-
+private var audioPermissionGranted = false
 
 
 class Chatroom : Fragment() {
@@ -100,70 +101,70 @@ class Chatroom : Fragment() {
 
         Log.d("Active Status", "User is now active")
 
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
-        val speechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        speechRecognizerIntent.putExtra(
-            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-        )
-        speechRecognizerIntent.putExtra(
-            RecognizerIntent.EXTRA_LANGUAGE,
-            Locale.getDefault()
-        )
-
-
-        speechRecognizer?.run {
-            speechRecognizerIntent.putExtra(
-                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-            )
-            speechRecognizerIntent.putExtra(
-                RecognizerIntent.EXTRA_LANGUAGE,
-                Locale.getDefault()
-            )
-
-
-            setRecognitionListener(object : RecognitionListener {
-                override fun onReadyForSpeech(bundle: Bundle) {  }
-                override fun onRmsChanged(p0: Float) {
-
-                }
-
-                override fun onBufferReceived(p0: ByteArray?) {
-
-                }
-
-                override fun onPartialResults(p0: Bundle?) {
-                }
-
-                override fun onEvent(p0: Int, p1: Bundle?) {
-
-                }
-
-                override fun onBeginningOfSpeech() {
-                    binding.inputMessage.setText("")
-                    binding.inputMessage.setHint("Listening...")
-                    binding.talkToText.setImageResource(R.drawable.ic_mic_on)
-                }
-
-                override fun onEndOfSpeech() {
-                    speechRecognizer!!.stopListening()
-                    binding.inputMessage.setHint("Type message here...")
-                }
-
-                override fun onError(p0: Int) {
-                    Log.d("error",p0.toString())
-
-                }
-
-                override fun onResults(p0: Bundle?) {
-                    val data = p0?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                    binding.inputMessage.append(data!![0])
-                    binding.talkToText.setImageResource(R.drawable.ic_mic_off)
-
-                }
-            })
-        }
+//        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
+//        val speechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+//        speechRecognizerIntent.putExtra(
+//            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+//            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+//        )
+//        speechRecognizerIntent.putExtra(
+//            RecognizerIntent.EXTRA_LANGUAGE,
+//            Locale.getDefault()
+//        )
+//
+//
+//        speechRecognizer?.run {
+//            speechRecognizerIntent.putExtra(
+//                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+//                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+//            )
+//            speechRecognizerIntent.putExtra(
+//                RecognizerIntent.EXTRA_LANGUAGE,
+//                Locale.getDefault()
+//            )
+//
+//
+//            setRecognitionListener(object : RecognitionListener {
+//                override fun onReadyForSpeech(bundle: Bundle) {  }
+//                override fun onRmsChanged(p0: Float) {
+//
+//                }
+//
+//                override fun onBufferReceived(p0: ByteArray?) {
+//
+//                }
+//
+//                override fun onPartialResults(p0: Bundle?) {
+//                }
+//
+//                override fun onEvent(p0: Int, p1: Bundle?) {
+//
+//                }
+//
+//                override fun onBeginningOfSpeech() {
+//                    binding.inputMessage.setText("")
+//                    binding.inputMessage.setHint("Listening...")
+//                    binding.talkToText.setImageResource(R.drawable.ic_mic_on)
+//                }
+//
+//                override fun onEndOfSpeech() {
+//                    speechRecognizer!!.stopListening()
+//                    binding.inputMessage.setHint("Type message here...")
+//                }
+//
+//                override fun onError(p0: Int) {
+//                    Log.d("error",p0.toString())
+//
+//                }
+//
+//                override fun onResults(p0: Bundle?) {
+//                    val data = p0?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+//                    binding.inputMessage.append(data!![0])
+//                    binding.talkToText.setImageResource(R.drawable.ic_mic_off)
+//
+//                }
+//            })
+//        }
 
         fusedLocationProviderClient =
             context?.let { LocationServices.getFusedLocationProviderClient(it) }!!
@@ -198,25 +199,25 @@ class Chatroom : Fragment() {
                 }
             })
 
-        binding.talkToText.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.RECORD_AUDIO
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                checkPermission()
-            }
-        }
+//        binding.talkToText.setOnClickListener {
+//            if (ContextCompat.checkSelfPermission(
+//                    requireContext(),
+//                    Manifest.permission.RECORD_AUDIO
+//                ) != PackageManager.PERMISSION_GRANTED
+//            ) {
+//                checkPermission()
+//            }
+//        }
 
-        binding.talkToText.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
-            if (motionEvent.action == MotionEvent.ACTION_UP) {
-                speechRecognizer?.run { stopListening() }
-            }
-            if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                speechRecognizer?.run {startListening(speechRecognizerIntent)}
-            }
-            false
-        })
+//        binding.talkToText.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+//            if (motionEvent.action == MotionEvent.ACTION_UP) {
+//                speechRecognizer?.run { stopListening() }
+//            }
+//            if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+//                speechRecognizer?.run {startListening(speechRecognizerIntent)}
+//            }
+//            false
+//        })
 
         binding.chatroomActiveUsers.setOnClickListener {
             val builder = AlertDialog.Builder(context)
@@ -306,6 +307,40 @@ class Chatroom : Fragment() {
 //                "Chatroom.kt file, where Speech to Text translation/creation feature is to be added"
 //            )
 //        }
+
+        binding.talkToText.setOnClickListener {
+            getAudioPermission()
+            if (audioPermissionGranted) {
+                //THIS IS WHERE WE WOULD SETUP CODE TO RECORD USER SPEECH AND CONVERT TO TEXT.
+                Log.d(
+                    "New Feature",
+                    "Chatroom.kt file, where Speech to Text translation/creation feature is to be added"
+                )
+
+                Log.d("Speech to Text", "Speak into your microphone.")
+                // Get the Intent action
+                val sttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                // Language model defines the purpose, there are special models for other use cases, like search.
+                sttIntent.putExtra(
+                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                )
+                // Adding an extra language, you can use any language from the Locale class.
+                sttIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                // Text that shows up on the Speech input prompt.
+                sttIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now!")
+                try {
+                    // Start the intent for a result, and pass in our request code.
+                    startActivityForResult(sttIntent, SPEECH_TO_TEXT_REQUEST)
+                } catch (e: ActivityNotFoundException) {
+                    // Handling error when the service is not available.
+                    e.printStackTrace()
+                    Toast.makeText(context, "Your device does not support STT.", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        }
+
 
         // this would be deleted. Just for testing layouts at the moment -------------------------------------------------------------------
         binding.requestRideButton.setOnLongClickListener {
@@ -545,15 +580,15 @@ class Chatroom : Fragment() {
         }
     }
 
-    private fun checkPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            ActivityCompat.requestPermissions(
-                context as Activity,
-                arrayOf(Manifest.permission.RECORD_AUDIO),
-               RECORD_AUDIO_REQUEST_CODE
-            )
-        }
-    }
+//    private fun checkPermission() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            ActivityCompat.requestPermissions(
+//                context as Activity,
+//                arrayOf(Manifest.permission.RECORD_AUDIO),
+//               RECORD_AUDIO_REQUEST_CODE
+//            )
+//        }
+//    }
 
     private fun getLocationPermission() {
         if (context?.let {
@@ -572,14 +607,30 @@ class Chatroom : Fragment() {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        locationPermissionGranted = false
+    private fun getAudioPermission() {
+        if (context?.let {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.RECORD_AUDIO)
+            }
+            == PackageManager.PERMISSION_GRANTED) {
+            audioPermissionGranted = true
+        } else {
+            ActivityCompat.requestPermissions(
+                context as Activity, arrayOf(Manifest.permission.RECORD_AUDIO),
+                PERMISSIONS_REQUEST_RECORD_AUDIO
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>,
+                                            grantResults: IntArray) {
+
+
         when (requestCode) {
             PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
+                locationPermissionGranted = false
                 if (grantResults.isNotEmpty() &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED
                 ) {
@@ -587,11 +638,19 @@ class Chatroom : Fragment() {
                 }
             }
 
-            RECORD_AUDIO_REQUEST_CODE -> {
+
+//            RECORD_AUDIO_REQUEST_CODE -> {
+//                if (grantResults.isNotEmpty() &&
+//                    grantResults[0] == PackageManager.PERMISSION_GRANTED
+//                ) {
+//                    Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+
+            PERMISSIONS_REQUEST_RECORD_AUDIO -> {
+                audioPermissionGranted = false
                 if (grantResults.isNotEmpty() &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED
-                ) {
-                    Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    audioPermissionGranted = true
+
                 }
             }
         }
@@ -620,11 +679,35 @@ class Chatroom : Fragment() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            // Handle the result for our request code.
+            SPEECH_TO_TEXT_REQUEST -> {
+                // Safety checks to ensure data is available.
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    // Retrieve the result array.
+                    val result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                    // Ensure result array is not null or empty to avoid errors.
+                    if (!result.isNullOrEmpty()) {
+                        // Recognized text is in the first position.
+                        val recognizedText = result[0]
+                        // Do what you want with the recognized text.
+
+                        //CALL THE TRANSLATION API HERE!!!!!!
+                        Log.d("Call the translation API here, with desired { to:, from:, message: }",recognizedText)
+                    }
+                }
+            }
+        }
+    }
 
     companion object {
         private const val RECORD_AUDIO_REQUEST_CODE = 10
         private const val DEFAULT_ZOOM = 15
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+        private const val PERMISSIONS_REQUEST_RECORD_AUDIO = 2
+        private const val SPEECH_TO_TEXT_REQUEST = 3
     }
 }
 
