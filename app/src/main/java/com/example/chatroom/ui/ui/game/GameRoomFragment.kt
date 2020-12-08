@@ -337,6 +337,7 @@ class GameRoomFragment : Fragment() {
                             playersTurnTextView?.text = getString(R.string.dealing)
                         } else if (gameMaster?.playersTurn == "player1") {
                             if (player1Name != null) {
+
                                 playersTurnTextView?.text = getString(R.string.turn, player1Name)
                             } else {
                                 playersTurnTextView?.text = getString(R.string.p1turn)

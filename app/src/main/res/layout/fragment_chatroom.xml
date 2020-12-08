@@ -108,7 +108,7 @@
         android:background="#FFFFFF"
         android:backgroundTint="#FFFFFF"
         android:contentDescription="@string/talk_to_text"
-        android:src="@drawable/microphone"
+        android:src="@drawable/ic_mic_off"
         app:layout_constraintBottom_toTopOf="@+id/chatroom_share_location_button"
         app:layout_constraintEnd_toStartOf="@+id/input_message"
         app:layout_constraintStart_toStartOf="parent" />
