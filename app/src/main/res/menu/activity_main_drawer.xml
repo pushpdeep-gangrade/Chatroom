@@ -22,5 +22,11 @@
         <item
             android:id="@+id/nav_game_lobby"
             android:title="@string/nav_game_lobby" />
+        <item
+            android:id="@+id/nav_settings"
+            android:title="@string/settings_title_text" />
+        <item
+            android:id="@+id/nav_image_translation"
+            android:title="@string/image_translation_title_text" />
     </group>
 </menu>

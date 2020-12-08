@@ -13,10 +13,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.JsonHttpResponseHandler
+import com.loopj.android.http.RequestParams
 import com.squareup.picasso.Picasso
 import cz.msebera.android.httpclient.Header
 import org.json.JSONArray
 import org.json.JSONObject
+
 
 class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.chat_item, parent, false)) {
@@ -71,10 +73,6 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     }
 
     private fun setTranslateMessageDialog(context: Context) {
-        val url =
-            "https://api.cognitive.microsofttranslator.com/languages?api-version=3.0"
-
-        val client: AsyncHttpClient = AsyncHttpClient()
         val arrStringName: ArrayList<String> = ArrayList()
         val arrLanguageObjects: ArrayList<Language> = ArrayList()
 
@@ -132,6 +130,11 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                 Log.d("To Language",(arrLanguageObjects.filter { it.name == toSpinnerLanguageSelected })[0].key)
                 Log.d("Message to Translate", mTvMsg?.text.toString())
 
+                val from: String = (arrLanguageObjects.filter { it.name == fromSpinnerLanguageSelected })[0].key
+                val to: String = (arrLanguageObjects.filter { it.name == toSpinnerLanguageSelected })[0].key
+
+                textToTextTranslation(from, to, mTvMsg, context, dialog)
+
                 //This is the body that needs to be sent to the api
                 //URL if you run nodemon ./server.js: http://localhost:8080/translate/textToText
                 /*
@@ -159,6 +162,12 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         }
 
         dialog.show()
+
+
+        val url =
+            "https://api.cognitive.microsofttranslator.com/languages?api-version=3.0"
+
+        val client: AsyncHttpClient = AsyncHttpClient()
 
         client.get(url, object : JsonHttpResponseHandler()
         {
@@ -243,6 +252,56 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             }
         })
     }
+
+    private fun textToTextTranslation(from: String, to: String, mTvMsg: TextView?, context: Context, dialog: AlertDialog){
+        val msg: String = mTvMsg?.text.toString()
+
+        val url =
+            "http://10.0.2.2:8080/translate/textToText"
+
+        val client: AsyncHttpClient = AsyncHttpClient()
+        val params = RequestParams()
+
+        params.put("from", from)
+        params.put("to", to)
+        params.put("message", msg)
+
+        client.post(url, params, object : JsonHttpResponseHandler()
+        {
+            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?)
+            {
+                if(response != null){
+
+                    Log.d("Response", response.toString())
+
+                    val translationsArray: JSONArray = response.getJSONArray("translations")
+                    val translatedMsg = (translationsArray.get(0) as JSONObject).getString("text")
+
+                    if (mTvMsg != null) {
+                        mTvMsg.text = translatedMsg
+                    }
+
+                    dialog.cancel()
+
+                    Toast.makeText(context,"Text to text translation successful",
+                        Toast.LENGTH_SHORT).show()
+
+                }else{
+
+                    Toast.makeText(context,"Text to text translation failed",
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<Header>?, e: Throwable, response: JSONArray?)
+            {
+                Toast.makeText(context,"Text to text translation failed",
+                    Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+
 
     private fun onLiked(postRef: DatabaseReference) {
         postRef.runTransaction(object : Transaction.Handler {

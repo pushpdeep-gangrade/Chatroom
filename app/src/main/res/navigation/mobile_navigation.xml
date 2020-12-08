@@ -205,4 +205,14 @@
             android:id="@+id/action_nav_game_room_to_nav_game_lobby"
             app:destination="@id/nav_game_lobby" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.example.chatroom.ui.ui.SettingsFragment"
+        android:label="@string/settings_title_text"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/nav_image_translation"
+        android:name="com.example.chatroom.ui.ui.ImageTranslationFragment"
+        android:label="@string/image_translation_title_text"
+        tools:layout="@layout/fragment_image_translation" />
 </navigation>
