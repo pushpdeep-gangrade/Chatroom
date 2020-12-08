@@ -3,16 +3,20 @@ package com.example.chatroom.ui.ui.chatroom
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.speech.RecognizerIntent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -48,6 +52,7 @@ import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.*
 
 var messageUser : User? = null
 var messageUserId: String = ""
@@ -66,6 +71,7 @@ private var lastKnownLocation: Location? = null
 private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 private var activeUsers  = mutableListOf<User>()
 var chatRoomId : String? = null
+private var audioPermissionGranted = false
 
 class Chatroom : Fragment() {
     private var _binding : FragmentChatroomBinding? = null
@@ -186,8 +192,36 @@ class Chatroom : Fragment() {
         }
 
         binding.talkToText.setOnClickListener {
-            //THIS IS WHERE WE WOULD SETUP CODE TO RECORD USER SPEECH AND CONVERT TO TEXT.
-            Log.d("New Feature","Chatroom.kt file, where Speech to Text translation/creation feature is to be added")
+            getAudioPermission()
+            if (audioPermissionGranted) {
+                //THIS IS WHERE WE WOULD SETUP CODE TO RECORD USER SPEECH AND CONVERT TO TEXT.
+                Log.d(
+                    "New Feature",
+                    "Chatroom.kt file, where Speech to Text translation/creation feature is to be added"
+                )
+
+                Log.d("Speech to Text", "Speak into your microphone.")
+                // Get the Intent action
+                val sttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                // Language model defines the purpose, there are special models for other use cases, like search.
+                sttIntent.putExtra(
+                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                )
+                // Adding an extra language, you can use any language from the Locale class.
+                sttIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                // Text that shows up on the Speech input prompt.
+                sttIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now!")
+                try {
+                    // Start the intent for a result, and pass in our request code.
+                    startActivityForResult(sttIntent, SPEECH_TO_TEXT_REQUEST)
+                } catch (e: ActivityNotFoundException) {
+                    // Handling error when the service is not available.
+                    e.printStackTrace()
+                    Toast.makeText(context, "Your device does not support STT.", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
         }
 
         // this would be deleted. Just for testing layouts at the moment -------------------------------------------------------------------
@@ -423,15 +457,39 @@ class Chatroom : Fragment() {
         }
     }
 
+    private fun getAudioPermission() {
+        if (context?.let {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.RECORD_AUDIO)
+            }
+            == PackageManager.PERMISSION_GRANTED) {
+            audioPermissionGranted = true
+        } else {
+            ActivityCompat.requestPermissions(
+                context as Activity, arrayOf(Manifest.permission.RECORD_AUDIO),
+                PERMISSIONS_REQUEST_RECORD_AUDIO
+            )
+        }
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>,
                                             grantResults: IntArray) {
-        locationPermissionGranted = false
+
         when (requestCode) {
             PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
+                locationPermissionGranted = false
                 if (grantResults.isNotEmpty() &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     locationPermissionGranted = true
+                }
+            }
+            PERMISSIONS_REQUEST_RECORD_AUDIO -> {
+                audioPermissionGranted = false
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    audioPermissionGranted = true
                 }
             }
         }
@@ -457,9 +515,34 @@ class Chatroom : Fragment() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            // Handle the result for our request code.
+            SPEECH_TO_TEXT_REQUEST -> {
+                // Safety checks to ensure data is available.
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    // Retrieve the result array.
+                    val result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                    // Ensure result array is not null or empty to avoid errors.
+                    if (!result.isNullOrEmpty()) {
+                        // Recognized text is in the first position.
+                        val recognizedText = result[0]
+                        // Do what you want with the recognized text.
+
+                        //CALL THE TRANSLATION API HERE!!!!!!
+                        Log.d("Call the translation API here, with desired { to:, from:, message: }",recognizedText)
+                    }
+                }
+            }
+        }
+    }
+
     companion object {
         private const val DEFAULT_ZOOM = 15
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+        private const val PERMISSIONS_REQUEST_RECORD_AUDIO = 2
+        private const val SPEECH_TO_TEXT_REQUEST = 3
     }
 }
 
