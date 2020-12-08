@@ -80,4 +80,19 @@
     <string name="translate_message_to_label">To</string>
     <string name="translate_message_submit_text">Submit</string>
     <string name="translate_message_cancel_text">Cancel</string>
+    <string name="image_translation_title_text">Image Translation</string>
+    <string name="settings_title_text">Settings</string>
+    <string name="auto_translate_switch_text">Auto-Translate</string>
+    <string name="location_permission_switch_text">Location Permission</string>
+    <string name="mic_permission_switch_text">Mic Permission</string>
+    <string name="camera_permission_switch_text">Camera Permission</string>
+    <string name="save_settings_button_text">Save Settings</string>
+    <string name="choose_an_image_label_text">Choose An Image</string>
+    <string name="translate_image_button_text">Translate Image</string>
+    <string name="translated_text_label">Translated Text</string>
+    <string name="play_audio_button_text">Play Audio</string>
+    <string name="language_for_auto_translation_label_text">Language for Auto-Translation</string>
+    <string name="image_to_text_rb_text">Image to Text</string>
+    <string name="image_to_talk_rb_text">Image to Talk</string>
+    <string name="translate_image_dialog_title">Translate Image</string>
 </resources>

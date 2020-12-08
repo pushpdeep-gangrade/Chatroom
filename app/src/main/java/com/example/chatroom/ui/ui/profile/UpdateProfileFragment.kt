@@ -28,6 +28,7 @@ import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
+import java.lang.Exception
 
 
 //data class User(val firstname: String, val lastname: String, val gender : String, val city : String, val profileImageUrl : String)
@@ -70,14 +71,22 @@ class UpdateProfileFragment : Fragment() {
     }
 
     private fun dispatchTakePictureIntent() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            context?.packageManager?.let {
-                takePictureIntent.resolveActivity(it)?.also {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        try{
+            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+                context?.packageManager?.let {
+                    takePictureIntent.resolveActivity(it)?.also {
+                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                    }
                 }
             }
         }
+        catch (e: Exception){
+            Log.d("Exception", e.toString())
+            Toast.makeText(context,"Camera Permission Denied",
+                Toast.LENGTH_SHORT).show()
+        }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             var fbUserId = MainActivity.auth.currentUser?.uid
