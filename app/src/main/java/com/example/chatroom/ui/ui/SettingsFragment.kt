@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.example.chatroom.R
 import com.example.chatroom.ui.ui.chatroom.Language
@@ -38,6 +39,16 @@ class SettingsFragment : Fragment() {
     private lateinit var languageDropDown: Spinner
     private var languageSelected: String = ""
 
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private lateinit var autoTranslate: Switch
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private lateinit var locationPermission: Switch
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private lateinit var micPermission: Switch
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private lateinit var cameraPermission: Switch
+    lateinit var saveSettings: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -53,14 +64,47 @@ class SettingsFragment : Fragment() {
         // Inflate the layout for this fragment
         val view: View = inflater.inflate(R.layout.fragment_settings, container, false)
 
-        val autoTranslate: Switch = view.findViewById(R.id.settings_autoTranslateSwitch)
-        val locationPermission: Switch = view.findViewById(R.id.settings_locationPermissionsSwitch)
-        val micPermission: Switch = view.findViewById(R.id.settings_micPermissionSwitch)
-        val cameraPermission: Switch = view.findViewById(R.id.settings_cameraPermissionSwitch)
-        val saveSettings: Button = view.findViewById(R.id.settings_saveSettingsButton)
+        autoTranslate = view.findViewById(R.id.settings_autoTranslateSwitch)
+        locationPermission = view.findViewById(R.id.settings_locationPermissionsSwitch)
+        micPermission = view.findViewById(R.id.settings_micPermissionSwitch)
+        cameraPermission = view.findViewById(R.id.settings_cameraPermissionSwitch)
+        saveSettings = view.findViewById(R.id.settings_saveSettingsButton)
         languageDropDown = view.findViewById(R.id.settings_autoTranslateDropdown)
 
         populateLanguageDropdown()
+
+
+
+        if (context?.let {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            }
+            == PackageManager.PERMISSION_GRANTED) {
+            locationPermission.isChecked = true
+        }
+
+        if (context?.let {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.RECORD_AUDIO
+                )
+            }
+            == PackageManager.PERMISSION_GRANTED) {
+            micPermission.isChecked = true
+        }
+
+        if (context?.let {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.CAMERA
+                )
+            }
+            == PackageManager.PERMISSION_GRANTED) {
+            cameraPermission.isChecked = true
+        }
+
 
         autoTranslate.setOnCheckedChangeListener { _, isChecked ->
             val message = if (isChecked) "Auto-Translate:ON" else "Auto-Translate:OFF"
@@ -74,6 +118,10 @@ class SettingsFragment : Fragment() {
         locationPermission.setOnCheckedChangeListener { _, isChecked ->
             val message = if (isChecked) "Location:ON" else "Location:OFF"
 
+            if(isChecked){
+                getLocationPermission()
+            }
+
             locationPermissionChecked = isChecked
 
             Toast.makeText(context, message,
@@ -82,6 +130,10 @@ class SettingsFragment : Fragment() {
 
         micPermission.setOnCheckedChangeListener { _, isChecked ->
             val message = if (isChecked) "Mic:ON" else "Mic:OFF"
+
+            if(isChecked){
+                getMicPermission()
+            }
 
             micPermissionChecked = isChecked
 
@@ -92,6 +144,10 @@ class SettingsFragment : Fragment() {
         cameraPermission.setOnCheckedChangeListener { _, isChecked ->
             val message = if (isChecked) "Camera:ON" else "Camera:OFF"
 
+            if(isChecked){
+                getCameraPermission()
+            }
+
             cameraPermissionChecked = isChecked
 
             Toast.makeText(context, message,
@@ -99,6 +155,9 @@ class SettingsFragment : Fragment() {
         }
 
         saveSettings.setOnClickListener {
+            val prefs: SharedPreferences =
+                requireContext().getSharedPreferences("info", Context.MODE_PRIVATE)
+
             if(autoTranslateChecked == true){
                 //Automatically check to see what language is being used or let user select a language
                 Log.d("Auto-Translate Checked", "Auto-Translate Checked")
@@ -107,8 +166,6 @@ class SettingsFragment : Fragment() {
 
                 val language = (arrLanguageObjects.filter { it.name == languageSelected })[0]
 
-                val prefs: SharedPreferences =
-                    requireContext().getSharedPreferences("info", Context.MODE_PRIVATE)
                 prefs.edit().putString("language", gsonObject.toJson(language)).apply()
 
 
@@ -122,35 +179,9 @@ class SettingsFragment : Fragment() {
 
             }
             else{
-
+                prefs.edit().putString("language", null).apply()
             }
 
-            if(locationPermissionChecked == true){
-                Log.d("Location Checked", "Location Checked")
-
-                getLocationPermission()
-            }
-            else{
-
-            }
-
-            if(micPermissionChecked == true){
-                Log.d("Mic Checked", "Mic Checked")
-
-                getMicPermission()
-            }
-            else{
-
-            }
-
-            if(cameraPermissionChecked == true){
-                Log.d("Camera Checked", "Camera Checked")
-
-                getCameraPermission()
-            }
-            else{
-
-            }
         }
 
         return view
@@ -202,6 +233,29 @@ class SettingsFragment : Fragment() {
 
                     languageSelected = arrStringName.get(0)
 
+
+                    val prefs: SharedPreferences =
+                        requireContext().getSharedPreferences("info", Context.MODE_PRIVATE)
+
+                    if(prefs.getString("language", null) != null){
+                        autoTranslate.isChecked = true
+
+                        val gsonObject = Gson()
+
+                        val language: Language = gsonObject.fromJson(prefs.getString("language", null), Language::class.java)
+
+                        if (adapter != null) {
+                            languageDropDown.setSelection(adapter.getPosition(language.name))
+                        }
+
+                        languageSelected = language.name
+
+                        Toast.makeText(
+                            context, "Current auto-translate language: ".plus(language.name),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
                     languageDropDown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
                         override fun onNothingSelected(parent: AdapterView<*>?) {
 
@@ -238,6 +292,8 @@ class SettingsFragment : Fragment() {
                 )
             }
             == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(context,"Location permission already granted",
+                Toast.LENGTH_SHORT).show()
         } else {
             ActivityCompat.requestPermissions(
                 context as Activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -254,6 +310,8 @@ class SettingsFragment : Fragment() {
                 )
             }
             == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(context,"Camera permission already granted",
+                Toast.LENGTH_SHORT).show()
         } else {
             ActivityCompat.requestPermissions(
                 context as Activity, arrayOf(Manifest.permission.CAMERA),
@@ -270,6 +328,8 @@ class SettingsFragment : Fragment() {
                 )
             }
             == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(context,"Mic permission already granted",
+                Toast.LENGTH_SHORT).show()
         } else {
             ActivityCompat.requestPermissions(
                 context as Activity, arrayOf(Manifest.permission.RECORD_AUDIO),
