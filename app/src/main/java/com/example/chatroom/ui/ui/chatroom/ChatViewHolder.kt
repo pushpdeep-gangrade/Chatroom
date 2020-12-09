@@ -257,7 +257,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         val msg: String = mTvMsg?.text.toString()
 
         val url =
-            "http://10.0.2.2:8080/translate/textToText"
+            "http://104.248.113.55:8080/translate/textToText"
 
         val client: AsyncHttpClient = AsyncHttpClient()
         val params = RequestParams()
