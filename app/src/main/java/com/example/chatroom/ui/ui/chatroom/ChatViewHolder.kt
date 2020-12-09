@@ -14,6 +14,11 @@ import com.google.firebase.database.*
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.JsonHttpResponseHandler
 import com.loopj.android.http.RequestParams
+import com.microsoft.cognitiveservices.speech.ResultReason
+import com.microsoft.cognitiveservices.speech.SpeechConfig
+import com.microsoft.cognitiveservices.speech.SpeechSynthesisCancellationDetails
+import com.microsoft.cognitiveservices.speech.SpeechSynthesizer
+import com.microsoft.cognitiveservices.speech.audio.AudioConfig
 import com.squareup.picasso.Picasso
 import cz.msebera.android.httpclient.Header
 import org.json.JSONArray
@@ -56,19 +61,26 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             mLikeImage?.setImageResource(R.drawable.heart_icon)
 
         mDelImage?.setOnClickListener(){
-         var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child("chatList").child(chat.messageId)
+         var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child(
+             "chatList"
+         ).child(chat.messageId)
         ref.removeValue()
         }
 
         mLikeImage?.setOnClickListener() {
-             var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child("chatList").child(chat.messageId)
+             var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child(
+                 "chatList"
+             ).child(chat.messageId)
             onLiked(ref)
 
         }
 
         mTranslateButton?.setOnClickListener() {
             setTranslateMessageDialog(context)
-            Log.d("New Feature","ChatViewHolder.kt file, where Text to Talk and Text to Text translations features are to be added")
+            Log.d(
+                "New Feature",
+                "ChatViewHolder.kt file, where Text to Talk and Text to Text translations features are to be added"
+            )
         }
     }
 
@@ -96,8 +108,10 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         radioGroup.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
             val radio: RadioButton = view.findViewById(checkedId)
             selectedRadioButton = radio.text.toString()
-            Toast.makeText(context," On checked change : ${radio.text}",
-                Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context, " On checked change : ${radio.text}",
+                Toast.LENGTH_SHORT
+            ).show()
         })
 
         builder.setView(view);
@@ -114,20 +128,30 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             Log.d("Submit", "Hit submit")
 
             //Logic for translating text goes here
-            Log.d("Selected", "Method: " + selectedRadioButton
-                    + "\nFrom Spinner Language: " + fromSpinnerLanguageSelected
-                    + "\nTo Spinner Language: " + toSpinnerLanguageSelected)
+            Log.d(
+                "Selected", "Method: " + selectedRadioButton
+                        + "\nFrom Spinner Language: " + fromSpinnerLanguageSelected
+                        + "\nTo Spinner Language: " + toSpinnerLanguageSelected
+            )
 
             if(selectedRadioButton.equals("")){
-                Toast.makeText(context,"Please select a translation method",
-                    Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context, "Please select a translation method",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             else if(selectedRadioButton.equals("Text to Text")){
                 //Grab message text and selected translation method and make API call
 
                 //This is how you will get the proper value for the selected languages
-                Log.d("From Language",(arrLanguageObjects.filter { it.name == fromSpinnerLanguageSelected })[0].key)
-                Log.d("To Language",(arrLanguageObjects.filter { it.name == toSpinnerLanguageSelected })[0].key)
+                Log.d(
+                    "From Language",
+                    (arrLanguageObjects.filter { it.name == fromSpinnerLanguageSelected })[0].key
+                )
+                Log.d(
+                    "To Language",
+                    (arrLanguageObjects.filter { it.name == toSpinnerLanguageSelected })[0].key
+                )
                 Log.d("Message to Translate", mTvMsg?.text.toString())
 
                 val from: String = (arrLanguageObjects.filter { it.name == fromSpinnerLanguageSelected })[0].key
@@ -158,6 +182,12 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             }
             else if(selectedRadioButton.equals("Text to Talk")){
                 //Grab message text and selected translation method and make API call
+                Log.d("Text to Talk", "Text to Talk Mode")
+
+                val from: String = (arrLanguageObjects.filter { it.name == fromSpinnerLanguageSelected })[0].key
+                val to: String = (arrLanguageObjects.filter { it.name == toSpinnerLanguageSelected })[0].key
+
+                textToSpeechTranslation(from, to, mTvMsg, context, dialog)
             }
         }
 
@@ -169,14 +199,17 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
         val client: AsyncHttpClient = AsyncHttpClient()
 
-        client.get(url, object : JsonHttpResponseHandler()
-        {
-            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?)
-            {
-                if(response != null){
+        client.get(url, object : JsonHttpResponseHandler() {
+            override fun onSuccess(
+                statusCode: Int,
+                headers: Array<Header>?,
+                response: JSONObject?
+            ) {
+                if (response != null) {
 
                     Log.d("Response", response.toString())
-                    val translationObj: JSONObject = JSONObject(response.toString()).getJSONObject("translation")
+                    val translationObj: JSONObject =
+                        JSONObject(response.toString()).getJSONObject("translation")
                     val keys: Iterator<String> = translationObj.keys()
 
 
@@ -199,53 +232,75 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                         Log.d("Objects", key + ": " + value)
                     }
 
-                    val adapter = ArrayAdapter(context,
-                        android.R.layout.simple_spinner_item, arrStringName)
+                    val adapter = ArrayAdapter(
+                        context,
+                        android.R.layout.simple_spinner_item, arrStringName
+                    )
                     fromLanguageSpinner.adapter = adapter
                     toLanguageSpinner.adapter = adapter
 
                     toSpinnerLanguageSelected = arrStringName.get(0)
                     fromSpinnerLanguageSelected = arrStringName.get(0)
 
-                    fromLanguageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                        override fun onNothingSelected(parent: AdapterView<*>?) {
+                    fromLanguageSpinner.onItemSelectedListener =
+                        object : AdapterView.OnItemSelectedListener {
+                            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                            }
+
+                            override fun onItemSelected(
+                                parent: AdapterView<*>?,
+                                view: View?,
+                                position: Int,
+                                id: Long
+                            ) {
+                                fromSpinnerLanguageSelected = arrStringName.get(position)
+                            }
 
                         }
 
-                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                            fromSpinnerLanguageSelected = arrStringName.get(position)
+                    toLanguageSpinner.onItemSelectedListener =
+                        object : AdapterView.OnItemSelectedListener {
+                            override fun onNothingSelected(parent: AdapterView<*>?) {
+                            }
+
+                            override fun onItemSelected(
+                                parent: AdapterView<*>?,
+                                view: View?,
+                                position: Int,
+                                id: Long
+                            ) {
+                                toSpinnerLanguageSelected = arrStringName.get(position)
+                            }
+
                         }
-
-                    }
-
-                    toLanguageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                        override fun onNothingSelected(parent: AdapterView<*>?) {
-                        }
-
-                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                            toSpinnerLanguageSelected = arrStringName.get(position)
-                        }
-
-                    }
 
                     progressBar.visibility = View.INVISIBLE
                     submit.isEnabled = true
 
 
-                }else{
+                } else {
 
-                    Toast.makeText(context,"Failed to get languages",
-                        Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context, "Failed to get languages",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                     progressBar.visibility = View.INVISIBLE
 
                 }
             }
 
-            override fun onFailure(statusCode: Int, headers: Array<Header>?, e: Throwable, response: JSONArray?)
-            {
-                Toast.makeText(context,"Failed to get languages",
-                    Toast.LENGTH_SHORT).show()
+            override fun onFailure(
+                statusCode: Int,
+                headers: Array<Header>?,
+                e: Throwable,
+                response: JSONArray?
+            ) {
+                Toast.makeText(
+                    context, "Failed to get languages",
+                    Toast.LENGTH_SHORT
+                ).show()
 
                 progressBar.visibility = View.INVISIBLE
 
@@ -253,11 +308,17 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         })
     }
 
-    private fun textToTextTranslation(from: String, to: String, mTvMsg: TextView?, context: Context, dialog: AlertDialog){
+    private fun textToTextTranslation(
+        from: String,
+        to: String,
+        mTvMsg: TextView?,
+        context: Context,
+        dialog: AlertDialog
+    ) {
         val msg: String = mTvMsg?.text.toString()
 
         val url =
-            "http://104.248.113.55:8080/translate/textToText"
+            "http://10.0.2.2:8080/translate/textToText"
 
         val client: AsyncHttpClient = AsyncHttpClient()
         val params = RequestParams()
@@ -266,11 +327,13 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         params.put("to", to)
         params.put("message", msg)
 
-        client.post(url, params, object : JsonHttpResponseHandler()
-        {
-            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?)
-            {
-                if(response != null){
+        client.post(url, params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(
+                statusCode: Int,
+                headers: Array<Header>?,
+                response: JSONObject?
+            ) {
+                if (response != null) {
 
                     Log.d("Response", response.toString())
 
@@ -283,20 +346,119 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
                     dialog.cancel()
 
-                    Toast.makeText(context,"Text to text translation successful",
-                        Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context, "Text to text translation successful",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-                }else{
+                } else {
 
-                    Toast.makeText(context,"Text to text translation failed",
-                        Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context, "Text to text translation failed",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
-            override fun onFailure(statusCode: Int, headers: Array<Header>?, e: Throwable, response: JSONArray?)
-            {
-                Toast.makeText(context,"Text to text translation failed",
-                    Toast.LENGTH_SHORT).show()
+            override fun onFailure(
+                statusCode: Int,
+                headers: Array<Header>?,
+                e: Throwable,
+                response: JSONArray?
+            ) {
+                Toast.makeText(
+                    context, "Text to text translation failed",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
+
+    }
+
+    private fun textToSpeechTranslation(
+        from: String,
+        to: String,
+        mTvMsg: TextView?,
+        context: Context,
+        dialog: AlertDialog
+    ) {
+        val msg: String = mTvMsg?.text.toString()
+
+        val url =
+            "http://104.248.113.55:8080/translate/textToText"
+
+        val client: AsyncHttpClient = AsyncHttpClient()
+        val params = RequestParams()
+
+        params.put("from", from)
+        params.put("to", to)
+        params.put("message", msg)
+
+        client.post(url, params, object : JsonHttpResponseHandler() {
+            override fun onSuccess(
+                statusCode: Int,
+                headers: Array<Header>?,
+                response: JSONObject?
+            ) {
+                if (response != null) {
+
+                    Log.d("Response", response.toString())
+
+                    val translationsArray: JSONArray = response.getJSONArray("translations")
+                    val translatedMsg = (translationsArray.get(0) as JSONObject).getString("text")
+
+                    if (mTvMsg != null) {
+                        mTvMsg.text = translatedMsg
+                    }
+
+                    dialog.cancel()
+
+                    Toast.makeText(
+                        context, "Text to text translation successful",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    val speechConfig = SpeechConfig.fromSubscription(
+                        "Put Speech Key Here",
+                        "eastus"
+                    )
+                    val audioConfig = AudioConfig.fromDefaultSpeakerOutput()
+                    val synthesizer = SpeechSynthesizer(speechConfig, audioConfig)
+                    Log.d(
+                        "Info",
+                        "Translated Message: ${translatedMsg}"
+                    )
+
+                    val result = synthesizer.SpeakText(translatedMsg)
+                    Log.d("Test", result.reason.toString())
+                    if (result.reason === ResultReason.Canceled) {
+                        val cancellationDetails =
+                            SpeechSynthesisCancellationDetails.fromResult(result).toString()
+                        Log.d("Test Details",
+                            "Error synthesizing. Error detail: \n${cancellationDetails}\nDid you update the subscription info?"
+                        )
+                    }
+                    result.close()
+
+                } else {
+
+                    Toast.makeText(
+                        context, "Text to text translation failed",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            override fun onFailure(
+                statusCode: Int,
+                headers: Array<Header>?,
+                e: Throwable,
+                response: JSONArray?
+            ) {
+                Toast.makeText(
+                    context, "Text to text translation failed",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
 
@@ -310,11 +472,11 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                     ?: return Transaction.success(currentData)
                 var id = FirebaseAuth.getInstance().currentUser?.uid.toString()
                 if (p.likesMap.containsKey(FirebaseAuth.getInstance().currentUser?.uid)) {
-                   p.likesMap.remove(id)
+                    p.likesMap.remove(id)
                     p.likes = p.likesMap.size
                     mLikeImage!!.setImageResource(R.drawable.heart_icon_empty)
                 } else {
-                p.likesMap[id] = true
+                    p.likesMap[id] = true
                     p.likes = p.likesMap.size
                     mLikeImage!!.setImageResource(R.drawable.heart_icon)
                 }
