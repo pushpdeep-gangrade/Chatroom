@@ -15,8 +15,8 @@
 - [Chatroom, Rideshare and Uno](#features)
 
 ## Project Sprint 3: December 9, 2020 <a name="sprint"></a>
-- The latest app features are text-to-text, and image translation.
-- Still in progress features include speech-to-speech, talk-to-text, text-to-speech and speech-to-text.
+- The latest app features are text-to-text, automatic chatroom translation, image translation and biometric authentication.
+- Still in progress features include talk-to-speech, talk-to-text, and text-to-speech.
 
 ### App Description & Use Cases
 - Chatroom app that provides translation options within the chatroom to speak with users of another language, and alternate translation features (i.e. talk-to-speech, talk-to-text, text-to-speech, text-to-text) outside of the chatroom
