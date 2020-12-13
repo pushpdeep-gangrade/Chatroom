@@ -74,6 +74,8 @@
     <string name="talk_to_text">Talk to Text</string>
     <string name="translate_button">Translate</string>
     <string name="translate_message_dialog_title">Translate Message</string>
+    <string name="translate_speech_dialog_title">Translate Speech</string>
+    <string name="speak_now_prompt">Speak Now...</string>
     <string name="text_to_text_rb_text">Text to Text</string>
     <string name="text_to_talk_rb_text">Text to Talk</string>
     <string name="translate_message_from_label">From</string>
@@ -81,6 +83,7 @@
     <string name="translate_message_submit_text">Submit</string>
     <string name="translate_message_cancel_text">Cancel</string>
     <string name="image_translation_title_text">Image Translation</string>
+    <string name="speech_translation_title_text">Speech Translation</string>
     <string name="settings_title_text">Settings</string>
     <string name="auto_translate_switch_text">Auto-Translate</string>
     <string name="location_permission_switch_text">Location Permission</string>
@@ -90,9 +93,89 @@
     <string name="choose_an_image_label_text">Choose An Image</string>
     <string name="translate_image_button_text">Translate Image</string>
     <string name="translated_text_label">Translated Text</string>
+    <string name="original_text_label">Original Text</string>
     <string name="play_audio_button_text">Play Audio</string>
     <string name="language_for_auto_translation_label_text">Language for Auto-Translation</string>
     <string name="image_to_text_rb_text">Image to Text</string>
     <string name="image_to_talk_rb_text">Image to Talk</string>
     <string name="translate_image_dialog_title">Translate Image</string>
+    <string name="speak_to_translate_text">Speak to Translate</string>
+    <string-array name="bcp_47_codes">
+        <item>ar-SA</item>
+        <item>cs-CZ</item>
+        <item>da-DK</item>
+        <item>de-DE</item>
+        <item>el-GR</item>
+        <item>en-AU</item>
+        <item>en-GB</item>
+        <item>en-IE</item>
+        <item>en-US</item>
+        <item>en-ZA</item>
+        <item>es-ES</item>
+        <item>es-MX</item>
+        <item>fi-FI</item>
+        <item>fr-CA</item>
+        <item>fr-FR</item>
+        <item>he-IL</item>
+        <item>hi-IN</item>
+        <item>hu-HU</item>
+        <item>id-ID</item>
+        <item>it-IT</item>
+        <item>ja-JP</item>
+        <item>ko-KR</item>
+        <item>nl-BE</item>
+        <item>nl-NL</item>
+        <item>no-NO</item>
+        <item>pl-PL</item>
+        <item>pt-BR</item>
+        <item>pt-PT</item>
+        <item>ro-RO</item>
+        <item>ru-RU</item>
+        <item>sk-SK</item>
+        <item>sv-SE</item>
+        <item>th-TH</item>
+        <item>tr-TR</item>
+        <item>zh-CN</item>
+        <item>zh-HK</item>
+        <item>zh-TW</item>
+    </string-array>
+    <string-array name="bcp_47_languages">
+        <item>Arabic Saudi Arabia</item>
+        <item>Czech Czech Republic</item>
+        <item>Danish Denmark</item>
+        <item>German Germany</item>
+        <item>Modern Greek Greece</item>
+        <item>English Australia</item>
+        <item>English United Kingdom</item>
+        <item>English Ireland</item>
+        <item>English United States</item>
+        <item>English South Africa</item>
+        <item>Spanish Spain</item>
+        <item>Spanish Mexico</item>
+        <item>Finnish Finland</item>
+        <item>French Canada</item>
+        <item>French France</item>
+        <item>Hebrew Israel</item>
+        <item>Hindi India</item>
+        <item>Hungarian Hungary</item>
+        <item>Indonesian Indonesia</item>
+        <item>Italian Italy</item>
+        <item>Japanese Japan</item>
+        <item>Korean Republic of Korea</item>
+        <item>Dutch Belgium</item>
+        <item>Dutch Netherlands</item>
+        <item>Norwegian Norway</item>
+        <item>Polish Poland</item>
+        <item>Portuguese Brazil</item>
+        <item>Portuguese Portugal</item>
+        <item>Romanian Romania</item>
+        <item>Russian Russian Federation</item>
+        <item>Slovak Slovakia</item>
+        <item>Swedish Sweden</item>
+        <item>Thai Thailand</item>
+        <item>Turkish Turkey</item>
+        <item>Chinese China</item>
+        <item>Chinese Hong Kong</item>
+        <item>Chinese Taiwan</item>
+    </string-array>
 </resources>

@@ -215,4 +215,9 @@
         android:name="com.example.chatroom.ui.ui.ImageTranslationFragment"
         android:label="@string/image_translation_title_text"
         tools:layout="@layout/fragment_image_translation" />
+    <fragment
+        android:id="@+id/nav_speech_translation"
+        android:name="com.example.chatroom.ui.ui.SpeechTranslationFragment"
+        android:label="@string/speech_translation_title_text"
+        tools:layout="@layout/fragment_speech_translation" />
 </navigation>

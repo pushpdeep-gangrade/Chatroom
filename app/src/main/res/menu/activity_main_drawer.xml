@@ -28,5 +28,8 @@
         <item
             android:id="@+id/nav_image_translation"
             android:title="@string/image_translation_title_text" />
+        <item
+            android:id="@+id/nav_speech_translation"
+            android:title="@string/speech_translation_title_text" />
     </group>
 </menu>

@@ -527,7 +527,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                     ).show()
 
                     val speechConfig = SpeechConfig.fromSubscription(
-                        "Put Speech Key Here",
+                        "ENTER TEXT TO SPEECH KEY HERE",
                         "eastus"
                     )
                     val audioConfig = AudioConfig.fromDefaultSpeakerOutput()
