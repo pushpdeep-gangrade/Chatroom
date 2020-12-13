@@ -170,7 +170,15 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                 val from: String = (arrLanguageObjects.filter { it.name == fromSpinnerLanguageSelected })[0].key
                 val to: String = (arrLanguageObjects.filter { it.name == toSpinnerLanguageSelected })[0].key
 
-                textToTextTranslation(from, to, mTvMsg, context, dialog)
+                if(toSpinnerLanguageSelected == "Unknown"){
+                    Toast.makeText(
+                        context, "Cannot choose Unknown for To language",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                else{
+                    textToTextTranslation(from, to, mTvMsg, context, dialog)
+                }
 
                 //This is the body that needs to be sent to the api
                 //URL if you run nodemon ./server.js: http://localhost:8080/translate/textToText
@@ -225,6 +233,9 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                         JSONObject(response.toString()).getJSONObject("translation")
                     val keys: Iterator<String> = translationObj.keys()
 
+                    val unknownLanguage: Language = Language("", "Unknown", "", "")
+                    arrStringName.add(unknownLanguage.name)
+                    arrLanguageObjects.add(unknownLanguage)
 
                     while (keys.hasNext()) {
                         val key = keys.next()
