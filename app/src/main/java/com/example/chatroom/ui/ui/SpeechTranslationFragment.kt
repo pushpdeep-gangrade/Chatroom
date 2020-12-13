@@ -132,30 +132,39 @@ class SpeechTranslationFragment : Fragment() {
 
             //textToTextTranslation(from, to, mTvMsg, context, dialog)
             //Recognizer and translator
-            if (audioPermissionGranted) {
-                Log.d("Speech to Text", "Speak into your microphone.")
-                // Get the Intent action
-                val sttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-                // Language model defines the purpose, there are special models for other use cases, like search.
-                sttIntent.putExtra(
-                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-                )
-                // Adding an extra language, you can use any language from the Locale class.
-                sttIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                // Text that shows up on the Speech input prompt.
-                sttIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now!")
-                try {
-                    // Start the intent for a result, and pass in our request code.
-                    startActivityForResult(sttIntent, SPEECH_TO_TEXT_REQUEST)
-                    dialog.cancel()
-                } catch (e: ActivityNotFoundException) {
-                    // Handling error when the service is not available.
-                    e.printStackTrace()
-                    Toast.makeText(context, "Your device does not support STT.", Toast.LENGTH_LONG)
-                        .show()
+            if(toSpinnerLanguageSelected == "Unknown"){
+                Toast.makeText(
+                    context, "Cannot choose Unknown for To language",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else{
+                if (audioPermissionGranted) {
+                    Log.d("Speech to Text", "Speak into your microphone.")
+                    // Get the Intent action
+                    val sttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                    // Language model defines the purpose, there are special models for other use cases, like search.
+                    sttIntent.putExtra(
+                        RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                    )
+                    // Adding an extra language, you can use any language from the Locale class.
+                    sttIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                    // Text that shows up on the Speech input prompt.
+                    sttIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now!")
+                    try {
+                        // Start the intent for a result, and pass in our request code.
+                        startActivityForResult(sttIntent, SPEECH_TO_TEXT_REQUEST)
+                        dialog.cancel()
+                    } catch (e: ActivityNotFoundException) {
+                        // Handling error when the service is not available.
+                        e.printStackTrace()
+                        Toast.makeText(context, "Your device does not support STT.", Toast.LENGTH_LONG)
+                            .show()
+                    }
                 }
             }
+
         }
 
         dialog.show()
@@ -179,6 +188,9 @@ class SpeechTranslationFragment : Fragment() {
                         JSONObject(response.toString()).getJSONObject("translation")
                     val keys: Iterator<String> = translationObj.keys()
 
+                    val unknownLanguage: Language = Language("", "Unknown", "", "")
+                    arrStringName.add(unknownLanguage.name)
+                    arrLanguageObjects.add(unknownLanguage)
 
                     while (keys.hasNext()) {
                         val key = keys.next()
