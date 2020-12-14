@@ -88,4 +88,14 @@ dependencies {
     //Biometric sdk
     implementation "androidx.biometric:biometric:1.0.0"
 
+    //computer vision azure
+    implementation 'com.microsoft.azure.cognitiveservices:azure-cognitiveservices-computervision:1.0.4-beta'
+
+    dependencies {
+        // ...
+
+        implementation 'com.google.android.gms:play-services-mlkit-text-recognition:16.1.2'
+    }
+
+
 }

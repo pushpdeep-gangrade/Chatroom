@@ -61,14 +61,17 @@
             android:text="@string/translated_text_label"
             android:textStyle="bold" />
 
-        <EditText
+        <TextView
             android:id="@+id/imageTranslation_translatedTextBox"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:ems="10"
             android:enabled="false"
             android:gravity="start|top"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <Button

@@ -178,4 +178,21 @@
         <item>Chinese Hong Kong</item>
         <item>Chinese Taiwan</item>
     </string-array>
+    <string-array name="vision_7_languages">
+        <item>English</item>
+        <item>Dutch</item>
+        <item>French</item>
+        <item>German</item>
+        <item>Italian</item>
+        <item>Portuguese</item>
+    </string-array>
+    <string-array name="vision_7_code">
+        <item>en</item>
+        <item>nl</item>
+        <item>fr</item>
+        <item>de</item>
+        <item>it</item>
+        <item>pt</item>
+    </string-array>
+
 </resources>
