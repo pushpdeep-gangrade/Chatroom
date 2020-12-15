@@ -387,7 +387,7 @@ class Chatroom : Fragment() {
     fun updateAdapter() {
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
-            adapter = ChatAdapter(listchats, context)
+            adapter = ChatAdapter(listchats, context, resources)
         }
     }
 

@@ -3,6 +3,7 @@ package com.example.chatroom.ui.ui.chatroom
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Resources
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -41,6 +42,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     private var fromSpinnerLanguageSelected: String = ""
     private var toSpinnerLanguageSelected: String = ""
 
+
     init {
         mUserImage = itemView.findViewById(R.id.user_image_chat)
        mLikeImage = itemView.findViewById(R.id.iv_like_msg)
@@ -52,7 +54,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         mTranslateButton = itemView.findViewById(R.id.iv_translate_button)
 
     }
-    fun bind(chat: Chat, context: Context) {
+    fun bind(chat: Chat, context: Context, res: Resources) {
         mTvUser?.text = chat.userfname.plus(" ").plus(chat.userlname)
         mTvLikes?.text = chat.likesMap.size.toString()
         mTvMsg?.text = chat.message
@@ -91,7 +93,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         }
 
         mTranslateButton?.setOnClickListener() {
-            setTranslateMessageDialog(context)
+            setTranslateMessageDialog(context, res)
             Log.d(
                 "New Feature",
                 "ChatViewHolder.kt file, where Text to Talk and Text to Text translations features are to be added"
@@ -99,7 +101,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         }
     }
 
-    private fun setTranslateMessageDialog(context: Context) {
+    private fun setTranslateMessageDialog(context: Context, res: Resources) {
         val arrStringName: ArrayList<String> = ArrayList()
         val arrLanguageObjects: ArrayList<Language> = ArrayList()
 
@@ -114,6 +116,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         val progressBar: ProgressBar = view.findViewById<ProgressBar>(R.id.translateMessageDialog_progressBar)
 
         var selectedRadioButton: String = ""
+        var speechIndex: Int = 0
 
         progressBar.visibility = View.VISIBLE
         submit.isEnabled = false
@@ -207,15 +210,123 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
                 val from: String = (arrLanguageObjects.filter { it.name == fromSpinnerLanguageSelected })[0].key
                 val to: String = (arrLanguageObjects.filter { it.name == toSpinnerLanguageSelected })[0].key
-
-                textToSpeechTranslation(from, to, mTvMsg, context, dialog)
+                if(toSpinnerLanguageSelected == "Unknown"){
+                    Toast.makeText(
+                        context, "Cannot choose Unknown for To language",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                else{
+                    textToSpeechTranslation(from, to, mTvMsg, context, dialog, arrLanguageObjects, speechIndex)
+                }
             }
         }
+
+
+        //Populate language spinners using hardcoded strings
+        val unknownLanguage: Language = Language("", "Unknown", "", "")
+        arrStringName.add(unknownLanguage.name)
+        arrLanguageObjects.add(unknownLanguage)
+
+        val languagesStringArr = res.getStringArray(R.array.text_to_speech_languages)
+        val languageCodesStringArr =  res.getStringArray(R.array.text_to_speech_codes)
+        val languagesRegionStringArr = res.getStringArray(R.array.text_to_speech_codes_with_region)
+        val languageVoiceStringArr = res.getStringArray(R.array.text_to_speech_voices)
+
+        for (i in languagesStringArr.indices)
+        {
+            arrStringName.add(languagesStringArr[i])
+
+            val language: Language = Language(languageCodesStringArr[i], languagesStringArr[i],
+                languagesRegionStringArr[i], languageVoiceStringArr[i])
+
+            arrLanguageObjects.add(language)
+
+        }
+
+        val adapter = ArrayAdapter(
+            context,
+            android.R.layout.simple_spinner_item, arrStringName
+        )
+
+        fromLanguageSpinner.adapter = adapter
+        toLanguageSpinner.adapter = adapter
+
+        val prefs: SharedPreferences = context.getSharedPreferences("info", Context.MODE_PRIVATE)
+
+        if(toSpinnerLanguageSelected == "" && prefs.getString("language", null) == null){
+            fromSpinnerLanguageSelected = arrStringName.get(0)
+            toSpinnerLanguageSelected = arrStringName.get(0)
+
+            if (adapter != null) {
+                fromLanguageSpinner.setSelection(adapter.getPosition(fromSpinnerLanguageSelected))
+            }
+        }
+        else if(toSpinnerLanguageSelected == "" && prefs.getString("language", null) != null){
+            val gsonObject = Gson()
+
+            val language: Language = gsonObject.fromJson(prefs.getString("language", null), Language::class.java)
+
+            fromSpinnerLanguageSelected = language.name
+
+            if (adapter != null) {
+                fromLanguageSpinner.setSelection(adapter.getPosition(fromSpinnerLanguageSelected))
+            }
+
+        }
+        else{
+            fromSpinnerLanguageSelected = toSpinnerLanguageSelected.plus("")
+
+            if (adapter != null) {
+                fromLanguageSpinner.setSelection(adapter.getPosition(toSpinnerLanguageSelected))
+            }
+        }
+
+        toSpinnerLanguageSelected = arrStringName.get(0)
+
+        fromLanguageSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                }
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    fromSpinnerLanguageSelected = arrStringName.get(position)
+                }
+
+            }
+
+        toLanguageSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    toSpinnerLanguageSelected = arrStringName.get(position)
+                    speechIndex = position
+                }
+
+            }
+
+        progressBar.visibility = View.INVISIBLE
+        submit.isEnabled = true
+
+
 
         dialog.show()
 
 
-        val url =
+        /*val url =
             "https://api.cognitive.microsofttranslator.com/languages?api-version=3.0"
 
         val client: AsyncHttpClient = AsyncHttpClient()
@@ -359,7 +470,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                 progressBar.visibility = View.INVISIBLE
 
             }
-        })
+        })*/
     }
 
     private fun autoTextToTextTranslation(
@@ -499,7 +610,9 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         to: String,
         mTvMsg: TextView?,
         context: Context,
-        dialog: AlertDialog
+        dialog: AlertDialog,
+        languageArray: ArrayList<Language>,
+        speechIndex: Int
     ) {
         val msg: String = mTvMsg?.text.toString()
 
@@ -541,6 +654,11 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                         "ENTER TEXT TO SPEECH KEY HERE",
                         "eastus"
                     )
+
+                    Log.d("Speech","Language Code: ${languageArray[speechIndex].region}\nVoice: ${languageArray[speechIndex].voice}")
+                    speechConfig.speechSynthesisLanguage = languageArray[speechIndex].region
+                    speechConfig.speechSynthesisVoiceName = languageArray[speechIndex].voice
+
                     val audioConfig = AudioConfig.fromDefaultSpeakerOutput()
                     val synthesizer = SpeechSynthesizer(speechConfig, audioConfig)
                     Log.d(
