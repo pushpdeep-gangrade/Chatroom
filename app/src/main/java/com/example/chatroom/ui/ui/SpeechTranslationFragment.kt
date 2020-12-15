@@ -47,6 +47,7 @@ class SpeechTranslationFragment : Fragment() {
     private var arrLanguageCodes: List<String>? = null
     private var arrLanguageCodesWithRegion: List<String>? = null
     private var arrLanguageVoices: List<String>? = null
+    private var arrLanguageCodesWithRegionRecognizers: List<String>? = null
     private var fromIndex: Int = 0
     private var toIndex: Int = 0
     private var speechIndex: Int = 0
@@ -85,6 +86,7 @@ class SpeechTranslationFragment : Fragment() {
         arrLanguageCodes = resources.getStringArray(R.array.text_to_speech_codes).toList()
         arrLanguageCodesWithRegion = resources.getStringArray(R.array.text_to_speech_codes_with_region).toList()
         arrLanguageVoices = resources.getStringArray(R.array.text_to_speech_voices).toList()
+        arrLanguageCodesWithRegionRecognizers = resources.getStringArray(R.array.speech_to_text_codes_with_region).toList()
 
 //
 
@@ -159,7 +161,8 @@ class SpeechTranslationFragment : Fragment() {
                         RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
                     )
                     // Adding an extra language, you can use any language from the Locale class.
-                    sttIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                    ////sttIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                    sttIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, arrLanguageCodesWithRegionRecognizers!![fromIndex])
                     // Text that shows up on the Speech input prompt.
                     sttIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now!")
                     try {
@@ -350,7 +353,7 @@ class SpeechTranslationFragment : Fragment() {
                     ).show()
 
                     val speechConfig = SpeechConfig.fromSubscription(
-                        "ADD SPEECH TRANSLATION KEY HERE",
+                        "Add Speech Key Here",
                         "eastus"
                     )
                     Log.d("Speech","Language Code: ${arrLanguageCodesWithRegion!![speechIndex]}\nVoice: ${arrLanguageVoices!![speechIndex]}")
@@ -399,7 +402,7 @@ class SpeechTranslationFragment : Fragment() {
 
     private fun textToSpeechOnly(mMsg: TextView?){
         val speechConfig = SpeechConfig.fromSubscription(
-            "ADD SPEECH TRANSLATION KEY HERE",
+            "Add Speech Key Here",
             "eastus"
         )
         Log.d("Speech","Language Code: ${arrLanguageCodesWithRegion!![speechIndex]}\nVoice: ${arrLanguageVoices!![speechIndex]}")

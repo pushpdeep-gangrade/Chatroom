@@ -335,6 +335,45 @@
         <item>tr-TR-EmelNeural</item>
         <item>vi-VN-HoaiMyNeural</item>
     </string-array>
+    <string-array name="speech_to_text_codes_with_region">
+        <item>ar-SA</item>
+        <item>bg-BG</item>
+        <item>ca-ES</item>
+        <item>yue-Hant-HK</item>
+        <item>cmn-Hans-CN</item>
+        <item>hr-HR</item>
+        <item>cs-CZ</item>
+        <item>da-DK</item>
+        <item>nl-NL</item>
+        <item>en-US</item>
+        <item>fr-FR</item>
+        <item>fr-CA</item>
+        <item>de-DE</item>
+        <item>el-GR</item>
+        <item>iw-IL</item>
+        <item>hi-IN</item>
+        <item>hu-HU</item>
+        <item>id-ID</item>
+        <item>it-IT</item>
+        <item>ja-JP</item>
+        <item>ko-KR</item>
+        <item>ms-MY</item>
+        <item>no-NO</item>
+        <item>pl-PL</item>
+        <item>pt-BR</item>
+        <item>pt-PT</item>
+        <item>ro-RO</item>
+        <item>ru-RU</item>
+        <item>sk-SK</item>
+        <item>sl-SI</item>
+        <item>es-MX</item>
+        <item>sv-SE</item>
+        <item>ta-IN</item>
+        <item>te-IN</item>
+        <item>th-TH</item>
+        <item>tr-TR</item>
+        <item>vi-VN</item>
+    </string-array>
 
     <string-array name="vision_7_languages">
         <item>English</item>
