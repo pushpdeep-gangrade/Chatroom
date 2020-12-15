@@ -178,6 +178,164 @@
         <item>Chinese Hong Kong</item>
         <item>Chinese Taiwan</item>
     </string-array>
+
+    <string-array name="text_to_speech_languages">
+        <item>Arabic</item>
+        <item>Bulgarian</item>
+        <item>Catalan</item>
+        <item>Chinese (Cantonese, Traditional)</item>
+        <item>Chinese (Mandarin, Simplified)</item>
+        <item>Croatian</item>
+        <item>Czech</item>
+        <item>Danish</item>
+        <item>Dutch</item>
+        <item>English</item>
+        <item>French (France)</item>
+        <item>French (Canada)</item>
+        <item>German</item>
+        <item>Greek</item>
+        <item>Hebrew</item>
+        <item>Hindi</item>
+        <item>Hungarian</item>
+        <item>Indonesian</item>
+        <item>Italian</item>
+        <item>Japanese</item>
+        <item>Korean</item>
+        <item>Malay</item>
+        <item>Norwegian</item>
+        <item>Polish</item>
+        <item>Portuguese (Brazil)</item>
+        <item>Portuguese (Portugal)</item>
+        <item>Romanian</item>
+        <item>Russian</item>
+        <item>Slovak</item>
+        <item>Slovenian</item>
+        <item>Spanish</item>
+        <item>Swedish</item>
+        <item>Tamil</item>
+        <item>Telugu</item>
+        <item>Thai</item>
+        <item>Turkish</item>
+        <item>Vietnamese</item>
+    </string-array>
+    <string-array name="text_to_speech_codes">
+        <item>ar</item>
+        <item>bg</item>
+        <item>ca</item>
+        <item>zh-Hant</item>
+        <item>zh-Hans</item>
+        <item>hr</item>
+        <item>cs</item>
+        <item>da</item>
+        <item>nl</item>
+        <item>en</item>
+        <item>fr</item>
+        <item>fr-ca</item>
+        <item>de</item>
+        <item>el</item>
+        <item>he</item>
+        <item>hi</item>
+        <item>hu</item>
+        <item>id</item>
+        <item>it</item>
+        <item>ja</item>
+        <item>ko</item>
+        <item>ms</item>
+        <item>nb</item>
+        <item>pl</item>
+        <item>pt</item>
+        <item>pt-pt</item>
+        <item>ro</item>
+        <item>ru</item>
+        <item>sk</item>
+        <item>sl</item>
+        <item>es</item>
+        <item>sv</item>
+        <item>ta</item>
+        <item>te</item>
+        <item>th</item>
+        <item>tr</item>
+        <item>vi</item>
+    </string-array>
+    <string-array name="text_to_speech_codes_with_region">
+        <item>ar-SA</item>
+        <item>bg-BG</item>
+        <item>ca-ES</item>
+        <item>zh-HK</item>
+        <item>zh-CN</item>
+        <item>hr-HR</item>
+        <item>cs-CZ</item>
+        <item>da-DK</item>
+        <item>nl-NL</item>
+        <item>en-US</item>
+        <item>fr-FR</item>
+        <item>fr-CA</item>
+        <item>de-DE</item>
+        <item>el-GR</item>
+        <item>he-IL</item>
+        <item>hi-IN</item>
+        <item>hu-HU</item>
+        <item>id-ID</item>
+        <item>it-IT</item>
+        <item>ja-JP</item>
+        <item>ko-KR</item>
+        <item>ms-MY</item>
+        <item>nb-NO</item>
+        <item>pl-PL</item>
+        <item>pt-BR</item>
+        <item>pt-PT</item>
+        <item>ro-RO</item>
+        <item>ru-RU</item>
+        <item>sk-SK</item>
+        <item>sl-SI</item>
+        <item>es-MX</item>
+        <item>sv-SE</item>
+        <item>ta-IN</item>
+        <item>te-IN</item>
+        <item>th-TH</item>
+        <item>tr-TR</item>
+        <item>vi-VN</item>
+    </string-array>
+    <string-array name="text_to_speech_voices">
+        <item>ar-SA-ZariyahNeural</item>
+        <item>bg-BG-KalinaNeural</item>
+        <item>ca-ES-AlbaNeural</item>
+        <item>zh-HK-HiuGaaiNeural</item>
+        <item>zh-CN-XiaoxiaoNeural</item>
+        <item>hr-HR-GabrijelaNeural</item>
+        <item>cs-CZ-VlastaNeural</item>
+        <item>da-DK-ChristelNeural</item>
+        <item>nl-NL-ColetteNeural</item>
+        <item>en-US-AriaNeural</item>
+        <item>fr-FR-DeniseNeural</item>
+        <item>fr-CA-SylvieNeural</item>
+        <item>de-DE-KatjaNeural</item>
+        <item>el-GR-AthinaNeural</item>
+        <item>he-IL-HilaNeural</item>
+        <item>hi-IN-SwaraNeural</item>
+        <item>hu-HU-NoemiNeural</item>
+        <item>id-ID-GadisNeural</item>
+        <item>it-IT-ElsaNeural</item>
+        <item>ja-JP-NanamiNeural</item>
+        <item>ko-KR-SunHiNeural</item>
+        <item>ms-MY-YasminNeural</item>
+        <item>nb-NO-IselinNeural</item>
+        <item>pl-PL-AgnieszkaNeural</item>
+        <item>pt-BR-FranciscaNeural</item>
+        <item>pt-PT-FernandaNeural</item>
+        <item>ro-RO-AlinaNeural</item>
+        <item>ru-RU-DariyaNeural</item>
+        <item>sk-SK-ViktoriaNeural</item>
+        <item>sl-SI-PetraNeural</item>
+        <item>es-MX-DaliaNeural</item>
+        <item>sv-SE-HilleviNeural</item>
+        <item>ta-IN-PallaviNeural</item>
+        <item>te-IN-ShrutiNeural</item>
+        <item>th-TH-AcharaNeural</item>
+        <item>tr-TR-EmelNeural</item>
+        <item>vi-VN-HoaiMyNeural</item>
+    </string-array>
+
     <string-array name="vision_7_languages">
         <item>English</item>
         <item>Dutch</item>

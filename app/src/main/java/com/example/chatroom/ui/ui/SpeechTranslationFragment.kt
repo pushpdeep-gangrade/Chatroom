@@ -43,14 +43,20 @@ import kotlin.collections.ArrayList
 
 class SpeechTranslationFragment : Fragment() {
 
-    var arrStringName: ArrayList<String> = ArrayList()
-    var arrLanguageObjects: ArrayList<Language> = ArrayList()
+    private var arrLanguageNames: List<String>? = null
+    private var arrLanguageCodes: List<String>? = null
+    private var arrLanguageCodesWithRegion: List<String>? = null
+    private var arrLanguageVoices: List<String>? = null
+    private var fromIndex: Int = 0
+    private var toIndex: Int = 0
+    private var speechIndex: Int = 0
+
     private var languageSelected: String = ""
     private var audioPermissionGranted = false
     private var fromSpinnerLanguageSelected: String = ""
     private var toSpinnerLanguageSelected: String = ""
-    private var fromLanguageCode: String = ""
-    private var toLanguageCode: String = ""
+    //private var fromLanguageCode: String = ""
+    //private var toLanguageCode: String = ""
     private var originalTextBox: TextView? = null
     private var translatedTextBox: TextView? = null
 
@@ -75,6 +81,11 @@ class SpeechTranslationFragment : Fragment() {
         translatedTextBox = view.findViewById(R.id.speechTranslation_translatedTextBox)
         val playAudio: Button = view.findViewById(R.id.speechTranslation_playAudioButton)
 
+        arrLanguageNames = resources.getStringArray(R.array.text_to_speech_languages).toList()
+        arrLanguageCodes = resources.getStringArray(R.array.text_to_speech_codes).toList()
+        arrLanguageCodesWithRegion = resources.getStringArray(R.array.text_to_speech_codes_with_region).toList()
+        arrLanguageVoices = resources.getStringArray(R.array.text_to_speech_voices).toList()
+
 //
 
         translateSpeech.setOnClickListener {
@@ -92,9 +103,6 @@ class SpeechTranslationFragment : Fragment() {
 
     //----------
     private fun setTranslateMessageDialog(context: Context) {
-        val arrStringName: ArrayList<String> = ArrayList()
-        val arrLanguageObjects: ArrayList<Language> = ArrayList()
-
         val builder = AlertDialog.Builder(context);
         val view: View = View.inflate(context, R.layout.translate_speech_dialog, null)
 
@@ -127,8 +135,10 @@ class SpeechTranslationFragment : Fragment() {
                         + "\nTo Spinner Language: " + toSpinnerLanguageSelected)
 
             //This is how you will get the proper value for the selected languages
-            Log.d("From Language", fromLanguageCode)
-            Log.d("To Language", toLanguageCode)
+            //Log.d("From Language", fromLanguageCode)
+            Log.d("From Language", arrLanguageCodes!![fromIndex])
+            //Log.d("To Language", toLanguageCode)
+            Log.d("To Language", arrLanguageCodes!![toIndex])
 
             //textToTextTranslation(from, to, mTvMsg, context, dialog)
             //Recognizer and translator
@@ -169,158 +179,99 @@ class SpeechTranslationFragment : Fragment() {
 
         dialog.show()
 
+        val adapterFrom = arrLanguageNames?.let {
+            ArrayAdapter(
+                context,
+                android.R.layout.simple_spinner_item, it
+            )
+        }
+        val adapterTo = arrLanguageNames?.let {
+            ArrayAdapter(
+                context,
+                android.R.layout.simple_spinner_item, it
+            )
+        }
+        fromLanguageSpinner.adapter = adapterFrom
+        toLanguageSpinner.adapter = adapterTo
 
-        val url =
-            "https://api.cognitive.microsofttranslator.com/languages?api-version=3.0"
+        val prefs: SharedPreferences = context.getSharedPreferences("info", Context.MODE_PRIVATE)
 
-        val client: AsyncHttpClient = AsyncHttpClient()
+        if(toSpinnerLanguageSelected == "" && prefs.getString("language", null) == null){
+            fromSpinnerLanguageSelected = arrLanguageNames!!.get(0)
+            fromIndex = 0
+            //fromLanguageCode = arrLanguageCodes.get(0)
+            toSpinnerLanguageSelected = arrLanguageNames!!.get(0)
+            toIndex = 0
+            //toLanguageCode = arrLanguageCodes.get(0)
 
-        client.get(url, object : JsonHttpResponseHandler() {
-            override fun onSuccess(
-                statusCode: Int,
-                headers: Array<Header>?,
-                response: JSONObject?
-            ) {
-                if (response != null) {
+            if (adapterFrom != null) {
+                fromLanguageSpinner.setSelection(adapterFrom.getPosition(fromSpinnerLanguageSelected))
+            }
+        }
+        else if(toSpinnerLanguageSelected == "" && prefs.getString("language", null) != null){
+            val gsonObject = Gson()
 
-                    Log.d("Response", response.toString())
-                    val translationObj: JSONObject =
-                        JSONObject(response.toString()).getJSONObject("translation")
-                    val keys: Iterator<String> = translationObj.keys()
+            val language: Language = gsonObject.fromJson(prefs.getString("language", null), Language::class.java)
 
-                    val unknownLanguage: Language = Language("", "Unknown", "", "")
-                    arrStringName.add(unknownLanguage.name)
-                    arrLanguageObjects.add(unknownLanguage)
+            fromSpinnerLanguageSelected = language.name
 
-                    while (keys.hasNext()) {
-                        val key = keys.next()
+            if (adapterFrom != null) {
+                fromLanguageSpinner.setSelection(adapterFrom.getPosition(fromSpinnerLanguageSelected))
+            }
 
-                        val value: JSONObject = translationObj.getJSONObject(key)
+        }
+        else{
+            fromSpinnerLanguageSelected = toSpinnerLanguageSelected.plus("")
+            //fromLanguageCode = toLanguageCode.plus("")
 
-                        val name: String = value.getString("name")
-                        val nativeName: String = value.getString("nativeName")
-                        val dir: String = value.getString("dir")
+            if (adapterFrom != null) {
+                fromLanguageSpinner.setSelection(adapterFrom.getPosition(toSpinnerLanguageSelected))
+            }
+        }
 
-                        val language: Language = Language(key, name, nativeName, dir)
+        toSpinnerLanguageSelected = arrLanguageNames!!.get(0)
+        toIndex = 0
+        //toLanguageCode = arrLanguageCodes.get(0)
 
-                        arrStringName.add(name)
-                        arrLanguageObjects.add(language)
-
-                        // Do something...
-
-                        Log.d("Objects", key + ": " + value)
-                    }
-
-                    val adapter = ArrayAdapter(
-                        context,
-                        android.R.layout.simple_spinner_item, arrStringName
-                    )
-                    fromLanguageSpinner.adapter = adapter
-                    toLanguageSpinner.adapter = adapter
-
-                    val prefs: SharedPreferences =
-                        context.getSharedPreferences("info", Context.MODE_PRIVATE)
-
-                    if(toSpinnerLanguageSelected == "" && prefs.getString("language", null) == null){
-                        fromSpinnerLanguageSelected = arrStringName.get(0)
-                        fromLanguageCode = arrLanguageObjects.get(0).key
-                        toSpinnerLanguageSelected = arrStringName.get(0)
-                        toLanguageCode = arrLanguageObjects.get(0).key
-
-                        if (adapter != null) {
-                            fromLanguageSpinner.setSelection(adapter.getPosition(fromSpinnerLanguageSelected))
-                        }
-                    }
-                    else if(toSpinnerLanguageSelected == "" && prefs.getString("language", null) != null){
-                        val gsonObject = Gson()
-
-                        val language: Language = gsonObject.fromJson(prefs.getString("language", null), Language::class.java)
-
-                        fromSpinnerLanguageSelected = language.name
-
-                        if (adapter != null) {
-                            fromLanguageSpinner.setSelection(adapter.getPosition(fromSpinnerLanguageSelected))
-                        }
-
-                    }
-                    else{
-                        fromSpinnerLanguageSelected = toSpinnerLanguageSelected.plus("")
-                        fromLanguageCode = toLanguageCode.plus("")
-
-                        if (adapter != null) {
-                            fromLanguageSpinner.setSelection(adapter.getPosition(toSpinnerLanguageSelected))
-                        }
-                    }
-
-                    toSpinnerLanguageSelected = arrStringName.get(0)
-                    toLanguageCode = arrLanguageObjects.get(0).key
-
-                    fromLanguageSpinner.onItemSelectedListener =
-                        object : AdapterView.OnItemSelectedListener {
-                            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                            }
-
-                            override fun onItemSelected(
-                                parent: AdapterView<*>?,
-                                view: View?,
-                                position: Int,
-                                id: Long
-                            ) {
-                                fromSpinnerLanguageSelected = arrStringName.get(position)
-                                fromLanguageCode = arrLanguageObjects.get(position).key
-                            }
-
-                        }
-
-                    toLanguageSpinner.onItemSelectedListener =
-                        object : AdapterView.OnItemSelectedListener {
-                            override fun onNothingSelected(parent: AdapterView<*>?) {
-                            }
-
-                            override fun onItemSelected(
-                                parent: AdapterView<*>?,
-                                view: View?,
-                                position: Int,
-                                id: Long
-                            ) {
-                                toSpinnerLanguageSelected = arrStringName.get(position)
-                                toLanguageCode = arrLanguageObjects.get(position).key
-                            }
-
-                        }
-
-                    progressBar.visibility = View.INVISIBLE
-                    submit.isEnabled = true
-
-
-                } else {
-
-                    Toast.makeText(
-                        context, "Failed to get languages",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    progressBar.visibility = View.INVISIBLE
+        fromLanguageSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
 
                 }
-            }
 
-            override fun onFailure(
-                statusCode: Int,
-                headers: Array<Header>?,
-                e: Throwable,
-                response: JSONArray?
-            ) {
-                Toast.makeText(
-                    context, "Failed to get languages",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                progressBar.visibility = View.INVISIBLE
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    fromSpinnerLanguageSelected = arrLanguageNames!!.get(position)
+                    fromIndex = position
+                    //fromLanguageCode = arrLanguageCodes.get(position)
+                }
 
             }
-        })
+
+        toLanguageSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    toSpinnerLanguageSelected = arrLanguageNames!!.get(position)
+                    toIndex = position
+                    //toLanguageCode = arrLanguageCodes.get(position)
+                }
+
+            }
+
+        progressBar.visibility = View.INVISIBLE
+        submit.isEnabled = true
     }
     //----------
 
@@ -399,9 +350,12 @@ class SpeechTranslationFragment : Fragment() {
                     ).show()
 
                     val speechConfig = SpeechConfig.fromSubscription(
-                        "ENTER TEXT TO SPEECH KEY HERE",
+                        "ADD SPEECH TRANSLATION KEY HERE",
                         "eastus"
                     )
+                    Log.d("Speech","Language Code: ${arrLanguageCodesWithRegion!![speechIndex]}\nVoice: ${arrLanguageVoices!![speechIndex]}")
+                    speechConfig.speechSynthesisLanguage = arrLanguageCodesWithRegion!![speechIndex]
+                    speechConfig.speechSynthesisVoiceName = arrLanguageVoices!![speechIndex]
                     val audioConfig = AudioConfig.fromDefaultSpeakerOutput()
                     val synthesizer = SpeechSynthesizer(speechConfig, audioConfig)
                     Log.d(
@@ -445,9 +399,12 @@ class SpeechTranslationFragment : Fragment() {
 
     private fun textToSpeechOnly(mMsg: TextView?){
         val speechConfig = SpeechConfig.fromSubscription(
-            "ENTER TEXT TO SPEECH KEY HERE",
+            "ADD SPEECH TRANSLATION KEY HERE",
             "eastus"
         )
+        Log.d("Speech","Language Code: ${arrLanguageCodesWithRegion!![speechIndex]}\nVoice: ${arrLanguageVoices!![speechIndex]}")
+        speechConfig.speechSynthesisLanguage = arrLanguageCodesWithRegion!![speechIndex]
+        speechConfig.speechSynthesisVoiceName = arrLanguageVoices!![speechIndex]
         val audioConfig = AudioConfig.fromDefaultSpeakerOutput()
         val synthesizer = SpeechSynthesizer(speechConfig, audioConfig)
         Log.d(
@@ -486,7 +443,11 @@ class SpeechTranslationFragment : Fragment() {
                         originalTextBox?.setText(recognizedText)
                         Log.d("Call the translation API here, with desired { to:, from:, message: }",recognizedText)
 
-                        textToSpeechTranslation(fromLanguageCode, toLanguageCode, originalTextBox, translatedTextBox, requireContext())
+                        //Set speech index to hold the value until submit is press and translation is returned
+                        speechIndex = toIndex
+
+                        textToSpeechTranslation(arrLanguageCodes!![fromIndex], arrLanguageCodes!![toIndex], originalTextBox, translatedTextBox, requireContext())
+                        //textToSpeechTranslation(fromLanguageCode, toLanguageCode, originalTextBox, translatedTextBox, requireContext())
                     }
                 }
             }
