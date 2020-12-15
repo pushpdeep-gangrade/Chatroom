@@ -1,6 +1,11 @@
 # Global-Chatroom
 - Trello Board: https://trello.com/b/I6qXEzW5/translation-app
 
+#todo: (Katy) Create slides to give an overview of your project and to motivate the use cases for the app and to show the different features.
+       Finish the wiki page describing your design and implementation. The wiki page should describe the data design choices.
+       The wiki should also include a description of the tasks performed by each team member.
+       Demo your App and record an app screencast showing the different app features. Your video should be posted on Github and included with your submission.
+
 ## Authors
 - Pushdeep Gangrade
 - Katy Mitchell
