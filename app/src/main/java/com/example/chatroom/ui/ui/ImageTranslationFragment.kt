@@ -662,7 +662,7 @@ class ImageTranslationFragment : Fragment() {
 
     companion object {
         private const val REQUEST_CODE = 100
-        var SPEECH_SUBS_KEY = "524b59a9e0b144b3bbf4e7215da37cb3"
+        var SPEECH_SUBS_KEY = "API KEY HERE"
     }
 
 }
