@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.MediaStore
@@ -38,6 +40,7 @@ import cz.msebera.android.httpclient.Header
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.util.*
 
 
@@ -57,6 +60,9 @@ class ImageTranslationFragment : Fragment() {
     private lateinit var imageByteArray : ByteArray
     private var fromlanguageCode: String = ""
     val REQUEST_IMAGE_CAPTURE = 1
+
+    private var speechIndex: Int = 0
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,14 +125,14 @@ class ImageTranslationFragment : Fragment() {
                 dialogView.findViewById<Spinner>(R.id.translateImageDialog_toLanguageSpinner)
             val radioGroup: RadioGroup =
                 dialogView.findViewById<RadioGroup>(R.id.translateImageDialog_radioGroup)
-            val progressBar: ProgressBar =
+            progressBar =
                 dialogView.findViewById<ProgressBar>(R.id.translateImageDialog_progressBar)
 
             var selectedRadioButton: String = ""
             var toSpinnerLanguageSelected: String = ""
 
             progressBar.visibility = View.VISIBLE
-            submit.isEnabled = false
+            submit.isEnabled = true
 
             radioGroup.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
                 val radio: RadioButton = dialogView.findViewById(checkedId)
@@ -155,10 +161,15 @@ class ImageTranslationFragment : Fragment() {
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     // Apply the adapter to the spinner
                     fromLanguageSpinner.adapter = adapter
+                    toLanguageSpinner.adapter = adapter
                 }
             }
 
-            populateLanguageDropdown(fromLanguageSpinner, toLanguageSpinner, progressBar, submit)
+
+
+            populateLanguageDropdownStrings(fromLanguageSpinner, toLanguageSpinner)
+            //populateLanguageDropdown(fromLanguageSpinner, toLanguageSpinner, progressBar, submit)
+            progressBar.visibility = View.INVISIBLE
 
             submit.setOnClickListener {
                 Log.d("Submit", "Hit submit")
@@ -182,8 +193,11 @@ class ImageTranslationFragment : Fragment() {
 
                     val to: String =
                         (arrLanguageObjects.filter { it.name == languageSelected })[0].key
-                    convertImageToText(fromlanguageCode , imageByteArray, to,translatedTextBox,dialog )
+
                     //Call Image to Text API here
+                    convertImageToText(fromlanguageCode , imageByteArray, to,
+                        translatedTextBox,dialog, "Text" )
+
                 } else if (selectedRadioButton.equals("Image to Talk")) {
                     Log.d(
                         "To Language",
@@ -194,6 +208,9 @@ class ImageTranslationFragment : Fragment() {
                         (arrLanguageObjects.filter { it.name == languageSelected })[0].key
 
                     //Call Image to Talk API here
+                    convertImageToText(fromlanguageCode , imageByteArray, to,
+                        translatedTextBox,dialog, "Talk" )
+
                 }
             }
 
@@ -203,11 +220,15 @@ class ImageTranslationFragment : Fragment() {
 
         playAudio.setOnClickListener {
 
-
             val speechConfig = SpeechConfig.fromSubscription(
                 "API KEY HERE",
                 "eastus"
             )
+
+            Log.d("Speech","Language Code: ${arrLanguageObjects[speechIndex].region}\nVoice: ${arrLanguageObjects[speechIndex].voice}")
+            speechConfig.speechSynthesisLanguage = arrLanguageObjects[speechIndex].region
+            speechConfig.speechSynthesisVoiceName = arrLanguageObjects[speechIndex].voice
+
             val audioConfig = AudioConfig.fromDefaultSpeakerOutput()
             val synthesizer = SpeechSynthesizer(speechConfig, audioConfig)
             val result = synthesizer.SpeakText(translatedTextBox.text.toString())
@@ -225,130 +246,61 @@ class ImageTranslationFragment : Fragment() {
         return view
     }
 
-    private fun populateLanguageDropdown(
+    private fun populateLanguageDropdownStrings(
         fromLanguageDropDown: Spinner,
-        languageDropDown: Spinner,
-        progressBar: ProgressBar,
-        submit: TextView
-    ) {
-        val url =
-            "https://api.cognitive.microsofttranslator.com/languages?api-version=3.0"
-
-        val client: AsyncHttpClient = AsyncHttpClient()
-
-        client.get(url, object : JsonHttpResponseHandler() {
-            override fun onSuccess(
-                statusCode: Int,
-                headers: Array<Header>?,
-                response: JSONObject?
-            ) {
-                if (response != null) {
-
-                    Log.d("Response", response.toString())
-                    val translationObj: JSONObject =
-                        JSONObject(response.toString()).getJSONObject("translation")
-                    val keys: Iterator<String> = translationObj.keys()
+        toLanguageDropDown: Spinner
+    ){
+        val languagesStringArr = resources.getStringArray(R.array.vision_7_languages)
+        val languageCodesStringArr =  resources.getStringArray(R.array.vision_7_code)
+        val languagesRegionStringArr = resources.getStringArray(R.array.vision_7_codes_with_region)
+        val languageVoiceStringArr = resources.getStringArray(R.array.vision_7_voices)
 
 
-                    while (keys.hasNext()) {
-                        val key = keys.next()
+        for (i in languagesStringArr.indices)
+        {
+            arrStringName.add(languagesStringArr[i])
 
-                        val value: JSONObject = translationObj.getJSONObject(key)
+            val language: Language = Language(languageCodesStringArr[i], languagesStringArr[i],
+                languagesRegionStringArr[i], languageVoiceStringArr[i])
 
-                        val name: String = value.getString("name")
-                        val nativeName: String = value.getString("nativeName")
-                        val dir: String = value.getString("dir")
+            arrLanguageObjects.add(language)
 
-                        val language: Language = Language(key, name, nativeName, dir)
+        }
 
-                        arrStringName.add(name)
-                        arrLanguageObjects.add(language)
-
-                        // Do something...
-
-                        Log.d("Objects", key + ": " + value)
-                    }
-
-                    val adapter = context?.let {
-                        ArrayAdapter(
-                            it,
-                            android.R.layout.simple_spinner_item, arrStringName
-                        )
-                    }
-
-                    languageDropDown.adapter = adapter
-
-                    languageSelected = arrStringName.get(0)
-
-                    fromLanguageDropDown.onItemSelectedListener =
-                        object : AdapterView.OnItemSelectedListener {
-                            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                            }
-
-                            override fun onItemSelected(
-                                parent: AdapterView<*>?,
-                                view: View?,
-                                position: Int,
-                                id: Long
-                            ) {
-                                val arr = resources.getStringArray(R.array.vision_7_languages)
-                                val arrCode = resources.getStringArray(R.array.vision_7_code)
-                                fromlanguageCode = arrCode.get(position)
-                                fromlanguageSelected = arr.get(position)
-                            }
-
-                        }
-                    languageDropDown.onItemSelectedListener =
-                        object : AdapterView.OnItemSelectedListener {
-                            override fun onNothingSelected(parent: AdapterView<*>?) {
-                            }
-
-                            override fun onItemSelected(
-                                parent: AdapterView<*>?,
-                                view: View?,
-                                position: Int,
-                                id: Long
-                            ) {
-                                languageSelected = arrStringName.get(position)
-                            }
-
-                        }
-
-                    progressBar.visibility = View.INVISIBLE
-                    submit.isEnabled = true
-
-                } else {
-
-                    progressBar.visibility = View.INVISIBLE
-                    submit.isEnabled = true
-
-                    Toast.makeText(
-                        context, "Failed to get languages",
-                        Toast.LENGTH_SHORT
-                    ).show()
+        fromLanguageDropDown.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
 
                 }
-            }
 
-            override fun onFailure(
-                statusCode: Int,
-                headers: Array<Header>?,
-                e: Throwable,
-                response: JSONArray?
-            ) {
-                progressBar.visibility = View.INVISIBLE
-                submit.isEnabled = true
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    fromlanguageCode = arrLanguageObjects.get(position).key
+                    fromlanguageSelected = arrStringName.get(position)
+                }
+        }
 
-                Toast.makeText(
-                    context, "Failed to get languages",
-                    Toast.LENGTH_SHORT
-                ).show()
+        toLanguageDropDown.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
 
-            }
-        })
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    languageSelected = arrStringName.get(position)
+                    speechIndex = position
+                }
+
+        }
     }
-
 
     private fun dispatchTakePictureIntent() {
         try {
@@ -373,10 +325,30 @@ class ImageTranslationFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == ImageTranslationFragment.REQUEST_CODE) {
-            imageView.setImageURI(data?.data) // handle chosen image
+            //imageView.setImageURI(data?.data) // handle chosen image
             Log.d("Image url", data?.data.toString())
 
+            try {
+
+                val uri: Uri = Uri.parse(data?.data.toString())
+
+                val imageBitmap: Bitmap =
+                    BitmapFactory.decodeStream(requireActivity().contentResolver.openInputStream(uri))
+
+                val baos = ByteArrayOutputStream()
+
+                imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+
+                imageByteArray =  baos.toByteArray()
+
+                imageView.setImageBitmap(imageBitmap)
+
+            } catch (e: IOException) {
+                Log.d("Image Load Error", e.toString())
+            }
+
             imageUrl = data?.data.toString()
+
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             val baos = ByteArrayOutputStream()
@@ -394,8 +366,11 @@ class ImageTranslationFragment : Fragment() {
         imageBitmapByteArray: ByteArray,
         to : String,
         textView: TextView,
-        dialog: AlertDialog
+        dialog: AlertDialog,
+        convertType: String
     ) {
+        progressBar.visibility = View.VISIBLE
+
         val compVisClient: ComputerVisionClient =
             ComputerVisionManager.authenticate(subscriptionKey).withEndpoint(endpoint)
         try {
@@ -413,7 +388,7 @@ class ImageTranslationFragment : Fragment() {
 
                 val operationLocation = responseHeader.operationLocation()
 
-                getAndPrintReadResult(vision, operationLocation, textView, to, dialog)
+                getAndPrintReadResult(vision, operationLocation, textView, to, dialog, convertType)
             }
 
 
@@ -429,7 +404,8 @@ class ImageTranslationFragment : Fragment() {
         operationLocation: String,
         textView: TextView,
         to : String,
-        dialog: AlertDialog
+        dialog: AlertDialog,
+        convertType: String
     ) {
         // Extract OperationId from Operation Location
         val operationId =
@@ -459,7 +435,7 @@ class ImageTranslationFragment : Fragment() {
             }
             // println(builder.toString())
             context?.let {
-                textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, dialog )
+                textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, dialog, convertType )
             }
             Log.d("ImageTransalte", builder.toString())
         }
@@ -482,7 +458,8 @@ class ImageTranslationFragment : Fragment() {
         message : String,
         mTvMsg: TextView?,
         context: Context,
-        dialog: AlertDialog
+        dialog: AlertDialog,
+        convertType: String
     ) {
         val url =
             "http://104.248.113.55:8080/translate/textToText"
@@ -507,6 +484,44 @@ class ImageTranslationFragment : Fragment() {
                        mTvMsg.text = translatedMsg
                     }
                     dialog.cancel()
+
+                    if(convertType == "Talk"){
+                        val speechConfig = SpeechConfig.fromSubscription(
+                            "Add Speech Key Here",
+                            "eastus"
+                        )
+
+                        Log.d("Speech","Language Code: ${arrLanguageObjects[speechIndex].region}\nVoice: ${arrLanguageObjects[speechIndex].voice}")
+
+                        speechConfig.speechSynthesisLanguage = arrLanguageObjects[speechIndex].region
+                        speechConfig.speechSynthesisVoiceName = arrLanguageObjects[speechIndex].voice
+
+                        val audioConfig = AudioConfig.fromDefaultSpeakerOutput()
+                        val synthesizer = SpeechSynthesizer(speechConfig, audioConfig)
+
+                        Log.d(
+                            "Info",
+                            "Translated Message: ${translatedMsg}"
+                        )
+
+                        val result = synthesizer.SpeakText(translatedMsg)
+
+                        Log.d("Test", result.reason.toString())
+
+                        if (result.reason === ResultReason.Canceled) {
+                            val cancellationDetails =
+                                SpeechSynthesisCancellationDetails.fromResult(result).toString()
+                            Log.d("Test Details",
+                                "Error synthesizing. Error detail: \n${cancellationDetails}\nDid you update the subscription info?"
+                            )
+                        }
+
+                        result.close()
+                    }
+
+                    progressBar.visibility = View.INVISIBLE
+
+
                 }
             }
 
@@ -520,10 +535,137 @@ class ImageTranslationFragment : Fragment() {
                     context, "Text to text translation failed",
                     Toast.LENGTH_SHORT
                 ).show()
+
+                progressBar.visibility = View.INVISIBLE
+
             }
         })
 
     }
+
+    /*private fun populateLanguageDropdown(
+       fromLanguageDropDown: Spinner,
+       languageDropDown: Spinner,
+       progressBar: ProgressBar,
+       submit: TextView
+   ) {
+       val url =
+           "https://api.cognitive.microsofttranslator.com/languages?api-version=3.0"
+
+       val client: AsyncHttpClient = AsyncHttpClient()
+
+       client.get(url, object : JsonHttpResponseHandler() {
+           override fun onSuccess(
+               statusCode: Int,
+               headers: Array<Header>?,
+               response: JSONObject?
+           ) {
+               if (response != null) {
+
+                   Log.d("Response", response.toString())
+                   val translationObj: JSONObject =
+                       JSONObject(response.toString()).getJSONObject("translation")
+                   val keys: Iterator<String> = translationObj.keys()
+
+
+                   while (keys.hasNext()) {
+                       val key = keys.next()
+
+                       val value: JSONObject = translationObj.getJSONObject(key)
+
+                       val name: String = value.getString("name")
+                       val nativeName: String = value.getString("nativeName")
+                       val dir: String = value.getString("dir")
+
+                       val language: Language = Language(key, name, nativeName, dir)
+
+                       arrStringName.add(name)
+                       arrLanguageObjects.add(language)
+
+                       // Do something...
+
+                       Log.d("Objects", key + ": " + value)
+                   }
+
+                   val adapter = context?.let {
+                       ArrayAdapter(
+                           it,
+                           android.R.layout.simple_spinner_item, arrStringName
+                       )
+                   }
+
+                   languageDropDown.adapter = adapter
+
+                   languageSelected = arrStringName.get(0)
+
+                   fromLanguageDropDown.onItemSelectedListener =
+                       object : AdapterView.OnItemSelectedListener {
+                           override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                           }
+
+                           override fun onItemSelected(
+                               parent: AdapterView<*>?,
+                               view: View?,
+                               position: Int,
+                               id: Long
+                           ) {
+                               val arr = resources.getStringArray(R.array.vision_7_languages)
+                               val arrCode = resources.getStringArray(R.array.vision_7_code)
+                               fromlanguageCode = arrCode.get(position)
+                               fromlanguageSelected = arr.get(position)
+                           }
+
+                       }
+                   languageDropDown.onItemSelectedListener =
+                       object : AdapterView.OnItemSelectedListener {
+                           override fun onNothingSelected(parent: AdapterView<*>?) {
+                           }
+
+                           override fun onItemSelected(
+                               parent: AdapterView<*>?,
+                               view: View?,
+                               position: Int,
+                               id: Long
+                           ) {
+                               languageSelected = arrStringName.get(position)
+                           }
+
+                       }
+
+                   progressBar.visibility = View.INVISIBLE
+                   submit.isEnabled = true
+
+               } else {
+
+                   progressBar.visibility = View.INVISIBLE
+                   submit.isEnabled = true
+
+                   Toast.makeText(
+                       context, "Failed to get languages",
+                       Toast.LENGTH_SHORT
+                   ).show()
+
+               }
+           }
+
+           override fun onFailure(
+               statusCode: Int,
+               headers: Array<Header>?,
+               e: Throwable,
+               response: JSONArray?
+           ) {
+               progressBar.visibility = View.INVISIBLE
+               submit.isEnabled = true
+
+               Toast.makeText(
+                   context, "Failed to get languages",
+                   Toast.LENGTH_SHORT
+               ).show()
+
+           }
+       })
+   }*/
 
     companion object {
         private const val REQUEST_CODE = 100
