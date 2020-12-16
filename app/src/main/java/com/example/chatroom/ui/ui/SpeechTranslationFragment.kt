@@ -353,7 +353,7 @@ class SpeechTranslationFragment : Fragment() {
                     ).show()
 
                     val speechConfig = SpeechConfig.fromSubscription(
-                        "Add Speech Key Here",
+                       ImageTranslationFragment.SPEECH_SUBS_KEY,
                         "eastus"
                     )
                     Log.d("Speech","Language Code: ${arrLanguageCodesWithRegion!![speechIndex]}\nVoice: ${arrLanguageVoices!![speechIndex]}")
@@ -402,7 +402,7 @@ class SpeechTranslationFragment : Fragment() {
 
     private fun textToSpeechOnly(mMsg: TextView?){
         val speechConfig = SpeechConfig.fromSubscription(
-            "Add Speech Key Here",
+            ImageTranslationFragment.SPEECH_SUBS_KEY,
             "eastus"
         )
         Log.d("Speech","Language Code: ${arrLanguageCodesWithRegion!![speechIndex]}\nVoice: ${arrLanguageVoices!![speechIndex]}")

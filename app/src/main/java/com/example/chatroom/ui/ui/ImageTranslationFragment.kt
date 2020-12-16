@@ -47,13 +47,10 @@ import java.util.*
 class ImageTranslationFragment : Fragment() {
     var subscriptionKey = "fd6436de1fdd4564a53423c0f2512098"
     var endpoint = "https://amad-vision-api-image-to-text.cognitiveservices.azure.com/"
-
     data class visionLanguage(val name: String, val code: String)
-
     lateinit var imageView: ImageView
     var imageUrl: String = ""
     var arrStringName: ArrayList<String> = ArrayList()
-
     var arrLanguageObjects: ArrayList<Language> = ArrayList()
     private var languageSelected: String = ""
     private var fromlanguageSelected: String = ""
@@ -78,7 +75,6 @@ class ImageTranslationFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view: View = inflater.inflate(R.layout.fragment_image_translation, container, false)
-
         imageView = view.findViewById(R.id.imageTranslation_imageView)
         val translateImage: Button = view.findViewById(R.id.imageTranslation_translateImageButton)
         val translatedTextBox: TextView = view.findViewById(R.id.imageTranslation_translatedTextBox)
@@ -210,7 +206,6 @@ class ImageTranslationFragment : Fragment() {
                     //Call Image to Talk API here
                     convertImageToText(fromlanguageCode , imageByteArray, to,
                         translatedTextBox,dialog, "Talk" )
-
                 }
             }
 
@@ -221,7 +216,7 @@ class ImageTranslationFragment : Fragment() {
         playAudio.setOnClickListener {
 
             val speechConfig = SpeechConfig.fromSubscription(
-                "API KEY HERE",
+                SPEECH_SUBS_KEY,
                 "eastus"
             )
 
@@ -426,18 +421,15 @@ class ImageTranslationFragment : Fragment() {
             }
         }
         for (pageResult in readResults!!.analyzeResult().readResults()) {
-
             println("Printing Read results for page " + pageResult.page())
             val builder = StringBuilder()
             for (line in pageResult.lines()) {
                 builder.append(line.text())
                 builder.append("\n")
             }
-            // println(builder.toString())
             context?.let {
                 textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, dialog, convertType )
             }
-            Log.d("ImageTransalte", builder.toString())
         }
     }
 
@@ -483,11 +475,12 @@ class ImageTranslationFragment : Fragment() {
                     if (mTvMsg != null) {
                        mTvMsg.text = translatedMsg
                     }
+                    progressBar.visibility = View.INVISIBLE
                     dialog.cancel()
 
                     if(convertType == "Talk"){
                         val speechConfig = SpeechConfig.fromSubscription(
-                            "Add Speech Key Here",
+                            SPEECH_SUBS_KEY,
                             "eastus"
                         )
 
@@ -519,7 +512,7 @@ class ImageTranslationFragment : Fragment() {
                         result.close()
                     }
 
-                    progressBar.visibility = View.INVISIBLE
+                  //  progressBar.visibility = View.INVISIBLE
 
 
                 }
@@ -669,6 +662,7 @@ class ImageTranslationFragment : Fragment() {
 
     companion object {
         private const val REQUEST_CODE = 100
+        var SPEECH_SUBS_KEY = "524b59a9e0b144b3bbf4e7215da37cb3"
     }
 
 }

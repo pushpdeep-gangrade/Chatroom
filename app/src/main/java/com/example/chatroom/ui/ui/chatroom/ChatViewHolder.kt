@@ -9,9 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.os.bundleOf
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatroom.R
+import com.example.chatroom.ui.ui.ImageTranslationFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.gson.Gson
@@ -31,68 +35,133 @@ import org.json.JSONObject
 
 class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.chat_item, parent, false)) {
-    private var mUserImage : ImageView? = null
-    private var mLikeImage : ImageView? = null
-    private var mDelImage : ImageView? = null
+    //private var mUserImage : ImageView? = null
+    private var mLikeImage: ImageView? = null
+    private var mDelImage: ImageView? = null
     private var mTvUser: TextView? = null
     private var mTvLikes: TextView? = null
     private var mTvMsg: TextView? = null
     private var mTvtime: TextView? = null
     private var mTranslateButton: TextView? = null
+
+    private var sLikeImage: ImageView? = null
+    private var sDelImage: ImageView? = null
+    private var sTvUser: TextView? = null
+    private var sTvLikes: TextView? = null
+    private var sTvMsg: TextView? = null
+    private var sTvtime: TextView? = null
+    private var sTranslateButton: TextView? = null
     private var fromSpinnerLanguageSelected: String = ""
     private var toSpinnerLanguageSelected: String = ""
+    private var userSender = false
 
+    private var senderLayout: ConstraintLayout? = null
+    private var receiverLayout: ConstraintLayout? = null
 
     init {
-        mUserImage = itemView.findViewById(R.id.user_image_chat)
-       mLikeImage = itemView.findViewById(R.id.iv_like_msg)
-       mDelImage  = itemView.findViewById(R.id.iv_delete_chat)
-       mTvUser= itemView.findViewById(R.id.username_chat)
-       mTvLikes  = itemView.findViewById(R.id.no_likes)
-       mTvMsg = itemView.findViewById(R.id.message_chat)
+       // mUserImage = itemView.findViewById(R.id.user_image_chat)
+        senderLayout = itemView.findViewById(R.id.constraintLayout_sender)
+        receiverLayout = itemView.findViewById(R.id.constraintLayout_reciver)
+
+        mLikeImage = itemView.findViewById(R.id.iv_like_msg)
+        mDelImage = itemView.findViewById(R.id.iv_delete_chat)
+        mTvUser = itemView.findViewById(R.id.username_chat)
+        mTvLikes = itemView.findViewById(R.id.no_likes)
+        mTvMsg = itemView.findViewById(R.id.message_chat)
         mTvtime = itemView.findViewById(R.id.time_chat)
         mTranslateButton = itemView.findViewById(R.id.iv_translate_button)
 
+        sLikeImage = itemView.findViewById(R.id.sender_iv_like_msg)
+        sDelImage = itemView.findViewById(R.id.sender_iv_delete_chat)
+        sTvUser = itemView.findViewById(R.id.sender_username_chat)
+        sTvLikes = itemView.findViewById(R.id.sender_no_likes)
+        sTvMsg = itemView.findViewById(R.id.sender_message_chat)
+        sTvtime = itemView.findViewById(R.id.sender_time_chat)
+        sTranslateButton = itemView.findViewById(R.id.sender_iv_translate_button)
+
     }
+
     fun bind(chat: Chat, context: Context, res: Resources) {
-        mTvUser?.text = chat.userfname.plus(" ").plus(chat.userlname)
-        mTvLikes?.text = chat.likesMap.size.toString()
-        mTvMsg?.text = chat.message
-        mTvtime?.text = chat.timedate
-        Picasso.get().load(chat.userphotourl).resize(250, 250).into(mUserImage)
+        // Picasso.get().load(chat.userphotourl).resize(250, 250).into(mUserImage)
 
         val gsonObject = Gson()
 
         val prefs: SharedPreferences =
             context.getSharedPreferences("info", Context.MODE_PRIVATE)
 
-        if(prefs.getString("language", null) != null){
-            val language: Language = gsonObject.fromJson(prefs.getString("language", null), Language::class.java)
-            autoTextToTextTranslation(mTvMsg, language,  context)
+        if (!FirebaseAuth.getInstance().currentUser?.uid.equals(chat.userId)) {
+            senderLayout!!.visibility = View.INVISIBLE
+            mDelImage!!.visibility = View.INVISIBLE
+            if (chat.likesMap.containsKey(FirebaseAuth.getInstance().currentUser?.uid))
+                mLikeImage?.setImageResource(R.drawable.heart_icon)
+
+            mTvUser?.text = chat.userfname.plus(" ").plus(chat.userlname)
+            mTvLikes?.text = chat.likesMap.size.toString()
+            mTvMsg?.text = chat.message
+            mTvtime?.text = chat.timedate
+            if (prefs.getString("language", null) != null) {
+                val language: Language =
+                    gsonObject.fromJson(prefs.getString("language", null), Language::class.java)
+                autoTextToTextTranslation(mTvMsg, language, context)
+            }
+        } else {
+            userSender = true
+            receiverLayout!!.visibility = View.INVISIBLE
+            if (chat.likesMap.containsKey(FirebaseAuth.getInstance().currentUser?.uid))
+                sLikeImage?.setImageResource(R.drawable.heart_icon)
+
+            sTvUser?.text = chat.userfname.plus(" ").plus(chat.userlname)
+            sTvLikes?.text = chat.likesMap.size.toString()
+            sTvMsg?.text = chat.message
+            sTvtime?.text = chat.timedate
+            if (prefs.getString("language", null) != null) {
+                val language: Language =
+                    gsonObject.fromJson(prefs.getString("language", null), Language::class.java)
+                autoTextToTextTranslation(sTvMsg, language, context)
+            }
         }
 
-        if(!FirebaseAuth.getInstance().currentUser?.uid.equals(chat.userId))
-            mDelImage!!.visibility = View.INVISIBLE
-
-        if(chat.likesMap.containsKey(FirebaseAuth.getInstance().currentUser?.uid))
-            mLikeImage?.setImageResource(R.drawable.heart_icon)
-
-        mDelImage?.setOnClickListener(){
-         var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child(
-             "chatList"
-         ).child(chat.messageId)
-        ref.removeValue()
+        mDelImage?.setOnClickListener() {
+            var ref = FirebaseDatabase.getInstance().reference.child("chatrooms")
+                .child(chatRoomId.toString()).child(
+                "chatList"
+            ).child(chat.messageId)
+            ref.removeValue()
         }
 
         mLikeImage?.setOnClickListener() {
-             var ref = FirebaseDatabase.getInstance().reference.child("chatrooms").child(chatRoomId.toString()).child(
-                 "chatList"
-             ).child(chat.messageId)
+            var ref = FirebaseDatabase.getInstance().reference.child("chatrooms")
+                .child(chatRoomId.toString()).child(
+                "chatList"
+            ).child(chat.messageId)
             onLiked(ref)
-
         }
 
         mTranslateButton?.setOnClickListener() {
+            setTranslateMessageDialog(context, res)
+            Log.d(
+                "New Feature",
+                "ChatViewHolder.kt file, where Text to Talk and Text to Text translations features are to be added"
+            )
+        }
+
+        sDelImage?.setOnClickListener() {
+            var ref = FirebaseDatabase.getInstance().reference.child("chatrooms")
+                .child(chatRoomId.toString()).child(
+                "chatList"
+            ).child(chat.messageId)
+            ref.removeValue()
+        }
+
+        sLikeImage?.setOnClickListener() {
+            var ref = FirebaseDatabase.getInstance().reference.child("chatrooms")
+                .child(chatRoomId.toString()).child(
+                "chatList"
+            ).child(chat.messageId)
+            onLiked(ref)
+        }
+
+        sTranslateButton?.setOnClickListener() {
             setTranslateMessageDialog(context, res)
             Log.d(
                 "New Feature",
@@ -110,10 +179,14 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
         val cancel: TextView = view.findViewById<TextView>(R.id.translateMessageDialog_cancelButton)
         val submit: TextView = view.findViewById<TextView>(R.id.translateMessageDialog_submitButton)
-        val fromLanguageSpinner: Spinner = view.findViewById<Spinner>(R.id.translateMessageDialog_fromLanguageSpinner)
-        val toLanguageSpinner: Spinner = view.findViewById<Spinner>(R.id.translateMessageDialog_toLanguageSpinner)
-        val radioGroup: RadioGroup = view.findViewById<RadioGroup>(R.id.translateMessageDialog_radioGroup)
-        val progressBar: ProgressBar = view.findViewById<ProgressBar>(R.id.translateMessageDialog_progressBar)
+        val fromLanguageSpinner: Spinner =
+            view.findViewById<Spinner>(R.id.translateMessageDialog_fromLanguageSpinner)
+        val toLanguageSpinner: Spinner =
+            view.findViewById<Spinner>(R.id.translateMessageDialog_toLanguageSpinner)
+        val radioGroup: RadioGroup =
+            view.findViewById<RadioGroup>(R.id.translateMessageDialog_radioGroup)
+        val progressBar: ProgressBar =
+            view.findViewById<ProgressBar>(R.id.translateMessageDialog_progressBar)
 
         var selectedRadioButton: String = ""
         var speechIndex: Int = 0
@@ -135,7 +208,6 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
         cancel.setOnClickListener {
             Log.d("Cancel", "Hit cancel")
-
             dialog.cancel()
 
         }
@@ -150,15 +222,13 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                         + "\nTo Spinner Language: " + toSpinnerLanguageSelected
             )
 
-            if(selectedRadioButton.equals("")){
+            if (selectedRadioButton.equals("")) {
                 Toast.makeText(
                     context, "Please select a translation method",
                     Toast.LENGTH_SHORT
                 ).show()
-            }
-            else if(selectedRadioButton.equals("Text to Text")){
+            } else if (selectedRadioButton.equals("Text to Text")) {
                 //Grab message text and selected translation method and make API call
-
                 //This is how you will get the proper value for the selected languages
                 Log.d(
                     "From Language",
@@ -170,17 +240,21 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                 )
                 Log.d("Message to Translate", mTvMsg?.text.toString())
 
-                val from: String = (arrLanguageObjects.filter { it.name == fromSpinnerLanguageSelected })[0].key
-                val to: String = (arrLanguageObjects.filter { it.name == toSpinnerLanguageSelected })[0].key
+                val from: String =
+                    (arrLanguageObjects.filter { it.name == fromSpinnerLanguageSelected })[0].key
+                val to: String =
+                    (arrLanguageObjects.filter { it.name == toSpinnerLanguageSelected })[0].key
 
-                if(toSpinnerLanguageSelected == "Unknown"){
+                if (toSpinnerLanguageSelected == "Unknown") {
                     Toast.makeText(
                         context, "Cannot choose Unknown for To language",
                         Toast.LENGTH_SHORT
                     ).show()
-                }
-                else{
-                    textToTextTranslation(from, to, mTvMsg, context, dialog)
+                } else {
+                    if (userSender)
+                        textToTextTranslation(from, to, sTvMsg, context, dialog)
+                    else
+                        textToTextTranslation(from, to, mTvMsg, context, dialog)
                 }
 
                 //This is the body that needs to be sent to the api
@@ -203,21 +277,29 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                     ]
                 }
                 */
-            }
-            else if(selectedRadioButton.equals("Text to Talk")){
+            } else if (selectedRadioButton.equals("Text to Talk")) {
                 //Grab message text and selected translation method and make API call
                 Log.d("Text to Talk", "Text to Talk Mode")
 
-                val from: String = (arrLanguageObjects.filter { it.name == fromSpinnerLanguageSelected })[0].key
-                val to: String = (arrLanguageObjects.filter { it.name == toSpinnerLanguageSelected })[0].key
-                if(toSpinnerLanguageSelected == "Unknown"){
+                val from: String =
+                    (arrLanguageObjects.filter { it.name == fromSpinnerLanguageSelected })[0].key
+                val to: String =
+                    (arrLanguageObjects.filter { it.name == toSpinnerLanguageSelected })[0].key
+                if (toSpinnerLanguageSelected == "Unknown") {
                     Toast.makeText(
                         context, "Cannot choose Unknown for To language",
                         Toast.LENGTH_SHORT
                     ).show()
-                }
-                else{
-                    textToSpeechTranslation(from, to, mTvMsg, context, dialog, arrLanguageObjects, speechIndex)
+                } else {
+                    textToSpeechTranslation(
+                        from,
+                        to,
+                        mTvMsg,
+                        context,
+                        dialog,
+                        arrLanguageObjects,
+                        speechIndex
+                    )
                 }
             }
         }
@@ -229,16 +311,17 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         arrLanguageObjects.add(unknownLanguage)
 
         val languagesStringArr = res.getStringArray(R.array.text_to_speech_languages)
-        val languageCodesStringArr =  res.getStringArray(R.array.text_to_speech_codes)
+        val languageCodesStringArr = res.getStringArray(R.array.text_to_speech_codes)
         val languagesRegionStringArr = res.getStringArray(R.array.text_to_speech_codes_with_region)
         val languageVoiceStringArr = res.getStringArray(R.array.text_to_speech_voices)
 
-        for (i in languagesStringArr.indices)
-        {
+        for (i in languagesStringArr.indices) {
             arrStringName.add(languagesStringArr[i])
 
-            val language: Language = Language(languageCodesStringArr[i], languagesStringArr[i],
-                languagesRegionStringArr[i], languageVoiceStringArr[i])
+            val language: Language = Language(
+                languageCodesStringArr[i], languagesStringArr[i],
+                languagesRegionStringArr[i], languageVoiceStringArr[i]
+            )
 
             arrLanguageObjects.add(language)
 
@@ -254,18 +337,18 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
         val prefs: SharedPreferences = context.getSharedPreferences("info", Context.MODE_PRIVATE)
 
-        if(toSpinnerLanguageSelected == "" && prefs.getString("language", null) == null){
+        if (toSpinnerLanguageSelected == "" && prefs.getString("language", null) == null) {
             fromSpinnerLanguageSelected = arrStringName.get(0)
             toSpinnerLanguageSelected = arrStringName.get(0)
 
             if (adapter != null) {
                 fromLanguageSpinner.setSelection(adapter.getPosition(fromSpinnerLanguageSelected))
             }
-        }
-        else if(toSpinnerLanguageSelected == "" && prefs.getString("language", null) != null){
+        } else if (toSpinnerLanguageSelected == "" && prefs.getString("language", null) != null) {
             val gsonObject = Gson()
 
-            val language: Language = gsonObject.fromJson(prefs.getString("language", null), Language::class.java)
+            val language: Language =
+                gsonObject.fromJson(prefs.getString("language", null), Language::class.java)
 
             fromSpinnerLanguageSelected = language.name
 
@@ -273,8 +356,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                 fromLanguageSpinner.setSelection(adapter.getPosition(fromSpinnerLanguageSelected))
             }
 
-        }
-        else{
+        } else {
             fromSpinnerLanguageSelected = toSpinnerLanguageSelected.plus("")
 
             if (adapter != null) {
@@ -321,10 +403,7 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         progressBar.visibility = View.INVISIBLE
         submit.isEnabled = true
 
-
-
         dialog.show()
-
 
         /*val url =
             "https://api.cognitive.microsofttranslator.com/languages?api-version=3.0"
@@ -651,11 +730,14 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                     ).show()
 
                     val speechConfig = SpeechConfig.fromSubscription(
-                        "ENTER TEXT TO SPEECH KEY HERE",
+                        ImageTranslationFragment.SPEECH_SUBS_KEY,
                         "eastus"
                     )
 
-                    Log.d("Speech","Language Code: ${languageArray[speechIndex].region}\nVoice: ${languageArray[speechIndex].voice}")
+                    Log.d(
+                        "Speech",
+                        "Language Code: ${languageArray[speechIndex].region}\nVoice: ${languageArray[speechIndex].voice}"
+                    )
                     speechConfig.speechSynthesisLanguage = languageArray[speechIndex].region
                     speechConfig.speechSynthesisVoiceName = languageArray[speechIndex].voice
 
@@ -671,7 +753,8 @@ class ChatViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                     if (result.reason === ResultReason.Canceled) {
                         val cancellationDetails =
                             SpeechSynthesisCancellationDetails.fromResult(result).toString()
-                        Log.d("Test Details",
+                        Log.d(
+                            "Test Details",
                             "Error synthesizing. Error detail: \n${cancellationDetails}\nDid you update the subscription info?"
                         )
                     }

@@ -5,31 +5,45 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:icon="@drawable/profile_icon"
             android:id="@+id/nav_profile"
             android:title="@string/profile" />
         <item
+            android:icon="@drawable/create_icon"
             android:id="@+id/nav_create_chatroom"
             android:title="@string/prompt_create_chatroom" />
         <item
+            android:icon="@drawable/chatroom_icon"
             android:id="@+id/nav_chatrooms"
             android:title="@string/view_chatroom" />
         <item
+            android:icon="@drawable/users_icon"
             android:id="@+id/nav_users"
             android:title="@string/view_users" />
         <item
-            android:id="@+id/nav_ride_history"
-            android:title="@string/view_ride_history" />
-        <item
-            android:id="@+id/nav_game_lobby"
-            android:title="@string/nav_game_lobby" />
-        <item
-            android:id="@+id/nav_settings"
-            android:title="@string/settings_title_text" />
-        <item
+            android:icon="@drawable/image_translation_icon"
             android:id="@+id/nav_image_translation"
             android:title="@string/image_translation_title_text" />
         <item
+            android:icon="@drawable/speech_translation_icon"
             android:id="@+id/nav_speech_translation"
             android:title="@string/speech_translation_title_text" />
     </group>
+    <group
+        android:checkableBehavior="single">
+        <item
+            android:icon="@drawable/ride_history_icon"
+            android:id="@+id/nav_ride_history"
+            android:title="@string/view_ride_history" />
+        <item
+            android:icon="@drawable/games_icon"
+            android:id="@+id/nav_game_lobby"
+            android:title="@string/nav_game_lobby" />
+    </group>
+        <item
+            android:icon="@drawable/setting_icon"
+            android:id="@+id/nav_settings"
+            android:title="@string/settings_title_text" />
+
+
 </menu>

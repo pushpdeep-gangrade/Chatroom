@@ -90,6 +90,7 @@
             android:layout_weight="1"
             android:text="@string/translate_message_submit_text"
             android:textAlignment="center"
+            android:textColor="#000000"
             android:textSize="18sp" />
 
         <TextView
@@ -99,6 +100,7 @@
             android:layout_weight="1"
             android:text="@string/translate_message_cancel_text"
             android:textAlignment="center"
+            android:textColor="#000000"
             android:textSize="18sp" />
     </LinearLayout>
 
