@@ -54,7 +54,7 @@ class ImageTranslationFragment : Fragment() {
     var arrLanguageObjects: ArrayList<Language> = ArrayList()
     private var languageSelected: String = ""
     private var fromlanguageSelected: String = ""
-    private lateinit var imageByteArray : ByteArray
+    private var imageByteArray : ByteArray? = null
     private var fromlanguageCode: String = ""
     val REQUEST_IMAGE_CAPTURE = 1
 
@@ -105,111 +105,120 @@ class ImageTranslationFragment : Fragment() {
             dialog.show()
         }
 
+
         translateImage.setOnClickListener {
             //Call API for translating image
+            if(imageByteArray != null){
+                val builder = AlertDialog.Builder(context);
+                val dialogView: View = View.inflate(context, R.layout.translate_image_dialog, null)
 
-            val builder = AlertDialog.Builder(context);
-            val dialogView: View = View.inflate(context, R.layout.translate_image_dialog, null)
+                val cancel: TextView =
+                    dialogView.findViewById<TextView>(R.id.translateImageDialog_cancelButton)
+                val submit: TextView =
+                    dialogView.findViewById<TextView>(R.id.translateImageDialog_submitButton)
+                val fromLanguageSpinner: Spinner =
+                    dialogView.findViewById<Spinner>(R.id.translateImageDialog_fromLanguageSpinner)
+                val toLanguageSpinner: Spinner =
+                    dialogView.findViewById<Spinner>(R.id.translateImageDialog_toLanguageSpinner)
+                val radioGroup: RadioGroup =
+                    dialogView.findViewById<RadioGroup>(R.id.translateImageDialog_radioGroup)
+                progressBar =
+                    dialogView.findViewById<ProgressBar>(R.id.translateImageDialog_progressBar)
 
-            val cancel: TextView =
-                dialogView.findViewById<TextView>(R.id.translateImageDialog_cancelButton)
-            val submit: TextView =
-                dialogView.findViewById<TextView>(R.id.translateImageDialog_submitButton)
-            val fromLanguageSpinner: Spinner =
-                dialogView.findViewById<Spinner>(R.id.translateImageDialog_fromLanguageSpinner)
-            val toLanguageSpinner: Spinner =
-                dialogView.findViewById<Spinner>(R.id.translateImageDialog_toLanguageSpinner)
-            val radioGroup: RadioGroup =
-                dialogView.findViewById<RadioGroup>(R.id.translateImageDialog_radioGroup)
-            progressBar =
-                dialogView.findViewById<ProgressBar>(R.id.translateImageDialog_progressBar)
+                var selectedRadioButton: String = ""
+                var toSpinnerLanguageSelected: String = ""
 
-            var selectedRadioButton: String = ""
-            var toSpinnerLanguageSelected: String = ""
+                progressBar.visibility = View.VISIBLE
+                submit.isEnabled = true
 
-            progressBar.visibility = View.VISIBLE
-            submit.isEnabled = true
-
-            radioGroup.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
-                val radio: RadioButton = dialogView.findViewById(checkedId)
-                selectedRadioButton = radio.text.toString()
-                Toast.makeText(
-                    context, " On checked change : ${radio.text}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            })
-
-            builder.setView(dialogView);
-            val dialog: AlertDialog = builder.create()
-
-            cancel.setOnClickListener {
-                Log.d("Cancel", "Hit cancel")
-                dialog.cancel()
-            }
-
-            context?.let { it1 ->
-                ArrayAdapter.createFromResource(
-                    it1,
-                    R.array.vision_7_languages,
-                    android.R.layout.simple_spinner_item
-                ).also { adapter ->
-                    // Specify the layout to use when the list of choices appears
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    // Apply the adapter to the spinner
-                    fromLanguageSpinner.adapter = adapter
-                    toLanguageSpinner.adapter = adapter
-                }
-            }
-
-
-
-            populateLanguageDropdownStrings(fromLanguageSpinner, toLanguageSpinner)
-            //populateLanguageDropdown(fromLanguageSpinner, toLanguageSpinner, progressBar, submit)
-            progressBar.visibility = View.INVISIBLE
-
-            submit.setOnClickListener {
-                Log.d("Submit", "Hit submit")
-
-                //Logic for translating text goes here
-                Log.d(
-                    "Selected", "Method: " + selectedRadioButton
-                            + "\nTo Spinner Language: " + languageSelected
-                )
-
-                if (selectedRadioButton.equals("")) {
+                radioGroup.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
+                    val radio: RadioButton = dialogView.findViewById(checkedId)
+                    selectedRadioButton = radio.text.toString()
                     Toast.makeText(
-                        context, "Please select a translation method",
+                        context, " On checked change : ${radio.text}",
                         Toast.LENGTH_SHORT
                     ).show()
-                } else if (selectedRadioButton.equals("Image to Text")) {
-                    Log.d(
-                        "To Language",
-                        (arrLanguageObjects.filter { it.name == languageSelected })[0].key
-                    )
+                })
 
-                    val to: String =
-                        (arrLanguageObjects.filter { it.name == languageSelected })[0].key
+                builder.setView(dialogView);
+                val dialog: AlertDialog = builder.create()
 
-                    //Call Image to Text API here
-                    convertImageToText(fromlanguageCode , imageByteArray, to,
-                        translatedTextBox,dialog, "Text" )
-
-                } else if (selectedRadioButton.equals("Image to Talk")) {
-                    Log.d(
-                        "To Language",
-                        (arrLanguageObjects.filter { it.name == languageSelected })[0].key
-                    )
-
-                    val to: String =
-                        (arrLanguageObjects.filter { it.name == languageSelected })[0].key
-
-                    //Call Image to Talk API here
-                    convertImageToText(fromlanguageCode , imageByteArray, to,
-                        translatedTextBox,dialog, "Talk" )
+                cancel.setOnClickListener {
+                    Log.d("Cancel", "Hit cancel")
+                    dialog.cancel()
                 }
+
+                context?.let { it1 ->
+                    ArrayAdapter.createFromResource(
+                        it1,
+                        R.array.vision_7_languages,
+                        android.R.layout.simple_spinner_item
+                    ).also { adapter ->
+                        // Specify the layout to use when the list of choices appears
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        // Apply the adapter to the spinner
+                        fromLanguageSpinner.adapter = adapter
+                        toLanguageSpinner.adapter = adapter
+                    }
+                }
+
+
+
+                populateLanguageDropdownStrings(fromLanguageSpinner, toLanguageSpinner)
+                //populateLanguageDropdown(fromLanguageSpinner, toLanguageSpinner, progressBar, submit)
+                progressBar.visibility = View.INVISIBLE
+
+                submit.setOnClickListener {
+                    Log.d("Submit", "Hit submit")
+
+                    //Logic for translating text goes here
+                    Log.d(
+                        "Selected", "Method: " + selectedRadioButton
+                                + "\nTo Spinner Language: " + languageSelected
+                    )
+
+                    if (selectedRadioButton.equals("")) {
+                        Toast.makeText(
+                            context, "Please select a translation method",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if (selectedRadioButton.equals("Image to Text")) {
+                        Log.d(
+                            "To Language",
+                            (arrLanguageObjects.filter { it.name == languageSelected })[0].key
+                        )
+
+                        val to: String =
+                            (arrLanguageObjects.filter { it.name == languageSelected })[0].key
+
+                        //Call Image to Text API here
+                        convertImageToText(fromlanguageCode , imageByteArray!!, to,
+                            translatedTextBox,dialog, "Text" )
+
+                    } else if (selectedRadioButton.equals("Image to Talk")) {
+                        Log.d(
+                            "To Language",
+                            (arrLanguageObjects.filter { it.name == languageSelected })[0].key
+                        )
+
+                        val to: String =
+                            (arrLanguageObjects.filter { it.name == languageSelected })[0].key
+
+                        //Call Image to Talk API here
+                        convertImageToText(fromlanguageCode , imageByteArray!!, to,
+                            translatedTextBox,dialog, "Talk" )
+                    }
+                }
+
+                dialog.show()
+            }
+            else{
+                Toast.makeText(
+                    context, "Please select an image",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
-            dialog.show()
 
         }
 

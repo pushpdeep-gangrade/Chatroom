@@ -69,7 +69,7 @@
         <TextView
             android:id="@+id/imageTranslation_translatedTextBox"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="230dp"
             android:ems="10"
             android:enabled="false"
             android:gravity="start|top"
