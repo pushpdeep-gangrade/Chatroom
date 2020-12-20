@@ -1,29 +1,28 @@
 # Global-Chatroom
-- Trello Board: https://trello.com/b/I6qXEzW5/translation-app
 
-#todo: (Katy) Create slides to give an overview of your project and to motivate the use cases for the app and to show the different features.
+#todo: (Katy)
        Finish the wiki page describing your design and implementation. The wiki page should describe the data design choices.
-       The wiki should also include a description of the tasks performed by each team member.
        Demo your App and record an app screencast showing the different app features. Your video should be posted on Github and included with your submission.
 
-## Authors
-- Pushdeep Gangrade
-- Katy Mitchell
-- Valerie Ray
-- Rockford Stoller
-
 ## Table of Contents
-- [Project Sprint 3](#sprint)
-- [App Mockup](#mockup)
+- [Authors](#authors)
 - [Video Demos](#demo)
+- [Intro](#intro)
 - [Design and Implementation](#design)
-- [Chatroom, Rideshare and Uno](#features)
+- [Other Features (Chatroom, Rideshare and Uno)](#features)
 
-## Project Sprint 3: December 9, 2020 <a name="sprint"></a>
-- The latest app features are text-to-text, automatic chatroom translation, image translation and biometric authentication.
-- Still in progress features include talk-to-speech, talk-to-text, and text-to-speech.
+## Authors <a name="authors"></a>
+- Pushpdeep Gangrade: Wireframe, biometric authentication, research and implement Microsoft and custom
+  APIs, speech, image and text translation
+- Katy Mitchell: Speech translation, project proposal, documentation, final presentation and video demo
+- Valerie Ray: Trello board set up, text, image and speech translation, other chatroom features, and
+  settings screen
+- Rockford Stoller: Wireframe, research and implement Microsoft and custom APIs, text, image and
+  speech translation
+Please visit https://trello.com/b/I6qXEzW5/translation-app for more
 
-### App Description & Use Cases
+## Intro <a name="intro"></a>
+### App Description & Use Cases <a name="intro"></a>
 - Chatroom app that provides translation options within the chatroom to speak with users of another language, and alternate translation features (i.e. talk-to-speech, talk-to-text, text-to-speech, text-to-text) outside of the chatroom
 - Use cases:
   - Airports & taxi companies
@@ -34,8 +33,7 @@
 ### App Features
 
 - Chatroom app that provides translation options
-- Translates text to speech, speech to text, between languages and visual text, speech to speech.
-- Long press on chatroom message and select a language for translation
+- Translates text, speech and images between languages and forms of communication.
 - Change app settings to preferred language and auto-translate
 
 ### Users
@@ -45,14 +43,13 @@
 ### Permissions and Sensors
 - Location permission to predict language based on country/region.
 - Microphone permission for speech.
+- Camera permission for image translation
+- Username/ password and biometric authentication (fingerprint and face regonition)
 
 ### App Monetization Ideas
 - Sponsors can run ad banners or play short videos
 - Subscription for advanced features: The basic model includes text-to-text translation between different languages. The advanced model includes speech-to-text translation as well as options to have auto translation turned on for the chat room.
 - Targeted marketing for travel and education industries.
-
-## Mockup <a name="mockup"></a>
-TODO: Add xd file
 
 ## Video Demos <a name="demo"></a>
 - Part 1: Creating a profile and introduction to group chats. https://www.youtu.be/PmfODNEfFbY
