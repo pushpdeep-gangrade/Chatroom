@@ -59,11 +59,11 @@
 
 ## Design and Implementation <a name="design"></a>
 # todo: update with images of new features
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/autotranslate.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/tap_to_speak.png" width=150>
 
 ### APIs
 - Custom APIs for translating text, images and speech. For example, when translating text-to-text, 
-  the `textToTextTranslation` function within the 'translate/textToText' API is called:
+  the `textToTextTranslation` function within the `translate/textToText` API is called:
 ```
 textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, dialog, convertType )
 ```
