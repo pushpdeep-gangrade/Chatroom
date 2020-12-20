@@ -73,29 +73,26 @@ textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, 
   - https://docs.microsoft.com/en-us/rest/api/speakerrecognition/identification/textindependent
 
 ### Login and Sign Up
-- Login with email and password using Firebase Authentication
+- Login with email and password or using biometrics (face recognition and fingerprints)
 - Clicking the Create Account link takes the user to the Sign Up page
 - Clicking the Forgot Password link takes the user to the Forgot Password page
-- Once successfully logged in, the user will be taken to the View Chatrooms page
-- The user signs up with their first name, last name, email, city, gender, and password
-- The user must also select a profile picture. The profile picture can be selected by clicking the profile
-  image at the top of the page. When the profile image is clicked, the photo gallery on the user's
-  phone will be opened so the user can select a picture
-- The data input by the user is checked when the user clicks the Sign Up button. No fields can be left blank
-- Once all data is verified, the app will attempt to sign up the user and add their information to Firebase.
-  On successful sign up, the user's email and password is added to Firebase Authentication, all of the
-  user's data is stored in the Firebase Realtime Database, and the image for the profile picture is stored
-  in Firebase Storage
-- Sign Up shows a loading symbol when verifying data and uploading data to Firebase. The loading symbol will
-  disappear once the operations are complete
-- Once the user is successfully signed up, they are taken back to the login page
-- Clicking Cancel takes the user back to the Login page with no further action
+- The user signs up with their first name, last name, email, city, gender, password and a profile picture
 
-### Forgot Password
-- The user is able to reset their password with Firebase Authentication
-- The Forgot Password page has the user input the email so that they can receive a link to reset their password
-- An email will not be sent if the user is not signed up (Given email is not in Firebase)
-- Clicking the Cancel button takes the user back to the Login page with no further action
+### Menu
+<br />
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/menu.png" width=150>
+- The top part of the menu displays the current user's profile picture, full name, and email
+- There are links displayed under the top part of the menu that will take the user to different pages
+  in the app: Profile, Create Chatroom, View Chatrooms, View Users, Image Translation, Speech Translation, 
+  View Ride History, Game Lobby and Settings
+  
+### Text Translation
+
+### Speech Translation
+
+### Image Translation
+
+### Settings & Autotranslate
 
 ## Chatroom, Rideshare and Uno <a name="features"></a>
 
@@ -103,18 +100,6 @@ textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, 
 - The View Chatrooms page is the default page the user is taken to once they log in
 - It shows a list of all the current chatrooms (pulled from Firebase Realtime Database)
 - Clicking on a chatroom in the list will take you to that particular chatroom
-
-### Menu
-<br />
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/Menu2.png" width=150>
-- Once logged in there will be a menu that is consistent across every page
-- There are two ways to access the menu, one way is to click the menu button at the top left corner of the
-  screen and the other way is to swipe right on the left side of the screen to pull out the menu
-- The top part of the menu displays the current user's profile picture, full name, and email
-- There are links displayed under the top part of the menu that will take the user to different pages
-  in the app. Profile takes the user to their personal profile page, Create Chatroom takes the user
-  to the Create Chatroom page, View Chatrooms takes the user to the View Chatrooms page (the main page), and
-  View Users takes the user to the View Users page
 
 ### Profile
 - The Profile page shows all of the user's information (first name, last name, gender, city, profile picture)
