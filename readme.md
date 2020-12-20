@@ -81,6 +81,8 @@ textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, 
 ### Menu
 <br />
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/menu.png" width=150>
+</br>
+
 - The top part of the menu displays the current user's profile picture, full name, and email
 - There are links displayed under the top part of the menu that will take the user to different pages
   in the app: Profile, Create Chatroom, View Chatrooms, View Users, Image Translation, Speech Translation, 
@@ -115,10 +117,8 @@ textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, 
 - The View Users page allows the user to view all of the users who are signed up for the app
 - The user can view the profile of another by clicking on their name in the user list
 
-### Chatroom
+### Chatroom- General Features
 - The Create Chatroom page allows the user to create their own chatroom
-- The user enters the name for their chatroom and clicks Create
-- Clicking Cancel takes the user back to the View Chatrooms page with no further action
 - The Chatroom page is dependent on which chatroom the users chooses from the list on the View Chatrooms page
 - The page is populated with messages from the current user and other users that have commented on the thread
 - The user can like other people's messages in the chatroom
