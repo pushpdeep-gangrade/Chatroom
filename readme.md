@@ -12,12 +12,12 @@
 - [Other Features (Chatroom, Rideshare and Uno)](#features)
 
 ## Authors <a name="authors"></a>
-- Pushpdeep Gangrade: Wireframe, biometric authentication, research and implement Microsoft and custom
+- **Pushpdeep Gangrade**: Wireframe, biometric authentication, research and implement Microsoft and custom
   APIs, speech, image and text translation
-- Katy Mitchell: Speech translation, project proposal, documentation, final presentation and video demo
-- Valerie Ray: Trello board set up, text, image and speech translation, other chatroom features, and
+- **Katy Mitchell**: Speech translation, project proposal, documentation, final presentation and video demo
+- **Valerie Ray**: Trello board set up, text, image and speech translation, other chatroom features, and
   settings screen
-- Rockford Stoller: Wireframe, research and implement Microsoft and custom APIs, text, image and
+- **Rockford Stoller**: Wireframe, research and implement Microsoft and custom APIs, text, image and
   speech translation
 - Please visit https://trello.com/b/I6qXEzW5/translation-app for more
 
