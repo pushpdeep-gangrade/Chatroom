@@ -19,7 +19,7 @@
   settings screen
 - Rockford Stoller: Wireframe, research and implement Microsoft and custom APIs, text, image and
   speech translation
-Please visit https://trello.com/b/I6qXEzW5/translation-app for more
+- Please visit https://trello.com/b/I6qXEzW5/translation-app for more
 
 ## Intro <a name="intro"></a>
 ### App Description & Use Cases <a name="intro"></a>
