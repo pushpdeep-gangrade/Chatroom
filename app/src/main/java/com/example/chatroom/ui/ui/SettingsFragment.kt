@@ -180,6 +180,8 @@ class SettingsFragment : Fragment() {
             }
             else{
                 prefs.edit().putString("language", null).apply()
+                Toast.makeText(context,"Auto-Translate turned off",
+                    Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -188,7 +190,71 @@ class SettingsFragment : Fragment() {
     }
 
     private fun populateLanguageDropdown(){
-        val url =
+
+        val languagesStringArr = resources.getStringArray(R.array.text_to_speech_languages)
+        val languageCodesStringArr = resources.getStringArray(R.array.text_to_speech_codes)
+        val languagesRegionStringArr = resources.getStringArray(R.array.text_to_speech_codes_with_region)
+        val languageVoiceStringArr = resources.getStringArray(R.array.text_to_speech_voices)
+
+        for (i in languagesStringArr.indices) {
+            arrStringName.add(languagesStringArr[i])
+
+            val language: Language = Language(
+                languageCodesStringArr[i], languagesStringArr[i],
+                languagesRegionStringArr[i], languageVoiceStringArr[i]
+            )
+
+            arrLanguageObjects.add(language)
+
+        }
+
+        val adapter = context?.let {
+            ArrayAdapter(
+                it,
+                android.R.layout.simple_spinner_item, arrStringName
+            )
+        }
+
+        languageDropDown.adapter = adapter
+
+        languageSelected = arrStringName.get(0)
+
+
+        val prefs: SharedPreferences =
+            requireContext().getSharedPreferences("info", Context.MODE_PRIVATE)
+
+        if(prefs.getString("language", null) != null){
+            autoTranslate.isChecked = true
+            autoTranslateChecked = true
+
+            val gsonObject = Gson()
+
+            val language: Language = gsonObject.fromJson(prefs.getString("language", null), Language::class.java)
+
+            if (adapter != null) {
+                languageDropDown.setSelection(adapter.getPosition(language.name))
+            }
+
+            languageSelected = language.name
+
+            Toast.makeText(
+                context, "Current auto-translate language: ".plus(language.name),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        languageDropDown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                languageSelected = arrStringName.get(position)
+            }
+
+        }
+
+        /*val url =
             "https://api.cognitive.microsofttranslator.com/languages?api-version=3.0"
 
         val client: AsyncHttpClient = AsyncHttpClient()
@@ -281,7 +347,7 @@ class SettingsFragment : Fragment() {
                     Toast.LENGTH_SHORT).show()
 
             }
-        })
+        })*/
     }
 
     private fun getLocationPermission() {
