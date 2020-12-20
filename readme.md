@@ -1,4 +1,4 @@
-# Global-Chatroom
+# Global Chatroom
 
 #todo: (Katy)
        Finish the wiki page describing your design and implementation. The wiki page should describe the data design choices.
@@ -59,17 +59,19 @@
 
 ## Design and Implementation <a name="design"></a>
 # todo: update with images of new features
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/screen_images/SignUp.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/autotranslate.png" width=150>
 
 ### APIs
-- Custom APIs (TODO: add details)
+- Custom APIs for translating text, images and speech. For example, when translating text-to-text, 
+  the `textToTextTranslation` function within the 'translate/textToText' API is called:
+```
+textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, dialog, convertType )
+```
 - Microsoft Azure APIs, including:
   - https://docs.microsoft.com/en-us/rest/api/cognitiveservices/computervision/recognizeprintedtext
   - https://docs.microsoft.com/en-us/rest/api/cognitiveservices/translatortext/translator
-  - https://docs.microsoft.com/en-us/rest/api/communication/chat/updatechatmessage
   - https://docs.microsoft.com/en-us/rest/api/speakerrecognition/identification/textindependent
 
-# todo: condense previous readme to focus on new features
 ### Login and Sign Up
 - Login with email and password using Firebase Authentication
 - Clicking the Create Account link takes the user to the Sign Up page
