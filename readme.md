@@ -1,9 +1,5 @@
 # Global Chatroom
 
-#todo: (Katy)
-       Finish the wiki page describing your design and implementation. The wiki page should describe the data design choices.
-       Demo your App and record an app screencast showing the different app features. Your video should be posted on Github and included with your submission.
-
 ## Table of Contents
 - [Authors](#authors)
 - [Video Demos](#demo)
@@ -52,14 +48,12 @@
 - Targeted marketing for travel and education industries.
 
 ## Video Demos <a name="demo"></a>
-- Part 1: Creating a profile and introduction to group chats. https://www.youtu.be/PmfODNEfFbY
-- Part 2: Requesting and accepting rides. https://youtu.be/yFQDB3oLeVI
-- Part 3: Playing "Uno" with two users. https://youtu.be/j_2SDM5q4Z8
-- TODO: video demo for translation features
+- Part 1: TODO: video demo for translation features
+- Part 2: Creating a profile and introduction to group chats. https://www.youtu.be/PmfODNEfFbY
+- Part 3: Requesting and accepting rides. https://youtu.be/yFQDB3oLeVI
+- Part 4: Playing "Uno" with two users. https://youtu.be/j_2SDM5q4Z8
 
 ## Design and Implementation <a name="design"></a>
-# todo: update with images of new features
-<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/tap_to_speak.png" width=150>
 
 ### APIs
 - Custom APIs for translating text, images and speech. For example, when translating text-to-text, 
@@ -71,6 +65,8 @@ textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, 
   - [Recognizing Printed Text](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/computervision/recognizeprintedtext)
   - [Translator](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/translatortext/translator)
   - [Recognizing Spoken Text](https://docs.microsoft.com/en-us/rest/api/speakerrecognition/identification/textindependent)
+- Google APIs, including:
+   ***Add more***
 
 ### Login and Sign Up
 - Login with email and password or using biometrics (face recognition and fingerprints)
@@ -98,10 +94,14 @@ textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, 
 - Once the user confirms the traslation method and languages, the selected message changes within the chat.
 
 ### Speech Translation
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/tap_to_speak.png" width=150>
 
 ### Image Translation
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/image_to_french.png" width=150>
 
 ### Settings & Autotranslate
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/permissions.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/auto_translate.png" width=150>
 
 ## Chatroom, Rideshare and Uno <a name="features"></a>
 
