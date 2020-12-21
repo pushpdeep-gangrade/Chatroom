@@ -12,12 +12,12 @@
 - [Other Features (Chatroom, Rideshare and Uno)](#features)
 
 ## Authors <a name="authors"></a>
-- Pushpdeep Gangrade: Wireframe, biometric authentication, research and implement Microsoft and custom
+- **Pushpdeep Gangrade**: Wireframe, biometric authentication, research and implement Microsoft and custom
   APIs, speech, image and text translation
-- Katy Mitchell: Speech translation, project proposal, documentation, final presentation and video demo
-- Valerie Ray: Trello board set up, text, image and speech translation, other chatroom features, and
+- **Katy Mitchell**: Speech translation, project proposal, documentation, final presentation and video demo
+- **Valerie Ray**: Trello board set up, text, image and speech translation, other chatroom features, and
   settings screen
-- Rockford Stoller: Wireframe, research and implement Microsoft and custom APIs, text, image and
+- **Rockford Stoller**: Wireframe, research and implement Microsoft and custom APIs, text, image and
   speech translation
 - Please visit https://trello.com/b/I6qXEzW5/translation-app for more
 
@@ -68,9 +68,9 @@
 textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, dialog, convertType )
 ```
 - Microsoft Azure APIs, including:
-  - https://docs.microsoft.com/en-us/rest/api/cognitiveservices/computervision/recognizeprintedtext
-  - https://docs.microsoft.com/en-us/rest/api/cognitiveservices/translatortext/translator
-  - https://docs.microsoft.com/en-us/rest/api/speakerrecognition/identification/textindependent
+  - [Recognizing Printed Text](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/computervision/recognizeprintedtext)
+  - [Translator](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/translatortext/translator)
+  - [Recognizing Spoken Text](https://docs.microsoft.com/en-us/rest/api/speakerrecognition/identification/textindependent)
 
 ### Login and Sign Up
 - Login with email and password or using biometrics (face recognition and fingerprints)
@@ -89,6 +89,13 @@ textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, 
   View Ride History, Game Lobby and Settings
   
 ### Text Translation
+<br>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/text_to_text_popup.png" width=150>
+<img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/greek_to_spanish_text.png" width=150>
+</br>
+
+- Within a chatroom, the user can select `Translate` on individual messages. A popup dialog asks the user to select text-to-text or text-to-speech and the destination language. The source language is automatically detected, or the user can select a different one from the menu.
+- Once the user confirms the traslation method and languages, the selected message changes within the chat.
 
 ### Speech Translation
 
