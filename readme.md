@@ -65,8 +65,6 @@ textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, 
   - [Recognizing Printed Text](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/computervision/recognizeprintedtext)
   - [Translator](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/translatortext/translator)
   - [Recognizing Spoken Text](https://docs.microsoft.com/en-us/rest/api/speakerrecognition/identification/textindependent)
-- Google APIs, including:
-   ***Add more***
 
 ### Login and Sign Up
 - Login with email and password or using biometrics (face recognition and fingerprints)
@@ -96,8 +94,11 @@ textToTextTranslation(fromlanguageCode, to, builder.toString(), textView ,  it, 
 ### Speech Translation
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/tap_to_speak.png" width=150>
 
+- The user can speak into a microphone and have their words translated to written text or to speech in a different language.
 ### Image Translation
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/image_to_french.png" width=150>
+
+- The user can take a picture or select an image from their phone to translate. Translation is available from image to text and image to speech.
 
 ### Settings & Autotranslate
 <img src="https://github.com/pushpdeep-gangrade/Chatroom/blob/master/images_and_videos/permissions.png" width=150>
