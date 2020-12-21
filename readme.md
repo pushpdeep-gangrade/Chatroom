@@ -49,7 +49,7 @@
 - Targeted marketing for travel and education industries.
 
 ## Video Demos <a name="demo"></a>
-- Part 1: TODO: video demo for translation features
+- Part 1: Translation Feautres: https://youtu.be/1zCRWFhEUP0
 - Part 2: Creating a profile and introduction to group chats. https://www.youtu.be/PmfODNEfFbY
 - Part 3: Requesting and accepting rides. https://youtu.be/yFQDB3oLeVI
 - Part 4: Playing "Uno" with two users. https://youtu.be/j_2SDM5q4Z8
